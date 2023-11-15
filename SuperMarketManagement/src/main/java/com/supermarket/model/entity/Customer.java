@@ -95,7 +95,6 @@ public class Customer {
 	}
 
 	public void setPincode(String pincode) {
-		System.out.println(pincode);
 		this.pincode = pincode;
 	}
 

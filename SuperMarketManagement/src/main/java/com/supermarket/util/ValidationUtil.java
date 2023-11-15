@@ -4,6 +4,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ValidationUtil {
+	
+	public static boolean isNotEmpty(String field) {
+		return ((field != null) && (field.trim().length() > 0));
+	}
+	
 	public static boolean isValidName(String name) {
 		Pattern pattern = Pattern.compile("^[A-Za-z\\s]+$");
 		Matcher matcher = pattern.matcher(name);
@@ -14,6 +19,7 @@ public class ValidationUtil {
 //		Pattern pattern = Pattern.compile("^[A-Za-z0-9+_.-]+@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}$");
 //		Pattern pattern = Pattern.compile("^[A-Za-z0-9]+[_.-]*[A-Za-z0-9]+@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}$");
 		Pattern pattern = Pattern.compile("^[A-Za-z]+[_.-]{0,1}[A-Za-z0-9]*@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}$");
+//		public static final String REGEX_EMAIL = "^([_a-zA-Z0-9-]+(\\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*(\\.[a-zA-Z]{1,6}))?$";
 		Matcher matcher = pattern.matcher(email);
 		return matcher.matches();
 	}

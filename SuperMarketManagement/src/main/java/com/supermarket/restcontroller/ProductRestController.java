@@ -75,7 +75,7 @@ public class ProductRestController {
 	 * @param filterListDto
 	 * @return
 	 */
-	@RequestMapping(value = "/listProducts", method = RequestMethod.GET)
+	@RequestMapping(value = "/listProducts", method = RequestMethod.POST)
 	public ResponseEntity<FilteredResponse> listProduct(@RequestBody ProductFilterList filterListDto) {
 		return new ResponseEntity<>(productService.listProduct(filterListDto), HttpStatus.OK);
 	}

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
@@ -102,7 +103,7 @@ public class OrderDAOImpl implements OrderDAO {
 	public void updateOrderStatus(int orderId, String orderStatus) {
 		String rawQuery = "UPDATE OrderDetails SET orderStatus = :orderStatus WHERE orderId = :orderId";
 
-		org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(rawQuery);
+		Query query = sessionFactory.getCurrentSession().createQuery(rawQuery);
 		query.setParameter("orderStatus", orderStatus);
 		query.setInteger("orderId", orderId);
 		query.executeUpdate();
@@ -112,7 +113,7 @@ public class OrderDAOImpl implements OrderDAO {
 	public void updateOrderItemStatus(int orderId, String orderStatus) {
 		String rawQuery = "UPDATE OrderLineItemDetails SET olidStatus = :olidStatus WHERE orderId = :orderId";
 
-		org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(rawQuery);
+		Query query = sessionFactory.getCurrentSession().createQuery(rawQuery);
 		query.setParameter("olidStatus", orderStatus);
 		query.setInteger("orderId", orderId);
 		query.executeUpdate();

@@ -1,5 +1,7 @@
 package com.supermarket.model.custom.product;
 
+import com.supermarket.model.custom.OrderBy;
+
 public class ProductFilterList {
 	
 	private Integer length;
@@ -7,6 +9,8 @@ public class ProductFilterList {
 	private Integer start;
 	
 	private ProductFilter filter;
+	
+	private OrderBy orderBy;
 	
 	private String search;
 	
@@ -34,6 +38,14 @@ public class ProductFilterList {
 
 	public void setFilter(ProductFilter filter) {
 		this.filter = filter;
+	}
+
+	public OrderBy getOrderBy() {
+		return orderBy;
+	}
+
+	public void setOrderBy(OrderBy orderBy) {
+		this.orderBy = orderBy;
 	}
 
 	public String getSearch() {

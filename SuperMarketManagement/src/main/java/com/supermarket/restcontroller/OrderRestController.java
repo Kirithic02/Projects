@@ -77,7 +77,7 @@ public class OrderRestController {
 	 * @param orderFilterList
 	 * @return
 	 */
-	@RequestMapping(value = "/listOrder", method = RequestMethod.GET)
+	@RequestMapping(value = "/listOrder", method = RequestMethod.POST)
 	public ResponseEntity<FilteredResponse> listOrder(@RequestBody OrderFilterList orderFilterList) {
 		return new ResponseEntity<>(orderService.listOrder(orderFilterList), HttpStatus.OK);
 	}

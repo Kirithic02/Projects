@@ -246,15 +246,28 @@ public class CustomerServiceImpl implements CustomerService {
 			errorResponseList.add(errorResponse);
 		}
 
-		if ( !(customerFilterList.getSearchColumn() == null || customerFilterList.getSearchColumn().equalsIgnoreCase("customerName")
-				|| customerFilterList.getSearchColumn().equalsIgnoreCase("mobileNo")
+		if ( !(customerFilterList.getSearchColumn() == null || customerFilterList.getSearchColumn().equalsIgnoreCase("customername")
+				|| customerFilterList.getSearchColumn().equalsIgnoreCase("mobileno")
 				|| customerFilterList.getSearchColumn().equalsIgnoreCase("mail")
 				|| customerFilterList.getSearchColumn().isBlank()) ) {
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName("searchColumn");
-			errorResponse.setErrorMessage("searchColumn Should Contain Only CUSTOMERNAME (or) MOBILENO (or) MAIL .");
+			errorResponse.setErrorMessage("searchColumn Should Contain Only CUSTOMERNAME (or) MOBILENO (or) MAIL");
 			errorResponseList.add(errorResponse);
 		} 
+		
+		if (customerFilterList.getOrderBy() != null
+				&& ValidationUtil.isNotEmpty(customerFilterList.getOrderBy().getType())
+				&& ValidationUtil.isNotEmpty(customerFilterList.getOrderBy().getColumn())) {
+			
+			if (!(customerFilterList.getOrderBy().getColumn().equalsIgnoreCase("customername")
+					|| customerFilterList.getOrderBy().getColumn().equalsIgnoreCase("createddate"))) {
+				ErrorResponse errorResponse = new ErrorResponse();
+				errorResponse.setFieldName("column");
+				errorResponse.setErrorMessage("column Should Contain Only CUSTOMERNAME (or) CREATEDDATE (or) NULL");
+				errorResponseList.add(errorResponse);
+			}
+		}
 
 		return errorResponseList;
 	}

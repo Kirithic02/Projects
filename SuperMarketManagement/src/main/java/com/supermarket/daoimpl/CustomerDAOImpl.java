@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
@@ -15,6 +17,7 @@ import com.supermarket.dao.CustomerDAO;
 import com.supermarket.model.custom.customer.CustomerDTO;
 import com.supermarket.model.custom.customer.CustomerFilterList;
 import com.supermarket.model.entity.Customer;
+import com.supermarket.util.ValidationUtil;
 
 @Repository
 public class CustomerDAOImpl implements CustomerDAO {
@@ -76,20 +79,44 @@ public class CustomerDAOImpl implements CustomerDAO {
 			if(!customerFilterList.getSearchColumn().isEmpty()) {
 				
 				if(customerFilterList.getSearchColumn().equalsIgnoreCase("customername")) {
-					criteria.add(Restrictions.ilike("customerName", "%" + customerFilterList.getSearch() + "%"));
+					criteria.add(Restrictions.ilike("customerName", customerFilterList.getSearch(), MatchMode.ANYWHERE));
 				} else if(customerFilterList.getSearchColumn().equalsIgnoreCase("mobileno")) {
-					criteria.add(Restrictions.ilike("mobileNo", "%" + customerFilterList.getSearch() + "%"));
+					criteria.add(Restrictions.ilike("mobileNo", customerFilterList.getSearch(), MatchMode.ANYWHERE));
 				} else {
-					criteria.add(Restrictions.ilike("mail", "%" + customerFilterList.getSearch() + "%"));
+					criteria.add(Restrictions.ilike("mail", customerFilterList.getSearch(), MatchMode.ANYWHERE));
 				}
-				criteria.add(Restrictions.ilike(customerFilterList.getSearchColumn(),
-						"%" + customerFilterList.getSearch() + "%"));
 			} else {
 				criteria.add(Restrictions.disjunction()
-						.add(Restrictions.ilike("customerName", "%" + customerFilterList.getSearch() + "%"))
-						.add(Restrictions.ilike("mobileNo", "%" + customerFilterList.getSearch() + "%"))
-						.add(Restrictions.ilike("mail", "%" + customerFilterList.getSearch() + "%")));
+						.add(Restrictions.ilike("customerName", customerFilterList.getSearch(), MatchMode.ANYWHERE))
+						.add(Restrictions.ilike("mobileNo", customerFilterList.getSearch(), MatchMode.ANYWHERE))
+						.add(Restrictions.ilike("mail", customerFilterList.getSearch(), MatchMode.ANYWHERE)));
 			}
+		}
+		
+		if(customerFilterList.getOrderBy() != null) {
+			
+			if(ValidationUtil.isNotEmpty(customerFilterList.getOrderBy().getColumn()) && customerFilterList.getOrderBy().getType() != null) {
+				
+				if(customerFilterList.getOrderBy().getColumn().equalsIgnoreCase("customername")) {
+					
+					if(customerFilterList.getOrderBy().getType().equalsIgnoreCase("desc")) {
+						criteria.addOrder(Order.desc("customerName"));
+					} else {
+						criteria.addOrder(Order.asc("customerName"));
+					}
+				} else if(customerFilterList.getOrderBy().getType().equalsIgnoreCase("createddate")) {
+					
+					if(customerFilterList.getOrderBy().getType().equalsIgnoreCase("desc")) {
+						criteria.addOrder(Order.desc("createdDate"));
+					} else {
+						criteria.addOrder(Order.asc("createdDate"));
+					}
+				}
+			} else {
+				criteria.addOrder(Order.asc("customerName"));
+			}
+		} else {
+			criteria.addOrder(Order.asc("customerName"));
 		}
 
 		criteria.setProjection(Projections.rowCount());

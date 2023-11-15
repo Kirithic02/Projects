@@ -53,7 +53,7 @@ public class CustomerRestController {
 	 * @param customerFilterList
 	 * @return
 	 */
-	@RequestMapping(value = "/listCustomer", method = RequestMethod.GET)
+	@RequestMapping(value = "/listCustomer", method = RequestMethod.POST)
 	public ResponseEntity<FilteredResponse> listCustomer(@RequestBody CustomerFilterList customerFilterList) {
 		return new ResponseEntity<>(customerService.listCustomer(customerFilterList), HttpStatus.OK);
 	}
