@@ -113,8 +113,12 @@ public class OrderServiceImpl implements OrderService {
 
 			int totalPrice = 0;
 			StringBuilder bodyStringBuilder = new StringBuilder(
-					"Dear Customer, \n\n Your Order Has Been Placed Successfully. \nOrder ID : " + order.getOrderId()
-							+ "\nExpected Date : " + order.getOrderExpectedDate() + "\n\nProducts:\n\n");
+					"Dear Customer, \n\n              Thank you for choosing FreshMart! Your order has been successfully placed, "
+					+ "and we're busy \npreparing your items. Here are the details: \n\nOrder ID : "
+							+ order.getOrderId() + "\nOrder Date : " + order.getOrderedDate()
+							+ "\nExpected Date : " + order.getOrderExpectedDate() + "\n\n\nShipping Details:" 
+							+ "\n\nYour order will be carefully packed and shipped as soon as possible. We will send you another \nemail once your order is on its way."
+							+ "\n\n\nProducts:\n");
 
 			for (OrderLineItemDetailsDTO itemDTO : customerOrderDTO.getOrderList()) {
 
@@ -133,17 +137,21 @@ public class OrderServiceImpl implements OrderService {
 
 				bodyStringBuilder.append("\nName : " + product.getProductName() + "\nQuantity : "
 						+ item.getQuantityIndividualUnit() + "\nProduct Price : " + product.getProductPrice()
-						+ "\nNet Price : " + (item.getQuantityInPackage() * product.getProductPrice()) + "\n\n");
+						+ "\nNet Price : " + (item.getQuantityInPackage() * product.getProductPrice()) + "\n");
 
 				orderDAO.orderProduct(item);
 			}
 
-			bodyStringBuilder.append("Total Price : " + totalPrice + "\nMode of Payment : Cash on Delivery\n");
-			bodyStringBuilder.append("\n\nDelivery Address :\n\n" + customer.getCustomerName() + "\n"
-					+ customer.getAddress() + "\n" + customer.getLocation() + "\n" + customer.getCity() + " - "
-					+ customer.getPincode() + "\nMobile : " + customer.getMobileNo());
+//			bodyStringBuilder.append("\nMode of Payment : Cash on Delivery\n" + "Total Price : " + totalPrice);
+			bodyStringBuilder.append("\n\nMode of Payment : Cash on Delivery\n" + "Total Price : " + totalPrice
+					+ "\n\n\nDelivery Address :\n\n" + customer.getCustomerName() + "\n" + customer.getAddress() + "\n"
+					+ customer.getLocation() + "\n" + customer.getCity() + " - " + customer.getPincode() + "\nMobile : "
+					+ customer.getMobileNo() + "\n\n\nIf you have any questions about your order, "
+					+ "feel free to contact our customer support team at \nkirithic@humworld.in or 9894507215."
+					+ "\n\nWe appreciate your business and hope you enjoy your FreshMart products!" + "\n\nBest regards,\n"
+					+ "The FreshMart Team");
 			String to = customer.getMail();
-			String subject = "Order Placed";
+			String subject = "Thank You for Your FreshMart Order!";
 			String body = bodyStringBuilder.toString();
 
 			try {
@@ -402,7 +410,7 @@ public class OrderServiceImpl implements OrderService {
 
 					int totalPrice = 0;
 					StringBuilder bodyStringBuilder = new StringBuilder(
-							"Dear Customer, \n\n Your Order Has Been " + newStatus);
+							"Dear Customer, \n\n          Your Order Has Been " + newStatus + " From the Super Market." );
 					Customer customer = new Customer();
 
 					for (OrderLineItemDetails itemDetailsDTO : orderItemList) {
@@ -600,6 +608,14 @@ public class OrderServiceImpl implements OrderService {
 				ErrorResponse errorResponse = new ErrorResponse();
 				errorResponse.setFieldName("column");
 				errorResponse.setErrorMessage("column Should Contain Only ORDERDATE (or) EXPECTEDDATE (or) ORDERSTATUS (or) NULL");
+				errorResponseList.add(errorResponse);
+			}
+			
+			if( !(orderFilterList.getOrderBy().getType().equalsIgnoreCase("asc")
+					|| orderFilterList.getOrderBy().getType().equalsIgnoreCase("desc")) ) {
+				ErrorResponse errorResponse = new ErrorResponse();
+				errorResponse.setFieldName("type");
+				errorResponse.setErrorMessage("type Should Contain Only ASC (or) DESC (or) NULL");
 				errorResponseList.add(errorResponse);
 			}
 		}

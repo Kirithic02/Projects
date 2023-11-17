@@ -75,9 +75,9 @@ public class ProductDAOImpl implements ProductDAO {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap.put("totalCount", criteria.uniqueResult());
 
-		if (filterList.getSearch() != null && !filterList.getSearch().isEmpty()) {
+		if (filterList.getSearch() != null && !filterList.getSearch().trim().isEmpty()) {
 			
-			if(!filterList.getSearchColumn().isEmpty()) {
+			if(!filterList.getSearchColumn().trim().isEmpty()) {
 				
 				if(filterList.getSearchColumn().equalsIgnoreCase("productname")) {
 					criteria.add(Restrictions.ilike("productName", "%" + filterList.getSearch() + "%"));
@@ -119,38 +119,46 @@ public class ProductDAOImpl implements ProductDAO {
 
 				if (filterList.getOrderBy().getColumn().equalsIgnoreCase("productname")) {
 
-					if (filterList.getOrderBy().getType().equalsIgnoreCase("desc")) {
-						criteria.addOrder(Order.desc("productName"));
-					} else {
+					if (filterList.getOrderBy().getType() == null
+							|| filterList.getOrderBy().getType().trim().isEmpty()
+							|| filterList.getOrderBy().getType().equalsIgnoreCase("asc")) {
 						criteria.addOrder(Order.asc("productName"));
+					} else {
+						criteria.addOrder(Order.desc("productName"));
 					}
 				} else if (filterList.getOrderBy().getColumn().equalsIgnoreCase("productprice")) {
 
-					if (filterList.getOrderBy().getType().equalsIgnoreCase("desc")) {
-						criteria.addOrder(Order.desc("productPrice"));
-					} else {
+					if (filterList.getOrderBy().getType() == null
+							|| filterList.getOrderBy().getType().trim().isEmpty()
+							|| filterList.getOrderBy().getType().equalsIgnoreCase("asc")) {
 						criteria.addOrder(Order.asc("productPrice"));
+					} else {
+						criteria.addOrder(Order.desc("productPrice"));
 					}
 				} else if (filterList.getOrderBy().getColumn().equalsIgnoreCase("availablestock")) {
 
-					if (filterList.getOrderBy().getType().equalsIgnoreCase("desc")) {
-						criteria.addOrder(Order.desc("currentStockPackageCount"));
-					} else {
+					if (filterList.getOrderBy().getType() == null
+							|| filterList.getOrderBy().getType().trim().isEmpty()
+							|| filterList.getOrderBy().getType().equalsIgnoreCase("asc")) {
 						criteria.addOrder(Order.asc("currentStockPackageCount"));
+					} else {
+						criteria.addOrder(Order.desc("currentStockPackageCount"));
 					}
 				} else if (filterList.getOrderBy().getColumn().equalsIgnoreCase("effectiveDate")) {
 
-					if (filterList.getOrderBy().getType().equalsIgnoreCase("desc")) {
-						criteria.addOrder(Order.desc("effectiveDate"));
-					} else {
+					if (filterList.getOrderBy().getType() == null
+							|| filterList.getOrderBy().getType().trim().isEmpty()
+							|| filterList.getOrderBy().getType().equalsIgnoreCase("asc")) {
 						criteria.addOrder(Order.asc("effectiveDate"));
+					} else {
+						criteria.addOrder(Order.desc("effectiveDate"));
 					}
 				}
-			} else {
-				criteria.addOrder(Order.asc("productName"));
+//			} else {
+//				criteria.addOrder(Order.asc("productName"));
 			}
-		} else {
-			criteria.addOrder(Order.asc("productName"));
+//		} else {
+//			criteria.addOrder(Order.asc("productName"));
 		}
 
 		criteria.setProjection(Projections.rowCount());
@@ -172,80 +180,4 @@ public class ProductDAOImpl implements ProductDAO {
 		return resultMap;
 	}
 
-//	@Override
-//	public Map<String, Object> listActiveProducts(Date date, Integer page, Integer limit) {
-//		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Product.class)
-//				.createAlias("oldProductId", "oldproduct", JoinType.LEFT_OUTER_JOIN)
-//				.setProjection(Projections.rowCount());
-//
-//		Map<String, Object> resultMap = new HashMap<String, Object>();
-//		resultMap.put("totalCount", criteria.uniqueResult());
-//
-//		if (date == null) {
-//			criteria.add(Restrictions.le("effectiveDate", new Date()))
-//					.add(Restrictions.disjunction().add(Restrictions.gt("lastEffectiveDate", new Date()))
-//							.add(Restrictions.isNull("lastEffectiveDate")));
-//		} else {
-//			criteria.add(Restrictions.le("effectiveDate", date))
-//					.add(Restrictions.disjunction().add(Restrictions.gt("lastEffectiveDate", date))
-//							.add(Restrictions.isNull("lastEffectiveDate")));
-//		}
-//
-//		criteria.setProjection(Projections.rowCount());
-//		resultMap.put("filteredCount", criteria.uniqueResult());
-//
-//		criteria.setProjection(Projections.projectionList().add(Projections.property("productId"), "productId")
-//				.add(Projections.property("productName"), "productName")
-//				.add(Projections.property("packQuantity"), "packQuantity")
-//				.add(Projections.property("productPrice"), "productPrice")
-//				.add(Projections.property("currentStockPackageCount"), "currentStockPackageCount")
-//				.add(Projections.property("effectiveDate"), "effectiveDate")
-//				.add(Projections.property("oldproduct.productId"), "oldProductId")).setFirstResult((page - 1) * limit)
-//				.setMaxResults(limit).setResultTransformer(Transformers.aliasToBean(ProductDTO.class));
-//
-//		resultMap.put("data", criteria.list());
-//
-//		return resultMap;
-//	}
-//
-//	@Override
-//	@Transactional
-//	public Map<String, Object> listInActiveProducts(Date date) {
-//		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Product.class)
-//				.createAlias("oldProductId", "oldproduct", JoinType.LEFT_OUTER_JOIN)
-//				.setProjection(Projections.rowCount());
-//
-//		Map<String, Object> resultMap = new HashMap<String, Object>();
-//		resultMap.put("totalCount", criteria.uniqueResult());
-//
-//		if (date == null) {
-//			criteria.add(Restrictions.disjunction()
-//					.add(Restrictions.conjunction().add(Restrictions.gt("effectiveDate", new Date())))
-//					.add(Restrictions.conjunction().add(Restrictions.isNotNull("lastEffectiveDate"))
-//							.add(Restrictions.lt("lastEffectiveDate", new Date()))));
-//		} else {
-//			criteria.add(Restrictions.disjunction()
-//					.add(Restrictions.conjunction().add(Restrictions.gt("effectiveDate", date)))
-//					.add(Restrictions.conjunction().add(Restrictions.isNotNull("lastEffectiveDate"))
-//							.add(Restrictions.lt("lastEffectiveDate", date))));
-//		}
-//		
-//		criteria.setProjection(Projections.rowCount());
-//		resultMap.put("filteredCount", criteria.uniqueResult());
-//
-//		criteria.setProjection(Projections.projectionList().add(Projections.property("productId"), "productId")
-//				.add(Projections.property("productName"), "productName")
-//				.add(Projections.property("packQuantity"), "packQuantity")
-//				.add(Projections.property("productPrice"), "productPrice")
-//				.add(Projections.property("currentStockPackageCount"), "currentStockPackageCount")
-//				.add(Projections.property("effectiveDate"), "effectiveDate")
-//				.add(Projections.property("lastEffectiveDate"), "lastEffectiveDate")
-//				.add(Projections.property("oldproduct.productId"), "oldProductId"))
-//				.setResultTransformer(Transformers.aliasToBean(ProductDTO.class));
-//
-//		resultMap.put("data", criteria.list());
-//
-//		return resultMap;
-//
-//	}
 }

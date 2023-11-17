@@ -267,6 +267,14 @@ public class CustomerServiceImpl implements CustomerService {
 				errorResponse.setErrorMessage("column Should Contain Only CUSTOMERNAME (or) CREATEDDATE (or) NULL");
 				errorResponseList.add(errorResponse);
 			}
+			
+			if( !(customerFilterList.getOrderBy().getType().equalsIgnoreCase("asc")
+					|| customerFilterList.getOrderBy().getType().equalsIgnoreCase("desc")) ) {
+				ErrorResponse errorResponse = new ErrorResponse();
+				errorResponse.setFieldName("type");
+				errorResponse.setErrorMessage("type Should Contain Only ASC (or) DESC (or) NULL");
+				errorResponseList.add(errorResponse);
+			}
 		}
 
 		return errorResponseList;

@@ -74,9 +74,9 @@ public class CustomerDAOImpl implements CustomerDAO {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap.put("totalCount", criteria.uniqueResult());
 
-		if (customerFilterList.getSearch() != null && !customerFilterList.getSearch().isEmpty()) {
+		if (customerFilterList.getSearch() != null && !customerFilterList.getSearch().trim().isEmpty()) {
 			
-			if(!customerFilterList.getSearchColumn().isEmpty()) {
+			if(!customerFilterList.getSearchColumn().trim().isEmpty()) {
 				
 				if(customerFilterList.getSearchColumn().equalsIgnoreCase("customername")) {
 					criteria.add(Restrictions.ilike("customerName", customerFilterList.getSearch(), MatchMode.ANYWHERE));
@@ -95,28 +95,29 @@ public class CustomerDAOImpl implements CustomerDAO {
 		
 		if(customerFilterList.getOrderBy() != null) {
 			
-			if(ValidationUtil.isNotEmpty(customerFilterList.getOrderBy().getColumn()) && customerFilterList.getOrderBy().getType() != null) {
+//			 && customerFilterList.getOrderBy().getType() != null
+			if(ValidationUtil.isNotEmpty(customerFilterList.getOrderBy().getColumn())) {
 				
 				if(customerFilterList.getOrderBy().getColumn().equalsIgnoreCase("customername")) {
 					
-					if(customerFilterList.getOrderBy().getType().equalsIgnoreCase("desc")) {
-						criteria.addOrder(Order.desc("customerName"));
-					} else {
+					if (customerFilterList.getOrderBy().getType() == null
+							|| customerFilterList.getOrderBy().getType().trim().isEmpty()
+							|| customerFilterList.getOrderBy().getType().equalsIgnoreCase("asc")) {
 						criteria.addOrder(Order.asc("customerName"));
-					}
-				} else if(customerFilterList.getOrderBy().getType().equalsIgnoreCase("createddate")) {
-					
-					if(customerFilterList.getOrderBy().getType().equalsIgnoreCase("desc")) {
-						criteria.addOrder(Order.desc("createdDate"));
 					} else {
+						criteria.addOrder(Order.desc("customerName"));
+					}
+				} else if(customerFilterList.getOrderBy().getColumn().equalsIgnoreCase("createddate")) {
+					
+					if(customerFilterList.getOrderBy().getType() == null
+							|| customerFilterList.getOrderBy().getType().trim().isEmpty()
+							|| customerFilterList.getOrderBy().getType().equalsIgnoreCase("asc")) {
 						criteria.addOrder(Order.asc("createdDate"));
+					} else {
+						criteria.addOrder(Order.desc("createdDate"));
 					}
 				}
-			} else {
-				criteria.addOrder(Order.asc("customerName"));
 			}
-		} else {
-			criteria.addOrder(Order.asc("customerName"));
 		}
 
 		criteria.setProjection(Projections.rowCount());

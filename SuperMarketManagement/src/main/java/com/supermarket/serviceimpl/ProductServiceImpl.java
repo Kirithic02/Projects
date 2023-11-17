@@ -363,8 +363,13 @@ public class ProductServiceImpl implements ProductService {
 			errorResponseList.add(errorResponse);
 		}
 
-		if ( !(productFilterList.getSearchColumn() == null || productFilterList.getSearchColumn().isBlank()
-				|| productFilterList.getSearchColumn().equals("productName")) ) {
+//		if ( !(productFilterList.getSearchColumn() == null || productFilterList.getSearchColumn().isBlank()
+//				|| productFilterList.getSearchColumn().equalsIgnoreCase("productName")) ) {
+			
+//		if( !(ValidationUtil.isNotEmpty(productFilterList.getSearchColumn()) || productFilterList.getSearchColumn().equalsIgnoreCase("productname")) ) {
+			
+		if ( !(productFilterList.getSearchColumn() == null || productFilterList.getSearchColumn().trim().isEmpty()
+				|| productFilterList.getSearchColumn().equalsIgnoreCase("productName")) ) {
 			
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName("searchColumn");
@@ -383,6 +388,14 @@ public class ProductServiceImpl implements ProductService {
 				ErrorResponse errorResponse = new ErrorResponse();
 				errorResponse.setFieldName("column");
 				errorResponse.setErrorMessage("column Should Contain Only PRODUCTNAME (or) PRODUCTPRICE (or) AVAILABLESTOCK (or) EFFECTIVEDATE (or) NULL");
+				errorResponseList.add(errorResponse);
+			}
+			
+			if( !(productFilterList.getOrderBy().getType().equalsIgnoreCase("asc")
+					|| productFilterList.getOrderBy().getType().equalsIgnoreCase("desc")) ) {
+				ErrorResponse errorResponse = new ErrorResponse();
+				errorResponse.setFieldName("type");
+				errorResponse.setErrorMessage("type Should Contain Only ASC (or) DESC (or) NULL");
 				errorResponseList.add(errorResponse);
 			}
 		}

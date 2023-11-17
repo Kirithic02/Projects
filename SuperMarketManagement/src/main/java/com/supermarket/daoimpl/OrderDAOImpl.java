@@ -130,7 +130,7 @@ public class OrderDAOImpl implements OrderDAO {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap.put("totalCount", criteria.uniqueResult());
 
-		if (orderFilterList.getFilter().getStatus() != null && !orderFilterList.getFilter().getStatus().isEmpty()) {
+		if (orderFilterList.getFilter().getStatus() != null && !orderFilterList.getFilter().getStatus().trim().isEmpty()) {
 
 			criteria.add(Restrictions.eq("orderStatus", orderFilterList.getFilter().getStatus()));
 		}
@@ -150,31 +150,33 @@ public class OrderDAOImpl implements OrderDAO {
 
 				if (orderFilterList.getOrderBy().getColumn().equalsIgnoreCase("ordereddate")) {
 
-					if (orderFilterList.getOrderBy().getType().equalsIgnoreCase("desc")) {
-						criteria.addOrder(Order.desc("orderedDate"));
-					} else {
+					if (orderFilterList.getOrderBy().getType() == null
+							|| orderFilterList.getOrderBy().getType().trim().isEmpty()
+							|| orderFilterList.getOrderBy().getType().equalsIgnoreCase("asc")) {
 						criteria.addOrder(Order.asc("orderedDate"));
-					}
-				} else if (orderFilterList.getOrderBy().getColumn().equalsIgnoreCase("productprice")) {
-
-					if (orderFilterList.getOrderBy().getType().equalsIgnoreCase("expecteddate")) {
-						criteria.addOrder(Order.desc("orderExpectedDate"));
 					} else {
+						criteria.addOrder(Order.desc("orderedDate"));
+					}
+				} else if (orderFilterList.getOrderBy().getColumn().equalsIgnoreCase("expecteddate")) {
+
+					if (orderFilterList.getOrderBy().getType() == null
+							|| orderFilterList.getOrderBy().getType().trim().isEmpty()
+							|| orderFilterList.getOrderBy().getType().equalsIgnoreCase("asc")) {
 						criteria.addOrder(Order.asc("orderExpectedDate"));
+					} else {
+						criteria.addOrder(Order.desc("orderExpectedDate"));
 					}
 				} else if (orderFilterList.getOrderBy().getColumn().equalsIgnoreCase("orderstatus")) {
 
-					if (orderFilterList.getOrderBy().getType().equalsIgnoreCase("desc")) {
-						criteria.addOrder(Order.desc("orderStatus"));
-					} else {
+					if (orderFilterList.getOrderBy().getType() == null
+							|| orderFilterList.getOrderBy().getType().trim().isEmpty()
+							|| orderFilterList.getOrderBy().getType().equalsIgnoreCase("asc")) {
 						criteria.addOrder(Order.asc("orderStatus"));
+					} else {
+						criteria.addOrder(Order.desc("orderStatus"));
 					}
 				}
-			} else {
-				criteria.addOrder(Order.asc("orderedDate"));
 			}
-		} else {
-			criteria.addOrder(Order.asc("orderedDate"));
 		}
 
 		
