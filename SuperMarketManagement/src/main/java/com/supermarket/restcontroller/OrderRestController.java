@@ -3,6 +3,7 @@ package com.supermarket.restcontroller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,6 +16,7 @@ import com.supermarket.model.custom.order.CustomerOrderDTO;
 import com.supermarket.model.custom.order.OrderFilterList;
 import com.supermarket.service.OrderService;
 
+@CrossOrigin
 @RestController
 @RequestMapping(value = "/order")
 public class OrderRestController {
@@ -31,6 +33,7 @@ public class OrderRestController {
 	 * @param customerOrderDTO
 	 * @return
 	 */
+	@CrossOrigin
 	@RequestMapping(value = "/orderProduct", method = RequestMethod.POST)
 	public ResponseEntity<Response> orderProduct(@RequestBody CustomerOrderDTO customerOrderDTO) {
 		return new ResponseEntity<>(orderService.orderProduct(customerOrderDTO), HttpStatus.OK);
@@ -42,6 +45,7 @@ public class OrderRestController {
 	 * @param customerOrderDTO
 	 * @return
 	 */
+	@CrossOrigin
 	@RequestMapping(value = "/updateOrder", method = RequestMethod.POST)
 	public ResponseEntity<Response> updateOrder(@RequestBody CustomerOrderDTO customerOrderDTO) {
 		return new ResponseEntity<>(orderService.updateOrder(customerOrderDTO), HttpStatus.OK);
@@ -54,7 +58,8 @@ public class OrderRestController {
 	 * @param newStatus
 	 * @return
 	 */
-	@RequestMapping(value = "/updateStatus", method = RequestMethod.POST)
+	@CrossOrigin
+	@RequestMapping(value = "/updateStatus", method = RequestMethod.GET)
 	public ResponseEntity<?> updateStatus(@RequestParam Integer orderId,
 			@RequestParam("orderStatus") String orderStatus) {
 		return new ResponseEntity<>(orderService.updateStatus(orderId, orderStatus), HttpStatus.OK);
@@ -66,6 +71,7 @@ public class OrderRestController {
 	 * @param orderId
 	 * @return
 	 */
+	@CrossOrigin
 	@RequestMapping(value = "/showOrder", method = RequestMethod.GET)
 	public ResponseEntity<Response> show(@RequestParam() Integer orderId) {
 		return new ResponseEntity<>(orderService.getOrderItemListByOrderId(orderId), HttpStatus.OK);
@@ -77,6 +83,7 @@ public class OrderRestController {
 	 * @param orderFilterList
 	 * @return
 	 */
+	@CrossOrigin
 	@RequestMapping(value = "/listOrder", method = RequestMethod.POST)
 	public ResponseEntity<FilteredResponse> listOrder(@RequestBody OrderFilterList orderFilterList) {
 		return new ResponseEntity<>(orderService.listOrder(orderFilterList), HttpStatus.OK);

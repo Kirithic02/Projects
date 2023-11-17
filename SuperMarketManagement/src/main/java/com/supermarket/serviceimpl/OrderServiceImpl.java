@@ -30,6 +30,7 @@ import com.supermarket.model.entity.OrderDetails;
 import com.supermarket.model.entity.OrderLineItemDetails;
 import com.supermarket.model.entity.Product;
 import com.supermarket.service.OrderService;
+import com.supermarket.util.ValidationUtil;
 import com.supermarket.util.WebServiceUtil;
 
 @Service
@@ -584,11 +585,25 @@ public class OrderServiceImpl implements OrderService {
 				|| orderFilterList.getFilter().getStatus().equalsIgnoreCase(WebServiceUtil.CANCELLED)) ) {
 			
 			ErrorResponse errorResponse = new ErrorResponse();
-			errorResponse.setFieldName("start");
-			errorResponse.setErrorMessage("Start Should not be Null");
+			errorResponse.setFieldName("status");
+			errorResponse.setErrorMessage("status Should not be Null");
 			errorResponseList.add(errorResponse);
 		}
 
+		if (orderFilterList.getOrderBy() != null
+				&& ValidationUtil.isNotEmpty(orderFilterList.getOrderBy().getType())
+				&& ValidationUtil.isNotEmpty(orderFilterList.getOrderBy().getColumn())) {
+			
+			if (!(orderFilterList.getOrderBy().getColumn().equalsIgnoreCase("ordereddate")
+					|| orderFilterList.getOrderBy().getColumn().equalsIgnoreCase("expecteddate")
+					|| orderFilterList.getOrderBy().getColumn().equalsIgnoreCase("orderstatus"))) {
+				ErrorResponse errorResponse = new ErrorResponse();
+				errorResponse.setFieldName("column");
+				errorResponse.setErrorMessage("column Should Contain Only ORDERDATE (or) EXPECTEDDATE (or) ORDERSTATUS (or) NULL");
+				errorResponseList.add(errorResponse);
+			}
+		}
+		
 		return errorResponseList;
 	}
 }

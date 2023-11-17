@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
@@ -17,6 +18,7 @@ import com.supermarket.dao.ProductDAO;
 import com.supermarket.model.custom.product.ProductFilterList;
 import com.supermarket.model.custom.product.ProductDTO;
 import com.supermarket.model.entity.Product;
+import com.supermarket.util.ValidationUtil;
 import com.supermarket.util.WebServiceUtil;
 
 @Repository
@@ -96,18 +98,59 @@ public class ProductDAOImpl implements ProductDAO {
 
 		if (filterList.getFilter().getStatus() != null) {
 
-			if (filterList.getFilter().getStatus().equals(WebServiceUtil.ACTIVE)) {
+			if (filterList.getFilter().getStatus().equalsIgnoreCase(WebServiceUtil.ACTIVE)) {
 				criteria.add(Restrictions.le("effectiveDate", new Date()))
 						.add(Restrictions.disjunction().add(Restrictions.gt("lastEffectiveDate", new Date()))
 								.add(Restrictions.isNull("lastEffectiveDate")));
-			} else if (filterList.getFilter().getStatus().equals(WebServiceUtil.INACTIVE)) {
+			} else if (filterList.getFilter().getStatus().equalsIgnoreCase(WebServiceUtil.INACTIVE)) {
 				criteria.add(Restrictions.disjunction()
 						.add(Restrictions.conjunction().add(Restrictions.gt("effectiveDate", new Date())))
 						.add(Restrictions.conjunction().add(Restrictions.isNotNull("lastEffectiveDate"))
 								.add(Restrictions.lt("lastEffectiveDate", new Date()))));
-			} else if (filterList.getFilter().getStatus().equals(WebServiceUtil.UPCOMING)) {
+			} else if (filterList.getFilter().getStatus().equalsIgnoreCase(WebServiceUtil.UPCOMING)) {
 				criteria.add(Restrictions.gt("effectiveDate", new Date()));
 			}
+		}
+		
+		if (filterList.getOrderBy() != null) {
+
+			if (ValidationUtil.isNotEmpty(filterList.getOrderBy().getColumn())
+					&& filterList.getOrderBy().getType() != null) {
+
+				if (filterList.getOrderBy().getColumn().equalsIgnoreCase("productname")) {
+
+					if (filterList.getOrderBy().getType().equalsIgnoreCase("desc")) {
+						criteria.addOrder(Order.desc("productName"));
+					} else {
+						criteria.addOrder(Order.asc("productName"));
+					}
+				} else if (filterList.getOrderBy().getColumn().equalsIgnoreCase("productprice")) {
+
+					if (filterList.getOrderBy().getType().equalsIgnoreCase("desc")) {
+						criteria.addOrder(Order.desc("productPrice"));
+					} else {
+						criteria.addOrder(Order.asc("productPrice"));
+					}
+				} else if (filterList.getOrderBy().getColumn().equalsIgnoreCase("availablestock")) {
+
+					if (filterList.getOrderBy().getType().equalsIgnoreCase("desc")) {
+						criteria.addOrder(Order.desc("currentStockPackageCount"));
+					} else {
+						criteria.addOrder(Order.asc("currentStockPackageCount"));
+					}
+				} else if (filterList.getOrderBy().getColumn().equalsIgnoreCase("effectiveDate")) {
+
+					if (filterList.getOrderBy().getType().equalsIgnoreCase("desc")) {
+						criteria.addOrder(Order.desc("effectiveDate"));
+					} else {
+						criteria.addOrder(Order.asc("effectiveDate"));
+					}
+				}
+			} else {
+				criteria.addOrder(Order.asc("productName"));
+			}
+		} else {
+			criteria.addOrder(Order.asc("productName"));
 		}
 
 		criteria.setProjection(Projections.rowCount());

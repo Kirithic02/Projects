@@ -80,28 +80,4 @@ public class ProductRestController {
 		return new ResponseEntity<>(productService.listProduct(filterListDto), HttpStatus.OK);
 	}
 
-//	/**
-//	 * Retrieves Active Product List
-//	 * 
-//	 * @param date
-//	 * @return
-//	 */
-//	@RequestMapping(value = "/listActive", method = RequestMethod.GET)
-//	public ResponseEntity<FilteredResponse> listActiveProducts(
-//			@RequestParam(required = false) @DateTimeFormat(pattern = "MM-dd-yyyy hh:mm a") Date date, @RequestParam Integer page, @RequestParam Integer limit) {
-//		return new ResponseEntity<>(productService.listActiveProducts(date, page, limit), HttpStatus.OK);
-//	}
-//	
-//	/**
-//	 * Retrieves InActive Product List
-//	 * 
-//	 * @param date
-//	 * @return
-//	 */
-//	@RequestMapping(value = "/listInActive", method = RequestMethod.GET)
-//	public ResponseEntity<FilteredResponse> listInActiveProducts(
-//			@RequestParam(required = false) @DateTimeFormat(pattern = "MM-dd-yyyy hh:mm a") Date date, @RequestParam Integer page,
-//			@RequestParam Integer limit) {
-//		return new ResponseEntity<>(productService.listInActiveProducts(date, page, limit), HttpStatus.OK);
-//	}
 }

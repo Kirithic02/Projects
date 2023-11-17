@@ -7,6 +7,7 @@ import java.util.Map;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -20,6 +21,7 @@ import com.supermarket.model.custom.order.OrderFilterList;
 import com.supermarket.model.custom.order.OrderLineItemDetailsDTO;
 import com.supermarket.model.entity.OrderDetails;
 import com.supermarket.model.entity.OrderLineItemDetails;
+import com.supermarket.util.ValidationUtil;
 
 @Repository
 public class OrderDAOImpl implements OrderDAO {
@@ -140,7 +142,42 @@ public class OrderDAOImpl implements OrderDAO {
 		if (orderFilterList.getFilter().getToDate() != null) {
 			criteria.add(Restrictions.le("orderedDate", orderFilterList.getFilter().getToDate()));
 		}
+		
+		if (orderFilterList.getOrderBy() != null) {
 
+			if (ValidationUtil.isNotEmpty(orderFilterList.getOrderBy().getColumn())
+					&& orderFilterList.getOrderBy().getType() != null) {
+
+				if (orderFilterList.getOrderBy().getColumn().equalsIgnoreCase("ordereddate")) {
+
+					if (orderFilterList.getOrderBy().getType().equalsIgnoreCase("desc")) {
+						criteria.addOrder(Order.desc("orderedDate"));
+					} else {
+						criteria.addOrder(Order.asc("orderedDate"));
+					}
+				} else if (orderFilterList.getOrderBy().getColumn().equalsIgnoreCase("productprice")) {
+
+					if (orderFilterList.getOrderBy().getType().equalsIgnoreCase("expecteddate")) {
+						criteria.addOrder(Order.desc("orderExpectedDate"));
+					} else {
+						criteria.addOrder(Order.asc("orderExpectedDate"));
+					}
+				} else if (orderFilterList.getOrderBy().getColumn().equalsIgnoreCase("orderstatus")) {
+
+					if (orderFilterList.getOrderBy().getType().equalsIgnoreCase("desc")) {
+						criteria.addOrder(Order.desc("orderStatus"));
+					} else {
+						criteria.addOrder(Order.asc("orderStatus"));
+					}
+				}
+			} else {
+				criteria.addOrder(Order.asc("orderedDate"));
+			}
+		} else {
+			criteria.addOrder(Order.asc("orderedDate"));
+		}
+
+		
 		criteria.setProjection(Projections.rowCount());
 		resultMap.put("filteredCount", criteria.uniqueResult());
 
