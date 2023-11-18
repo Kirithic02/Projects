@@ -147,7 +147,7 @@ public class OrderServiceImpl implements OrderService {
 					+ "\n\n\nDelivery Address :\n\n" + customer.getCustomerName() + "\n" + customer.getAddress() + "\n"
 					+ customer.getLocation() + "\n" + customer.getCity() + " - " + customer.getPincode() + "\nMobile : "
 					+ customer.getMobileNo() + "\n\n\nIf you have any questions about your order, "
-					+ "feel free to contact our customer support team at \nkirithic@humworld.in or 9894507215."
+					+ "feel free to contact our customer support team at \nkirithic@humworld.in (or) 9894507215."
 					+ "\n\nWe appreciate your business and hope you enjoy your FreshMart products!" + "\n\nBest regards,\n"
 					+ "The FreshMart Team");
 			String to = customer.getMail();
@@ -410,7 +410,8 @@ public class OrderServiceImpl implements OrderService {
 
 					int totalPrice = 0;
 					StringBuilder bodyStringBuilder = new StringBuilder(
-							"Dear Customer, \n\n          Your Order Has Been " + newStatus + " From the Super Market." );
+							"Dear Customer, \n\n          Great news! Your order from FreshMart is " + newStatus + ". Here's a quick summary:"
+							+ "\n\nOrder Number: " + orderId + "\n\n\nProducts:\n\n");
 					Customer customer = new Customer();
 
 					for (OrderLineItemDetails itemDetailsDTO : orderItemList) {
@@ -418,7 +419,7 @@ public class OrderServiceImpl implements OrderService {
 						totalPrice += itemDetailsDTO.getQuantityInPackage()
 								* itemDetailsDTO.getProductId().getProductPrice();
 
-						bodyStringBuilder.append("\n\nName : " + itemDetailsDTO.getProductId().getProductName()
+						bodyStringBuilder.append("Name : " + itemDetailsDTO.getProductId().getProductName()
 								+ "\nQuantity : " + itemDetailsDTO.getQuantityIndividualUnit() + "\nProduct Price : "
 								+ itemDetailsDTO.getProductId().getProductPrice() + "\nNet Price : "
 								+ (itemDetailsDTO.getQuantityInPackage() * itemDetailsDTO.getProductId().getProductPrice())
@@ -429,14 +430,18 @@ public class OrderServiceImpl implements OrderService {
 
 					if (newStatus != "cancelled") {
 
-						bodyStringBuilder.append("Total Price : " + totalPrice + "\nMode of Payment : Cash on Delivery\n");
-						bodyStringBuilder.append("\n\nDelivery Address :\n\n" + customer.getCustomerName() + "\n"
+						bodyStringBuilder.append("\nMode of Payment : Cash on Delivery\n" + "Total Price : " + totalPrice);
+						bodyStringBuilder.append("\n\n\nDelivery Address :\n\n" + customer.getCustomerName() + "\n"
 								+ customer.getAddress() + "\n" + customer.getLocation() + "\n" + customer.getCity() + " - "
-								+ customer.getPincode() + "\nMobile : " + customer.getMobileNo());
+								+ customer.getPincode() + "\nMobile : " + customer.getMobileNo()
+								+ "\n\n\nIf you have any questions about your order, "
+								+ "feel free to contact our customer support team at \nkirithic@humworld.in (or) 9894507215."
+								+ "\n\nWe appreciate your business and hope you enjoy your FreshMart products!" + "\n\nBest regards,\n"
+								+ "The FreshMart Team");
 					}
 
 					String to = order.getCustomerId().getMail();
-					String subject = "Order " + newStatus;
+					String subject = "Your FreshMart Order is " + newStatus;
 					String body = bodyStringBuilder.toString();
 
 					try {
