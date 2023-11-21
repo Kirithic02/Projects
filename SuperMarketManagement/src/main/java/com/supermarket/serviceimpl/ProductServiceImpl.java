@@ -352,9 +352,9 @@ public class ProductServiceImpl implements ProductService {
 		}
 
 		if ( !(productFilterList.getFilter().getStatus() == null || productFilterList.getFilter().getStatus().isBlank()
-				|| productFilterList.getFilter().getStatus().equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_ACTIVE)
-				|| productFilterList.getFilter().getStatus().equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_INACTIVE)
-				|| productFilterList.getFilter().getStatus().equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_UPCOMING))) {
+				|| productFilterList.getFilter().getStatus().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_ACTIVE)
+				|| productFilterList.getFilter().getStatus().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_INACTIVE)
+				|| productFilterList.getFilter().getStatus().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_UPCOMING))) {
 			
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.PRODUCT_STATUS);
@@ -368,30 +368,35 @@ public class ProductServiceImpl implements ProductService {
 //		if( !(ValidationUtil.isNotEmpty(productFilterList.getSearchColumn()) || productFilterList.getSearchColumn().equalsIgnoreCase("productname")) ) {
 			
 		if ( !(productFilterList.getSearchColumn() == null || productFilterList.getSearchColumn().trim().isEmpty()
-				|| productFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.PRODUCT_NAME)) ) {
+				|| productFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_ID)
+				|| productFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_NAME)) ) {
 			
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.FILTERLIST_SEARCHCOLUMN);
 			errorResponse.setErrorMessage("searchColumn Should Contain only productname");
 			errorResponseList.add(errorResponse);
-		} 
+		} else if(productFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_ID)
+				&& !ValidationUtil.isValidNumber(productFilterList.getSearch())) {
+			
+			productFilterList.setSearch("0");
+		}
 		
 		if (productFilterList.getOrderBy() != null
 				&& ValidationUtil.isNotEmpty(productFilterList.getOrderBy().getType())
 				&& ValidationUtil.isNotEmpty(productFilterList.getOrderBy().getColumn())) {
 			
 			if (!(productFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.PRODUCT_NAME)
-					|| productFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.PRODUCT_PRICE)
-					|| productFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.PRODUCT_CURRENTSTOCKPACKAGECOUNT)
-					|| productFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.PRODUCT_EFFECTIVEDATE))) {
+					|| productFilterList.getOrderBy().getColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_PRICE)
+					|| productFilterList.getOrderBy().getColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_CURRENTSTOCKPACKAGECOUNT)
+					|| productFilterList.getOrderBy().getColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_EFFECTIVEDATE))) {
 				ErrorResponse errorResponse = new ErrorResponse();
 				errorResponse.setFieldName(WebServiceUtil.FILTERLIST_ORDERBY_COLUMN);
 				errorResponse.setErrorMessage("column Should Contain Only productname (or) productprice (or) CurrentStockPackageCount (or) effectivedate (or) null");
 				errorResponseList.add(errorResponse);
 			}
 			
-			if( !(productFilterList.getOrderBy().getType().equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)
-					|| productFilterList.getOrderBy().getType().equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_DESC)) ) {
+			if( !(productFilterList.getOrderBy().getType().trim().equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)
+					|| productFilterList.getOrderBy().getType().trim().equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_DESC)) ) {
 				ErrorResponse errorResponse = new ErrorResponse();
 				errorResponse.setFieldName(WebServiceUtil.FILTERLIST_ORDERBY_TYPE);
 				errorResponse.setErrorMessage("type Should Contain Only asc (or) desc (or) null");
