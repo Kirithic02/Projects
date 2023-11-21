@@ -7,20 +7,20 @@ import com.supermarket.util.deserializer.DateDeserializer;
 
 public class OrderFilter {
 	
-	private String status;
+	private String orderStatus;
 	
 	@JsonDeserialize(using = DateDeserializer.class)
 	private Date fromDate;
 	
 	@JsonDeserialize(using = DateDeserializer.class)
 	private Date toDate;
-	
-	public String getStatus() {
-		return status;
+
+	public String getOrderStatus() {
+		return orderStatus;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setOrderStatus(String orderStatus) {
+		this.orderStatus = orderStatus;
 	}
 
 	public Date getFromDate() {

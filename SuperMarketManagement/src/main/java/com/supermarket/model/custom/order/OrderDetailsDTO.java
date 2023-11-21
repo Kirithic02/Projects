@@ -11,8 +11,10 @@ public class OrderDetailsDTO {
 
 	@JsonSerialize(using = TimestampSerializer.class)
 	private Date orderedDate;
-
+	
 	private Integer customerId;
+	
+	private String customerName;
 
 	@JsonSerialize(using = TimestampSerializer.class)
 	private Date orderExpectedDate;
@@ -31,7 +33,7 @@ public class OrderDetailsDTO {
 		return orderedDate;
 	}
 
-	public void setOrderDate(Date orderedDate) {
+	public void setOrderedDate(Date orderedDate) {
 		this.orderedDate = orderedDate;
 	}
 
@@ -41,6 +43,14 @@ public class OrderDetailsDTO {
 
 	public void setCustomerId(Integer customerId) {
 		this.customerId = customerId;
+	}
+
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
 	}
 
 	public Date getOrderExpectedDate() {

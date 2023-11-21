@@ -29,6 +29,12 @@ public class ValidationUtil {
 		Matcher matcher = pattern.matcher(phoneNumber);
 		return matcher.matches();
 	}
+	
+	public static boolean isValidNumber(String Number) {
+		Pattern pattern = Pattern.compile("\\d+");
+		Matcher matcher = pattern.matcher(Number);
+		return matcher.matches();
+	}
 
 	public static boolean isValidAddressLine(String addressLine) {
 		if (addressLine == null || addressLine.isEmpty()) {

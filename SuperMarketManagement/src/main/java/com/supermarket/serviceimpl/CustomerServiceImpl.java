@@ -55,11 +55,11 @@ public class CustomerServiceImpl implements CustomerService {
 
 				if (customerDTO.getCustomerId() == null) {
 					Customer customer = new Customer();
-					customer.setCustomerName(customerDTO.getCustomerName().trim());
+					customer.setCustomerName(WebServiceUtil.formatFullName(customerDTO.getCustomerName()));
 					customer.setMobileNo(customerDTO.getMobileNo());
 					customer.setAddress(customerDTO.getAddress());
-					customer.setLocation(customerDTO.getLocation());
-					customer.setCity(customerDTO.getCity());
+					customer.setLocation(WebServiceUtil.formatFullName(customerDTO.getLocation()));
+					customer.setCity(WebServiceUtil.formatFullName(customerDTO.getCity()));
 					customer.setPincode(customerDTO.getPincode());
 					customer.setMail(customerDTO.getMail());
 					customer.setCreatedDate(new Date());
@@ -71,11 +71,11 @@ public class CustomerServiceImpl implements CustomerService {
 					Customer ExistingCustomer = customerDAO.getCustomerById(customerDTO.getCustomerId());
 
 					if (ExistingCustomer != null) {
-						ExistingCustomer.setCustomerName(customerDTO.getCustomerName().trim());
+						ExistingCustomer.setCustomerName(WebServiceUtil.formatFullName(customerDTO.getCustomerName()));
 						ExistingCustomer.setMobileNo(customerDTO.getMobileNo());
 						ExistingCustomer.setAddress(customerDTO.getAddress());
-						ExistingCustomer.setCity(customerDTO.getCity());
-						ExistingCustomer.setLocation(customerDTO.getLocation());
+						ExistingCustomer.setCity(WebServiceUtil.formatFullName(customerDTO.getCity()));
+						ExistingCustomer.setLocation(WebServiceUtil.formatFullName(customerDTO.getLocation()));
 						ExistingCustomer.setPincode(customerDTO.getPincode());
 						ExistingCustomer.setMail(customerDTO.getMail());
 
@@ -110,22 +110,22 @@ public class CustomerServiceImpl implements CustomerService {
 		if (customerDTO.getCustomerName() == null || customerDTO.getCustomerName().isBlank()
 				|| !ValidationUtil.isValidName(customerDTO.getCustomerName())) {
 			ErrorResponse errorResponse = new ErrorResponse();
-			errorResponse.setFieldName("customerName");
-			errorResponse.setErrorMessage("Customer Name Should Contain only Alphabets and Should Not be Null");
+			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_NAME);
+			errorResponse.setErrorMessage("Customer Name Should Contain only Alphabets and Should Not be null");
 			errorResponseList.add(errorResponse);
 		}
 
 		if (customerDTO.getMobileNo() == null || customerDTO.getMobileNo().isBlank()
 				|| !ValidationUtil.isValidPhoneNumber(customerDTO.getMobileNo())) {
 			ErrorResponse errorResponse = new ErrorResponse();
-			errorResponse.setFieldName("mobileNo");
-			errorResponse.setErrorMessage("Mobile Number Should Contain only Numbers and Should Not be Null");
+			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_MOBILE_NUMBER);
+			errorResponse.setErrorMessage("Mobile Number Should Contain only Numbers and Should Not be null");
 			errorResponseList.add(errorResponse);
 		}
 
 		if (!ValidationUtil.isValidAddressLine(customerDTO.getAddress())) {
 			ErrorResponse errorResponse = new ErrorResponse();
-			errorResponse.setFieldName("address");
+			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_ADDRESS);
 			errorResponse.setErrorMessage("Address is invalid or null");
 			errorResponseList.add(errorResponse);
 		}
@@ -133,31 +133,31 @@ public class CustomerServiceImpl implements CustomerService {
 		if (customerDTO.getLocation() == null || customerDTO.getLocation().isBlank()
 				|| !ValidationUtil.isValidName(customerDTO.getLocation())) {
 			ErrorResponse errorResponse = new ErrorResponse();
-			errorResponse.setFieldName("location");
-			errorResponse.setErrorMessage("Location Should Contain only Alphabets and Should Not be Null");
+			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_LOCATION);
+			errorResponse.setErrorMessage("Location Should Contain only Alphabets and Should Not be null");
 			errorResponseList.add(errorResponse);
 		}
 
 		if (customerDTO.getCity() == null || customerDTO.getCity().isBlank()
 				|| !ValidationUtil.isValidName(customerDTO.getCity())) {
 			ErrorResponse errorResponse = new ErrorResponse();
-			errorResponse.setFieldName("city");
-			errorResponse.setErrorMessage("City Name Should Contain only Alphabets and Should Not be Null");
+			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_CITY);
+			errorResponse.setErrorMessage("City Name Should Contain only Alphabets and Should Not be null");
 			errorResponseList.add(errorResponse);
 		}
 
 		if (customerDTO.getPincode() == null || customerDTO.getPincode().isBlank()
 				|| !ValidationUtil.isValidPincode(customerDTO.getPincode())) {
 			ErrorResponse errorResponse = new ErrorResponse();
-			errorResponse.setFieldName("pincode");
-			errorResponse.setErrorMessage("Pincode Should Contain only Numbers and Should Not be Null");
+			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_PINCODE);
+			errorResponse.setErrorMessage("Pincode Should Contain only Numbers and Should Not be null");
 			errorResponseList.add(errorResponse);
 		}
 
 		if (customerDTO.getMail() == null || customerDTO.getMail().isBlank()
 				|| !ValidationUtil.isValidEmail(customerDTO.getMail())) {
 			ErrorResponse errorResponse = new ErrorResponse();
-			errorResponse.setFieldName("mail");
+			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_MAIL);
 			errorResponse.setErrorMessage("Email is invalid or null");
 			errorResponseList.add(errorResponse);
 		}
@@ -209,15 +209,15 @@ public class CustomerServiceImpl implements CustomerService {
 
 			Map<String, Object> resultMap = customerDAO.listCustomer(customerFilterList);
 
-			if ((Long) resultMap.get("filteredCount") > 0) {
+			if ((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT) > 0) {
 				filteredResponse.setStatus(WebServiceUtil.SUCCESS);
-				filteredResponse.setTotalCount((Long) resultMap.get("totalCount"));
-				filteredResponse.setFilteredCount((Long) resultMap.get("filteredCount"));
-				filteredResponse.setData(resultMap.get("data"));
+				filteredResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
+				filteredResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
+				filteredResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
 			} else {
 				filteredResponse.setStatus(WebServiceUtil.SUCCESS);
-				filteredResponse.setTotalCount((Long) resultMap.get("totalCount"));
-				filteredResponse.setFilteredCount((Long) resultMap.get("filteredCount"));
+				filteredResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
+				filteredResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
 				filteredResponse.setData(resultMap.get("No Matching Records Found"));
 			}
 		} else {
@@ -234,45 +234,49 @@ public class CustomerServiceImpl implements CustomerService {
 
 		if (customerFilterList.getLength() == null || customerFilterList.getLength() < 1) {
 			ErrorResponse errorResponse = new ErrorResponse();
-			errorResponse.setFieldName("length");
-			errorResponse.setErrorMessage("Length Should be greater than 0 and Should not be Null");
+			errorResponse.setFieldName(WebServiceUtil.FILTERLIST_LENGTH);
+			errorResponse.setErrorMessage("Length Should be greater than 0 and Should not be null");
 			errorResponseList.add(errorResponse);
 		}
 
 		if (customerFilterList.getStart() == null) {
 			ErrorResponse errorResponse = new ErrorResponse();
-			errorResponse.setFieldName("start");
-			errorResponse.setErrorMessage("Start Should not be Null");
+			errorResponse.setFieldName(WebServiceUtil.FILTERLIST_START);
+			errorResponse.setErrorMessage("Start Should not be null");
 			errorResponseList.add(errorResponse);
 		}
 
-		if ( !(customerFilterList.getSearchColumn() == null || customerFilterList.getSearchColumn().equalsIgnoreCase("customername")
-				|| customerFilterList.getSearchColumn().equalsIgnoreCase("mobileno")
-				|| customerFilterList.getSearchColumn().equalsIgnoreCase("mail")
+		if ( !(customerFilterList.getSearchColumn() == null || customerFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_ID)
+				|| customerFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_NAME)
+				|| customerFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_MOBILE_NUMBER)
+				|| customerFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_MAIL)
 				|| customerFilterList.getSearchColumn().isBlank()) ) {
 			ErrorResponse errorResponse = new ErrorResponse();
-			errorResponse.setFieldName("searchColumn");
-			errorResponse.setErrorMessage("searchColumn Should Contain Only CUSTOMERNAME (or) MOBILENO (or) MAIL");
+			errorResponse.setFieldName(WebServiceUtil.FILTERLIST_SEARCHCOLUMN);
+			errorResponse.setErrorMessage("searchColumn Should Contain Only customerid (or) customername (or) mobileno (or) mail");
 			errorResponseList.add(errorResponse);
-		} 
+		} else if(customerFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_ID)
+				&& !ValidationUtil.isValidNumber(customerFilterList.getSearch())) {
+			customerFilterList.setSearch("0");
+		}
 		
 		if (customerFilterList.getOrderBy() != null
 				&& ValidationUtil.isNotEmpty(customerFilterList.getOrderBy().getType())
 				&& ValidationUtil.isNotEmpty(customerFilterList.getOrderBy().getColumn())) {
 			
-			if (!(customerFilterList.getOrderBy().getColumn().equalsIgnoreCase("customername")
-					|| customerFilterList.getOrderBy().getColumn().equalsIgnoreCase("createddate"))) {
+			if (!(customerFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_NAME)
+					|| customerFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_CREATEDDATE))) {
 				ErrorResponse errorResponse = new ErrorResponse();
-				errorResponse.setFieldName("column");
-				errorResponse.setErrorMessage("column Should Contain Only CUSTOMERNAME (or) CREATEDDATE (or) NULL");
+				errorResponse.setFieldName(WebServiceUtil.FILTERLIST_ORDERBY_COLUMN);
+				errorResponse.setErrorMessage("column Should Contain Only customername (or) createddate (or) null");
 				errorResponseList.add(errorResponse);
 			}
 			
-			if( !(customerFilterList.getOrderBy().getType().equalsIgnoreCase("asc")
-					|| customerFilterList.getOrderBy().getType().equalsIgnoreCase("desc")) ) {
+			if( !(customerFilterList.getOrderBy().getType().equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)
+					|| customerFilterList.getOrderBy().getType().equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_DESC)) ) {
 				ErrorResponse errorResponse = new ErrorResponse();
-				errorResponse.setFieldName("type");
-				errorResponse.setErrorMessage("type Should Contain Only ASC (or) DESC (or) NULL");
+				errorResponse.setFieldName(WebServiceUtil.FILTERLIST_ORDERBY_TYPE);
+				errorResponse.setErrorMessage("type Should Contain Only asc (or) desc (or) null");
 				errorResponseList.add(errorResponse);
 			}
 		}

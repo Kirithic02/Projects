@@ -79,16 +79,17 @@ public class OrderServiceImpl implements OrderService {
 
 		if (customerOrderDTO.getCustomerId() == null) {
 			ErrorResponse errorResponse = new ErrorResponse();
-			errorResponse.setFieldName("customerId");
-			errorResponse.setErrorMessage("Customer ID should not be Null");
+			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_ID);
+			errorResponse.setErrorMessage("Customer ID should not be null");
 			errorResponseList.add(errorResponse);
+			
 		} else {
 
 			Customer customer = customerDAO.getCustomerById(customerOrderDTO.getCustomerId());
 
 			if (customer == null) {
 				ErrorResponse errorResponse = new ErrorResponse();
-				errorResponse.setFieldName("customerId");
+				errorResponse.setFieldName(WebServiceUtil.CUSTOMER_ID);
 				errorResponse.setErrorMessage("Customer ID " + customerOrderDTO.getCustomerId() + " Not Found");
 				errorResponseList.add(errorResponse);
 			}
@@ -114,9 +115,9 @@ public class OrderServiceImpl implements OrderService {
 			int totalPrice = 0;
 			StringBuilder bodyStringBuilder = new StringBuilder(
 					"Dear Customer, \n\n              Thank you for choosing FreshMart! Your order has been successfully placed, "
-					+ "and we're busy \npreparing your items. Here are the details: \n\nOrder ID : "
-							+ order.getOrderId() + "\nOrder Date : " + order.getOrderedDate()
-							+ "\nExpected Date : " + order.getOrderExpectedDate() + "\n\n\nShipping Details:" 
+							+ "and we're busy \npreparing your items. Here are the details: \n\nOrder ID : "
+							+ order.getOrderId() + "\nOrder Date : " + order.getOrderedDate() + "\nExpected Date : "
+							+ order.getOrderExpectedDate() + "\n\n\nShipping Details:"
 							+ "\n\nYour order will be carefully packed and shipped as soon as possible. We will send you another \nemail once your order is on its way."
 							+ "\n\n\nProducts:\n");
 
@@ -148,8 +149,8 @@ public class OrderServiceImpl implements OrderService {
 					+ customer.getLocation() + "\n" + customer.getCity() + " - " + customer.getPincode() + "\nMobile : "
 					+ customer.getMobileNo() + "\n\n\nIf you have any questions about your order, "
 					+ "feel free to contact our customer support team at \nkirithic@humworld.in (or) 9894507215."
-					+ "\n\nWe appreciate your business and hope you enjoy your FreshMart products!" + "\n\nBest regards,\n"
-					+ "The FreshMart Team");
+					+ "\n\nWe appreciate your business and hope you enjoy your FreshMart products!"
+					+ "\n\nBest regards,\n" + "The FreshMart Team");
 			String to = customer.getMail();
 			String subject = "Thank You for Your FreshMart Order!";
 			String body = bodyStringBuilder.toString();
@@ -159,12 +160,15 @@ public class OrderServiceImpl implements OrderService {
 			} catch (MessagingException e) {
 				e.printStackTrace();
 			}
+			
 			response.setStatus(WebServiceUtil.SUCCESS);
 			response.setData("Order Has Been Placed, Order ID : " + order.getOrderId());
+			
 		} else {
 			response.setStatus(WebServiceUtil.FAILURE);
 			response.setData(errorResponseList);
 		}
+		
 		return response;
 	}
 
@@ -176,31 +180,36 @@ public class OrderServiceImpl implements OrderService {
 			if (orderLineItemDetailsDTO.getQuantityIndividualUnit() <= 0
 					|| orderLineItemDetailsDTO.getQuantityIndividualUnit() == null) {
 				ErrorResponse errorResponse = new ErrorResponse();
-				errorResponse.setFieldName("quantityIndividualUnit");
+				errorResponse.setFieldName(WebServiceUtil.ORDERLINEITEMDETAILS_QUANTITYINDIVIDUALUNIT);
 				errorResponse.setErrorMessage(
 						"Quantity should be greater than 0 for Product ID : " + orderLineItemDetailsDTO.getProductId());
 				errorResponseList.add(errorResponse);
 			}
 
 			if (orderLineItemDetailsDTO.getProductId() == null) {
+				
 				ErrorResponse errorResponse = new ErrorResponse();
-				errorResponse.setFieldName("productId");
-				errorResponse.setErrorMessage("Product ID should not be Null");
+				errorResponse.setFieldName(WebServiceUtil.PRODUCT_ID);
+				errorResponse.setErrorMessage("Product ID should not be null");
 				errorResponseList.add(errorResponse);
+				
 			} else {
 				Product product = productDAO.getProductById(orderLineItemDetailsDTO.getProductId());
 
 				if (product == null) {
+					
 					ErrorResponse errorResponse = new ErrorResponse();
-					errorResponse.setFieldName("Product");
+					errorResponse.setFieldName(WebServiceUtil.PRODUCT_ID);
 					errorResponse
 							.setErrorMessage("Product ID " + orderLineItemDetailsDTO.getProductId() + " Not Found");
 					errorResponseList.add(errorResponse);
+					
 				} else if (product.getLastEffectiveDate() != null || product.getEffectiveDate().after(new Date())) {
 					ErrorResponse errorResponse = new ErrorResponse();
-					errorResponse.setFieldName("Product");
+					errorResponse.setFieldName(WebServiceUtil.PRODUCT_ID);
 					errorResponse.setErrorMessage("Product ID " + product.getProductId() + " Not Effective For Sale");
 					errorResponseList.add(errorResponse);
+					
 				} else {
 					int productPackCount = product.getPackQuantity();
 					int orderPackCount = getRoundedPackageCount(orderLineItemDetailsDTO.getQuantityIndividualUnit(),
@@ -211,7 +220,7 @@ public class OrderServiceImpl implements OrderService {
 //					check stock for each product
 					if (!isProductStockAvailable(orderLineItemDetailsDTO, customerOrderDTO.getOrderId(), product)) {
 						ErrorResponse errorResponse = new ErrorResponse();
-						errorResponse.setFieldName("Product");
+						errorResponse.setFieldName(WebServiceUtil.PRODUCT_ID);
 						errorResponse.setErrorMessage("Stock Not Available For Product ID : " + product.getProductId());
 						errorResponseList.add(errorResponse);
 					}
@@ -256,6 +265,7 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	@Transactional
 	public Response updateOrder(CustomerOrderDTO customerOrderDTO) {
+		
 		Response response = new Response();
 		List<ErrorResponse> errorResponseList = new ArrayList<ErrorResponse>();
 
@@ -270,17 +280,19 @@ public class OrderServiceImpl implements OrderService {
 
 				if (order == null) {
 					ErrorResponse errorResponse = new ErrorResponse();
-					errorResponse.setFieldName("orderId");
+					errorResponse.setFieldName(WebServiceUtil.ORDERDETAILS_ID);
 					errorResponse.setErrorMessage("Order ID " + customerOrderDTO.getOrderId() + " Not Found");
 					errorResponseList.add(errorResponse);
+					
 				} else if (!order.getOrderStatus().equalsIgnoreCase(WebServiceUtil.NEW)) {
 					ErrorResponse errorResponse = new ErrorResponse();
-					errorResponse.setFieldName("orderStatus");
+					errorResponse.setFieldName(WebServiceUtil.ORDERDETAILS_STATUS);
 					errorResponse.setErrorMessage("Updated failed, Order is already " + order.getOrderStatus());
 					errorResponseList.add(errorResponse);
+					
 				} else if (existingItem == null) {
 					ErrorResponse errorResponse = new ErrorResponse();
-					errorResponse.setFieldName("productId");
+					errorResponse.setFieldName(WebServiceUtil.PRODUCT_ID);
 					errorResponse
 							.setErrorMessage("Product ID " + itemDetailsDTO.getProductId() + " is not in your order");
 					errorResponseList.add(errorResponse);
@@ -291,9 +303,10 @@ public class OrderServiceImpl implements OrderService {
 
 					if (itemDetailsDTO.getQuantityIndividualUnit() == null) {
 						ErrorResponse errorResponse = new ErrorResponse();
-						errorResponse.setFieldName("quantityIndividualUnit");
-						errorResponse.setErrorMessage("Quantity Individual Unit Should not be Null");
+						errorResponse.setFieldName(WebServiceUtil.ORDERLINEITEMDETAILS_QUANTITYINDIVIDUALUNIT);
+						errorResponse.setErrorMessage("Quantity Individual Unit Should not be null");
 						errorResponseList.add(errorResponse);
+						
 					} else {
 						int productPackCount = product.getPackQuantity();
 						int orderPackCount = getRoundedPackageCount(itemDetailsDTO.getQuantityIndividualUnit(),
@@ -304,22 +317,24 @@ public class OrderServiceImpl implements OrderService {
 
 						if (!isProductStockAvailable(itemDetailsDTO, customerOrderDTO.getOrderId(), product)) {
 							ErrorResponse errorResponse = new ErrorResponse();
-							errorResponse.setFieldName("Product");
+							errorResponse.setFieldName(WebServiceUtil.ORDERLINEITEMDETAILS_QUANTITYINDIVIDUALUNIT);
 							errorResponse
 									.setErrorMessage("Stock Not Available For Product ID : " + product.getProductId());
 							errorResponseList.add(errorResponse);
 						}
 					}
 				}
+				
 			} else if (customerOrderDTO.getOrderId() == null) {
 				ErrorResponse errorResponse = new ErrorResponse();
-				errorResponse.setFieldName("orderId");
-				errorResponse.setErrorMessage("Order ID Should not be Null");
+				errorResponse.setFieldName(WebServiceUtil.ORDERDETAILS_ID);
+				errorResponse.setErrorMessage("Order ID Should not be null");
 				errorResponseList.add(errorResponse);
+				
 			} else {
 				ErrorResponse errorResponse = new ErrorResponse();
-				errorResponse.setFieldName("productId");
-				errorResponse.setErrorMessage("Product ID Should not be Null");
+				errorResponse.setFieldName(WebServiceUtil.PRODUCT_ID);
+				errorResponse.setErrorMessage("Product ID Should not be null");
 				errorResponseList.add(errorResponse);
 			}
 		}
@@ -355,6 +370,7 @@ public class OrderServiceImpl implements OrderService {
 
 			response.setStatus(WebServiceUtil.SUCCESS);
 			response.setData("Order has been updated");
+			
 		} else {
 			response.setStatus(WebServiceUtil.FAILURE);
 			response.setData(errorResponseList);
@@ -379,12 +395,13 @@ public class OrderServiceImpl implements OrderService {
 		LOGGER.info("Update Status For Order ID : " + orderId);
 
 		Response response = new Response();
-		
-		if(orderId != null) {
-			
+
+		if (orderId != null) {
+
 			OrderDetails order = orderDAO.getOrderById(orderId);
 
 			if (order != null) {
+				
 				if (isValidTransition(order.getOrderStatus(), newStatus)) {
 					List<OrderLineItemDetails> orderItemList = orderDAO.getOrderItemListByOrderId(orderId);
 
@@ -392,15 +409,18 @@ public class OrderServiceImpl implements OrderService {
 						int result = checkStock(orderItemList);
 
 						if (result == 0) {
+							
 							for (OrderLineItemDetails item : orderItemList) {
 								Product product = item.getProductId();
 								product.setCurrentStockPackageCount(
 										product.getCurrentStockPackageCount() - item.getQuantityInPackage());
 								product.setUpdatedDate(new Date());
 							}
+							
 						} else {
 							response.setStatus(WebServiceUtil.FAILURE);
 							response.setData("Update Failed, Stock not Available for Product ID : " + result);
+							
 							return response;
 						}
 					}
@@ -410,8 +430,9 @@ public class OrderServiceImpl implements OrderService {
 
 					int totalPrice = 0;
 					StringBuilder bodyStringBuilder = new StringBuilder(
-							"Dear Customer, \n\n          Great news! Your order from FreshMart is " + newStatus + ". Here's a quick summary:"
-							+ "\n\nOrder Number: " + orderId + "\n\n\nProducts:\n\n");
+							"Dear Customer, \n\n          Great news! Your order from FreshMart is " + newStatus
+									+ ". Here's a quick summary:" + "\n\nOrder Number: " + orderId
+									+ "\n\n\nProducts:\n\n");
 					Customer customer = new Customer();
 
 					for (OrderLineItemDetails itemDetailsDTO : orderItemList) {
@@ -422,7 +443,8 @@ public class OrderServiceImpl implements OrderService {
 						bodyStringBuilder.append("Name : " + itemDetailsDTO.getProductId().getProductName()
 								+ "\nQuantity : " + itemDetailsDTO.getQuantityIndividualUnit() + "\nProduct Price : "
 								+ itemDetailsDTO.getProductId().getProductPrice() + "\nNet Price : "
-								+ (itemDetailsDTO.getQuantityInPackage() * itemDetailsDTO.getProductId().getProductPrice())
+								+ (itemDetailsDTO.getQuantityInPackage()
+										* itemDetailsDTO.getProductId().getProductPrice())
 								+ "\n\n");
 
 						customer = itemDetailsDTO.getOrderId().getCustomerId();
@@ -430,14 +452,15 @@ public class OrderServiceImpl implements OrderService {
 
 					if (newStatus != "cancelled") {
 
-						bodyStringBuilder.append("\nMode of Payment : Cash on Delivery\n" + "Total Price : " + totalPrice);
+						bodyStringBuilder
+								.append("\nMode of Payment : Cash on Delivery\n" + "Total Price : " + totalPrice);
 						bodyStringBuilder.append("\n\n\nDelivery Address :\n\n" + customer.getCustomerName() + "\n"
-								+ customer.getAddress() + "\n" + customer.getLocation() + "\n" + customer.getCity() + " - "
-								+ customer.getPincode() + "\nMobile : " + customer.getMobileNo()
+								+ customer.getAddress() + "\n" + customer.getLocation() + "\n" + customer.getCity()
+								+ " - " + customer.getPincode() + "\nMobile : " + customer.getMobileNo()
 								+ "\n\n\nIf you have any questions about your order, "
 								+ "feel free to contact our customer support team at \nkirithic@humworld.in (or) 9894507215."
-								+ "\n\nWe appreciate your business and hope you enjoy your FreshMart products!" + "\n\nBest regards,\n"
-								+ "The FreshMart Team");
+								+ "\n\nWe appreciate your business and hope you enjoy your FreshMart products!"
+								+ "\n\nBest regards,\n" + "The FreshMart Team");
 					}
 
 					String to = order.getCustomerId().getMail();
@@ -455,16 +478,18 @@ public class OrderServiceImpl implements OrderService {
 
 				} else {
 					response.setStatus(WebServiceUtil.FAILURE);
-					response.setData("Order cannot be Moved to " + newStatus + " Status, it is in " + order.getOrderStatus() + " Status");
+					response.setData("Order cannot be Moved to " + newStatus + " Status, it is in "
+							+ order.getOrderStatus() + " Status");
 				}
 
 			} else {
 				response.setStatus(WebServiceUtil.FAILURE);
 				response.setData("Order ID " + orderId + " Not Found");
 			}
+			
 		} else {
 			response.setData(WebServiceUtil.FAILURE);
-			response.setData("productId Should not be Null");
+			response.setData("productId Should not be null");
 		}
 
 		return response;
@@ -474,22 +499,32 @@ public class OrderServiceImpl implements OrderService {
 
 		if (oldStatus.equalsIgnoreCase(WebServiceUtil.NEW) && (newStatus.equalsIgnoreCase(WebServiceUtil.PACKED)
 				|| newStatus.equalsIgnoreCase(WebServiceUtil.CANCELLED))) {
+			
 			return true;
+			
 		} else if (oldStatus.equalsIgnoreCase(WebServiceUtil.PACKED)
 				&& newStatus.equalsIgnoreCase(WebServiceUtil.SHIPPED)) {
+			
 			return true;
+			
 		} else if (oldStatus.equalsIgnoreCase(WebServiceUtil.SHIPPED)
 				&& newStatus.equalsIgnoreCase(WebServiceUtil.DELIVERED)) {
+			
 			return true;
+			
 		} else {
 			return false;
 		}
 	}
 
 	private int checkStock(List<OrderLineItemDetails> orderItemList) {
+		
 		for (OrderLineItemDetails item : orderItemList) {
+			
 			Product product = item.getProductId();
+			
 			if (product.getCurrentStockPackageCount() < item.getQuantityInPackage()) {
+				
 				return product.getProductId();
 			}
 		}
@@ -508,36 +543,41 @@ public class OrderServiceImpl implements OrderService {
 	public Response getOrderItemListByOrderId(Integer orderId) {
 
 		LOGGER.info("View Order Details List for Order ID : " + orderId);
-		
+
 		Response response = new Response();
-		
-		if(orderId != null) {
+
+		if (orderId != null) {
 			CustomerOrderDTO customerOrderDTO = new CustomerOrderDTO();
 			Map<String, Object> resultMap = orderDAO.getOrderItemListDTOByOrderId(orderId);
 
-			if (resultMap.get("customerId") == null) {
+			if (resultMap.get(WebServiceUtil.CUSTOMER_ID) == null) {
+				
 				response.setStatus(WebServiceUtil.SUCCESS);
 				response.setData("No Data Found for Order ID : " + orderId);
+				
 			} else {
-				customerOrderDTO.setCustomerId((Integer) resultMap.get("customerId"));
-				customerOrderDTO.setOrderId((Integer) resultMap.get("orderId"));
-				customerOrderDTO.setOrderList((List<OrderLineItemDetailsDTO>) resultMap.get("data"));
+				
+				customerOrderDTO.setCustomerId((Integer) resultMap.get(WebServiceUtil.CUSTOMER_ID));
+				customerOrderDTO.setOrderId((Integer) resultMap.get(WebServiceUtil.ORDERDETAILS_ID));
+				customerOrderDTO.setOrderList(
+						(List<OrderLineItemDetailsDTO>) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
 				response.setStatus(WebServiceUtil.SUCCESS);
 				response.setData(customerOrderDTO);
 			}
+			
 		} else {
+			
 			response.setStatus(WebServiceUtil.FAILURE);
-			response.setData("orderId Should not be Null");
+			response.setData("orderId Should not be null");
 		}
-		
-		
+
 		return response;
 	}
 
 	/**
 	 * Retrieves All Order Details
 	 *
-	 *@param orderFilterList
+	 * @param orderFilterList
 	 * @return
 	 */
 	@Override
@@ -549,22 +589,29 @@ public class OrderServiceImpl implements OrderService {
 		List<ErrorResponse> errorResponseList = orderFilterListValidation(orderFilterList);
 		FilteredResponse filteredResponse = new FilteredResponse();
 
+//		add searchcolumn(productname or id, customername or id)
+
 		if (errorResponseList.isEmpty()) {
 
 			Map<String, Object> resultMap = orderDAO.listOrder(orderFilterList);
 
-			if ((Long) resultMap.get("filteredCount") > 0) {
+			if ((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT) > 0) {
+				
 				filteredResponse.setStatus(WebServiceUtil.SUCCESS);
-				filteredResponse.setTotalCount((Long) resultMap.get("totalCount"));
-				filteredResponse.setFilteredCount((Long) resultMap.get("filteredCount"));
-				filteredResponse.setData(resultMap.get("data"));
+				filteredResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
+				filteredResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
+				filteredResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
+				
 			} else {
+				
 				filteredResponse.setStatus(WebServiceUtil.SUCCESS);
-				filteredResponse.setTotalCount((Long) resultMap.get("totalCount"));
-				filteredResponse.setFilteredCount((Long) resultMap.get("filteredCount"));
+				filteredResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
+				filteredResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
 				filteredResponse.setData(resultMap.get("No Matching Records Found"));
 			}
+			
 		} else {
+			
 			filteredResponse.setStatus(WebServiceUtil.FAILURE);
 			filteredResponse.setData(errorResponseList);
 		}
@@ -577,54 +624,79 @@ public class OrderServiceImpl implements OrderService {
 		List<ErrorResponse> errorResponseList = new ArrayList<ErrorResponse>();
 
 		if (orderFilterList.getLength() == null || orderFilterList.getLength() < 1) {
+			
 			ErrorResponse errorResponse = new ErrorResponse();
-			errorResponse.setFieldName("length");
-			errorResponse.setErrorMessage("Length Should be greater than 0 and Should not be Null");
+			errorResponse.setFieldName(WebServiceUtil.FILTERLIST_LENGTH);
+			errorResponse.setErrorMessage("Length Should be greater than 0 and Should not be null");
 			errorResponseList.add(errorResponse);
 		}
 
 		if (orderFilterList.getStart() == null) {
-			ErrorResponse errorResponse = new ErrorResponse();
-			errorResponse.setFieldName("start");
-			errorResponse.setErrorMessage("Start Should not be Null");
-			errorResponseList.add(errorResponse);
-		}
-
-		if ( !(orderFilterList.getFilter().getStatus() == null || orderFilterList.getFilter().getStatus().isBlank()
-				|| orderFilterList.getFilter().getStatus().equalsIgnoreCase(WebServiceUtil.NEW)
-				|| orderFilterList.getFilter().getStatus().equalsIgnoreCase(WebServiceUtil.PACKED)
-				|| orderFilterList.getFilter().getStatus().equalsIgnoreCase(WebServiceUtil.SHIPPED)
-				|| orderFilterList.getFilter().getStatus().equalsIgnoreCase(WebServiceUtil.DELIVERED)
-				|| orderFilterList.getFilter().getStatus().equalsIgnoreCase(WebServiceUtil.CANCELLED)) ) {
 			
 			ErrorResponse errorResponse = new ErrorResponse();
-			errorResponse.setFieldName("status");
-			errorResponse.setErrorMessage("status Should not be Null");
+			errorResponse.setFieldName(WebServiceUtil.FILTERLIST_START);
+			errorResponse.setErrorMessage("Start Should not be null");
 			errorResponseList.add(errorResponse);
 		}
 
-		if (orderFilterList.getOrderBy() != null
-				&& ValidationUtil.isNotEmpty(orderFilterList.getOrderBy().getType())
+		if (!(orderFilterList.getFilter().getOrderStatus() == null
+				|| orderFilterList.getFilter().getOrderStatus().isBlank()
+				|| orderFilterList.getFilter().getOrderStatus().equalsIgnoreCase(WebServiceUtil.NEW)
+				|| orderFilterList.getFilter().getOrderStatus().equalsIgnoreCase(WebServiceUtil.PACKED)
+				|| orderFilterList.getFilter().getOrderStatus().equalsIgnoreCase(WebServiceUtil.SHIPPED)
+				|| orderFilterList.getFilter().getOrderStatus().equalsIgnoreCase(WebServiceUtil.DELIVERED)
+				|| orderFilterList.getFilter().getOrderStatus().equalsIgnoreCase(WebServiceUtil.CANCELLED))) {
+
+			ErrorResponse errorResponse = new ErrorResponse();
+			errorResponse.setFieldName(WebServiceUtil.ORDERDETAILS_STATUS);
+			errorResponse.setErrorMessage("OrderStatus Should not be null");
+			errorResponseList.add(errorResponse);
+		}
+
+		if (!(orderFilterList.getSearchColumn() == null || orderFilterList.getSearchColumn().trim().isEmpty()
+				|| orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_ID)
+				|| orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_NAME)
+				|| orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.PRODUCT_ID)
+				|| orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.PRODUCT_NAME))) {
+
+			ErrorResponse errorResponse = new ErrorResponse();
+			errorResponse.setFieldName(WebServiceUtil.FILTERLIST_SEARCHCOLUMN);
+			errorResponse.setErrorMessage("searchColumn Should Contain only customerid (or) customername");
+			errorResponseList.add(errorResponse);
+			
+		} else if ((orderFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.CUSTOMER_ID)
+				|| orderFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_ID))
+				&& !ValidationUtil.isValidNumber(orderFilterList.getSearch())) {
+			
+			orderFilterList.setSearch("0");
+		}
+
+		if (orderFilterList.getOrderBy() != null && ValidationUtil.isNotEmpty(orderFilterList.getOrderBy().getType())
 				&& ValidationUtil.isNotEmpty(orderFilterList.getOrderBy().getColumn())) {
-			
-			if (!(orderFilterList.getOrderBy().getColumn().equalsIgnoreCase("ordereddate")
-					|| orderFilterList.getOrderBy().getColumn().equalsIgnoreCase("expecteddate")
-					|| orderFilterList.getOrderBy().getColumn().equalsIgnoreCase("orderstatus"))) {
+
+			if (!(orderFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.ORDERDETAILS_ORDEREDDATE)
+					|| orderFilterList.getOrderBy().getColumn()
+							.equalsIgnoreCase(WebServiceUtil.ORDERDETAILS_ORDEREXPECTEDDATE)
+					|| orderFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.ORDERDETAILS_STATUS))) {
+				
 				ErrorResponse errorResponse = new ErrorResponse();
-				errorResponse.setFieldName("column");
-				errorResponse.setErrorMessage("column Should Contain Only ORDERDATE (or) EXPECTEDDATE (or) ORDERSTATUS (or) NULL");
+				errorResponse.setFieldName(WebServiceUtil.FILTERLIST_ORDERBY_COLUMN);
+				errorResponse.setErrorMessage(
+						"column Should Contain Only orderdate (or) expecteddate (or) orderstatus (or) null");
 				errorResponseList.add(errorResponse);
 			}
-			
-			if( !(orderFilterList.getOrderBy().getType().equalsIgnoreCase("asc")
-					|| orderFilterList.getOrderBy().getType().equalsIgnoreCase("desc")) ) {
+
+			if (!(orderFilterList.getOrderBy().getType().equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)
+					|| orderFilterList.getOrderBy().getType()
+							.equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_DESC))) {
+				
 				ErrorResponse errorResponse = new ErrorResponse();
-				errorResponse.setFieldName("type");
-				errorResponse.setErrorMessage("type Should Contain Only ASC (or) DESC (or) NULL");
+				errorResponse.setFieldName(WebServiceUtil.FILTERLIST_ORDERBY_TYPE);
+				errorResponse.setErrorMessage("type Should Contain Only asc (or) desc (or) null");
 				errorResponseList.add(errorResponse);
 			}
 		}
-		
+
 		return errorResponseList;
 	}
 }

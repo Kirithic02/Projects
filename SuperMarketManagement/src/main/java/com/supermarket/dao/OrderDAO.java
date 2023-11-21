@@ -13,15 +13,15 @@ public interface OrderDAO {
 
 	void createOrder(OrderDetails order);
 
-	void updateOrderStatus(int orderId, String orderStatus);
+	void updateOrderStatus(Integer orderId, String orderStatus);
 
-	void updateOrderItemStatus(int orderId, String orderStatus);
+	void updateOrderItemStatus(Integer orderId, String orderStatus);
 
-	OrderDetails getOrderById(int orderId);
+	OrderDetails getOrderById(Integer orderId);
 
-	List<OrderLineItemDetails> getOrderItemListByOrderId(int orderId);
+	List<OrderLineItemDetails> getOrderItemListByOrderId(Integer orderId);
 
-	OrderLineItemDetails getOrderItemByOlidId(int orderId, int productId);
+	OrderLineItemDetails getOrderItemByOlidId(Integer orderId, Integer productId);
 
 	Map<String, Object> getOrderItemListDTOByOrderId(Integer orderId);
 

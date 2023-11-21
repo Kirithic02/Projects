@@ -7,10 +7,13 @@ import java.util.Map;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -22,6 +25,7 @@ import com.supermarket.model.custom.order.OrderLineItemDetailsDTO;
 import com.supermarket.model.entity.OrderDetails;
 import com.supermarket.model.entity.OrderLineItemDetails;
 import com.supermarket.util.ValidationUtil;
+import com.supermarket.util.WebServiceUtil;
 
 @Repository
 public class OrderDAOImpl implements OrderDAO {
@@ -40,12 +44,12 @@ public class OrderDAOImpl implements OrderDAO {
 	}
 
 	@Override
-	public OrderDetails getOrderById(int orderId) {
+	public OrderDetails getOrderById(Integer orderId) {
 		return (OrderDetails) sessionFactory.getCurrentSession().get(OrderDetails.class, orderId);
 	}
 
 	@Override
-	public OrderLineItemDetails getOrderItemByOlidId(int orderId, int productId) {
+	public OrderLineItemDetails getOrderItemByOlidId(Integer orderId, Integer productId) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(OrderLineItemDetails.class)
 				.createAlias("orderId", "order").createAlias("productId", "product")
 				.add(Restrictions.eq("order.orderId", orderId)).add(Restrictions.eq("product.productId", productId));
@@ -66,7 +70,7 @@ public class OrderDAOImpl implements OrderDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<OrderLineItemDetails> getOrderItemListByOrderId(int orderId) {
+	public List<OrderLineItemDetails> getOrderItemListByOrderId(Integer orderId) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(OrderLineItemDetails.class)
 				.createAlias("orderId", "order").add(Restrictions.eq("order.orderId", orderId));
 
@@ -102,7 +106,7 @@ public class OrderDAOImpl implements OrderDAO {
 	}
 
 	@Override
-	public void updateOrderStatus(int orderId, String orderStatus) {
+	public void updateOrderStatus(Integer orderId, String orderStatus) {
 		String rawQuery = "UPDATE OrderDetails SET orderStatus = :orderStatus WHERE orderId = :orderId";
 
 		Query query = sessionFactory.getCurrentSession().createQuery(rawQuery);
@@ -112,7 +116,7 @@ public class OrderDAOImpl implements OrderDAO {
 	}
 
 	@Override
-	public void updateOrderItemStatus(int orderId, String orderStatus) {
+	public void updateOrderItemStatus(Integer orderId, String orderStatus) {
 		String rawQuery = "UPDATE OrderLineItemDetails SET olidStatus = :olidStatus WHERE orderId = :orderId";
 
 		Query query = sessionFactory.getCurrentSession().createQuery(rawQuery);
@@ -121,8 +125,8 @@ public class OrderDAOImpl implements OrderDAO {
 		query.executeUpdate();
 	}
 
-	@Override
-	public Map<String, Object> listOrder(OrderFilterList orderFilterList) {
+//	@Override
+	public Map<String, Object> listOrders(OrderFilterList orderFilterList) {
 
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(OrderDetails.class)
 				.createAlias("customerId", "customer").setProjection(Projections.rowCount());
@@ -130,9 +134,33 @@ public class OrderDAOImpl implements OrderDAO {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap.put("totalCount", criteria.uniqueResult());
 
-		if (orderFilterList.getFilter().getStatus() != null && !orderFilterList.getFilter().getStatus().trim().isEmpty()) {
+		if (orderFilterList.getSearch() != null && !orderFilterList.getSearch().trim().isEmpty()) {
 
-			criteria.add(Restrictions.eq("orderStatus", orderFilterList.getFilter().getStatus()));
+			if (!orderFilterList.getSearchColumn().trim().isEmpty()) {
+
+				if (orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_ID)) {
+					criteria.add(Restrictions.eq("customer.customerId", Integer.parseInt(orderFilterList.getSearch())));
+				} else if (orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_NAME)) {
+					criteria.add(Restrictions.ilike("customer.customerName", orderFilterList.getSearch(),
+							MatchMode.ANYWHERE));
+				}
+			} else {
+//				criteria.add(Restrictions.disjunction()
+//						.add(Restrictions.ilike("customer.customerName", orderFilterList.getSearch(), MatchMode.ANYWHERE))
+//						.add(Restrictions.eq("customer.customerId", Integer.parseInt(orderFilterList.getSearch()))));
+				if (ValidationUtil.isValidNumber(orderFilterList.getSearch())) {
+					criteria.add(Restrictions.eq("customer.customerId", Integer.parseInt(orderFilterList.getSearch())));
+				} else {
+					criteria.add(Restrictions.ilike("customer.customerName", orderFilterList.getSearch(),
+							MatchMode.ANYWHERE));
+				}
+			}
+		}
+
+		if (orderFilterList.getFilter().getOrderStatus() != null
+				&& !orderFilterList.getFilter().getOrderStatus().trim().isEmpty()) {
+
+			criteria.add(Restrictions.eq("orderStatus", orderFilterList.getFilter().getOrderStatus()));
 		}
 
 		if (orderFilterList.getFilter().getFromDate() != null) {
@@ -142,7 +170,7 @@ public class OrderDAOImpl implements OrderDAO {
 		if (orderFilterList.getFilter().getToDate() != null) {
 			criteria.add(Restrictions.le("orderedDate", orderFilterList.getFilter().getToDate()));
 		}
-		
+
 		if (orderFilterList.getOrderBy() != null) {
 
 			if (ValidationUtil.isNotEmpty(orderFilterList.getOrderBy().getColumn())
@@ -179,16 +207,133 @@ public class OrderDAOImpl implements OrderDAO {
 			}
 		}
 
-		
 		criteria.setProjection(Projections.rowCount());
 		resultMap.put("filteredCount", criteria.uniqueResult());
 
 		criteria.setProjection(Projections.projectionList().add(Projections.property("orderId"), "orderId")
 				.add(Projections.property("orderedDate"), "orderedDate")
 				.add(Projections.property("customer.customerId"), "customerId")
+				.add(Projections.property("customer.customerName"), "customerName")
 				.add(Projections.property("orderExpectedDate"), "orderExpectedDate")
 				.add(Projections.property("orderStatus"), "orderStatus")).setFirstResult(orderFilterList.getStart())
 				.setMaxResults(orderFilterList.getLength())
+				.setResultTransformer(Transformers.aliasToBean(OrderDetailsDTO.class));
+
+		resultMap.put("data", criteria.list());
+
+		return resultMap;
+	}
+
+	@Override
+	public Map<String, Object> listOrder(OrderFilterList orderFilterList) {
+
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(OrderLineItemDetails.class, "olid")
+				.createAlias("olid.orderId", "order")
+				.createAlias("order.customerId", "customer")
+				.createAlias("olid.productId", "product")
+				.setProjection(Projections.countDistinct("orderId"));
+//				.setProjection(Projections.projectionList()
+//						.add(Projections.groupProperty("order.orderId"))
+////						.add(Projections.count("order.orderId")));
+//						.add(Projections.rowCount()));
+////				criteria.setProjection(Projections.groupProperty("olid.orderId"));
+//		criteria.setProjection(Projections.rowCount());
+				
+//				criteria.setProjection(Projections.count("order.orderId"));
+		
+//		criteria.add(Restrictions.)
+				
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("totalCount", criteria.uniqueResult());
+
+		if (orderFilterList.getSearch() != null && !orderFilterList.getSearch().trim().isEmpty()) {
+
+			if (!orderFilterList.getSearchColumn().trim().isEmpty()) {
+
+				if (orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_ID)) {
+					criteria.add(Restrictions.eq("customer.customerId", Integer.parseInt(orderFilterList.getSearch())));
+				} else if(orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_NAME)) {
+					criteria.add(Restrictions.ilike("customer.customerName", orderFilterList.getSearch(), MatchMode.ANYWHERE));
+				} else if(orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.PRODUCT_ID)) {
+					criteria.add(Restrictions.eq("product.productId", Integer.parseInt(orderFilterList.getSearch())));
+				} else {
+					criteria.add(Restrictions.ilike("product.productName", orderFilterList.getSearch(), MatchMode.ANYWHERE));
+				}
+			} else {
+//				criteria.add(Restrictions.disjunction()
+//						.add(Restrictions.ilike("customer.customerName", orderFilterList.getSearch(), MatchMode.ANYWHERE))
+//						.add(Restrictions.eq("customer.customerId", Integer.parseInt(orderFilterList.getSearch()))));
+				if(ValidationUtil.isValidNumber(orderFilterList.getSearch())) {
+					criteria.add(Restrictions.disjunction()
+							.add(Restrictions.eq("customer.customerId", Integer.parseInt(orderFilterList.getSearch())))
+							.add(Restrictions.eq("product.productId", Integer.parseInt(orderFilterList.getSearch()))));
+				} else {
+					criteria.add(Restrictions.disjunction()
+							.add(Restrictions.ilike("customer.customerName", orderFilterList.getSearch(), MatchMode.ANYWHERE))
+							.add(Restrictions.ilike("product.productName", orderFilterList.getSearch(), MatchMode.ANYWHERE)));
+				}
+			}
+		}
+		
+		if (orderFilterList.getFilter().getOrderStatus() != null && !orderFilterList.getFilter().getOrderStatus().trim().isEmpty()) {
+
+			criteria.add(Restrictions.eq("order.orderStatus", orderFilterList.getFilter().getOrderStatus()));
+		}
+
+		if (orderFilterList.getFilter().getFromDate() != null) {
+			criteria.add(Restrictions.gt("order.orderedDate", orderFilterList.getFilter().getFromDate()));
+		}
+
+		if (orderFilterList.getFilter().getToDate() != null) {
+			criteria.add(Restrictions.le("order.orderedDate", orderFilterList.getFilter().getToDate()));
+		}
+		
+		if (orderFilterList.getOrderBy() != null) {
+
+			if (ValidationUtil.isNotEmpty(orderFilterList.getOrderBy().getColumn())
+					&& orderFilterList.getOrderBy().getType() != null) {
+
+				if (orderFilterList.getOrderBy().getColumn().equalsIgnoreCase("order.ordereddate")) {
+
+					if (orderFilterList.getOrderBy().getType() == null
+							|| orderFilterList.getOrderBy().getType().trim().isEmpty()
+							|| orderFilterList.getOrderBy().getType().equalsIgnoreCase("asc")) {
+						criteria.addOrder(Order.asc("order.orderedDate"));
+					} else {
+						criteria.addOrder(Order.desc("order.orderedDate"));
+					}
+				} else if (orderFilterList.getOrderBy().getColumn().equalsIgnoreCase("order.expecteddate")) {
+
+					if (orderFilterList.getOrderBy().getType() == null
+							|| orderFilterList.getOrderBy().getType().trim().isEmpty()
+							|| orderFilterList.getOrderBy().getType().equalsIgnoreCase("asc")) {
+						criteria.addOrder(Order.asc("order.orderExpectedDate"));
+					} else {
+						criteria.addOrder(Order.desc("order.orderExpectedDate"));
+					}
+				} else if (orderFilterList.getOrderBy().getColumn().equalsIgnoreCase("order.orderstatus")) {
+
+					if (orderFilterList.getOrderBy().getType() == null
+							|| orderFilterList.getOrderBy().getType().trim().isEmpty()
+							|| orderFilterList.getOrderBy().getType().equalsIgnoreCase("asc")) {
+						criteria.addOrder(Order.asc("order.orderStatus"));
+					} else {
+						criteria.addOrder(Order.desc("order.orderStatus"));
+					}
+				}
+			}
+		}
+
+		criteria.setProjection(Projections.countDistinct("orderId"));
+		resultMap.put("filteredCount", criteria.uniqueResult());
+
+		criteria.setProjection(Projections.projectionList().add(Projections.groupProperty("order.orderId"), "orderId")
+				.add(Projections.property("order.orderedDate"), "orderedDate")
+				.add(Projections.property("customer.customerId"), "customerId")
+				.add(Projections.property("customer.customerName"), "customerName")
+				.add(Projections.property("order.orderExpectedDate"), "orderExpectedDate")
+				.add(Projections.property("order.orderStatus"), "orderStatus"))
+				.setFirstResult(orderFilterList.getStart()).setMaxResults(orderFilterList.getLength())
 				.setResultTransformer(Transformers.aliasToBean(OrderDetailsDTO.class));
 
 		resultMap.put("data", criteria.list());

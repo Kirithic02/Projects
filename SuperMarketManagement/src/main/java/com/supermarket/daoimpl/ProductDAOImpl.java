@@ -98,16 +98,16 @@ public class ProductDAOImpl implements ProductDAO {
 
 		if (filterList.getFilter().getStatus() != null) {
 
-			if (filterList.getFilter().getStatus().equalsIgnoreCase(WebServiceUtil.ACTIVE)) {
+			if (filterList.getFilter().getStatus().equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_ACTIVE)) {
 				criteria.add(Restrictions.le("effectiveDate", new Date()))
 						.add(Restrictions.disjunction().add(Restrictions.gt("lastEffectiveDate", new Date()))
 								.add(Restrictions.isNull("lastEffectiveDate")));
-			} else if (filterList.getFilter().getStatus().equalsIgnoreCase(WebServiceUtil.INACTIVE)) {
+			} else if (filterList.getFilter().getStatus().equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_INACTIVE)) {
 				criteria.add(Restrictions.disjunction()
 						.add(Restrictions.conjunction().add(Restrictions.gt("effectiveDate", new Date())))
 						.add(Restrictions.conjunction().add(Restrictions.isNotNull("lastEffectiveDate"))
 								.add(Restrictions.lt("lastEffectiveDate", new Date()))));
-			} else if (filterList.getFilter().getStatus().equalsIgnoreCase(WebServiceUtil.UPCOMING)) {
+			} else if (filterList.getFilter().getStatus().equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_UPCOMING)) {
 				criteria.add(Restrictions.gt("effectiveDate", new Date()));
 			}
 		}
@@ -135,7 +135,7 @@ public class ProductDAOImpl implements ProductDAO {
 					} else {
 						criteria.addOrder(Order.desc("productPrice"));
 					}
-				} else if (filterList.getOrderBy().getColumn().equalsIgnoreCase("availablestock")) {
+				} else if (filterList.getOrderBy().getColumn().equalsIgnoreCase("currentStockPackageCount")) {
 
 					if (filterList.getOrderBy().getType() == null
 							|| filterList.getOrderBy().getType().trim().isEmpty()

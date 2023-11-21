@@ -58,7 +58,7 @@ public class ProductServiceImpl implements ProductService {
 
 				if (productDTO.getProductId() == null) {
 					Product product = new Product();
-					product.setProductName(productDTO.getProductName().trim());
+					product.setProductName(WebServiceUtil.formatFullName(productDTO.getProductName()));
 					product.setPackQuantity(productDTO.getPackQuantity());
 					product.setProductPrice(productDTO.getProductPrice());
 					product.setCurrentStockPackageCount(productDTO.getCurrentStockPackageCount());
@@ -74,7 +74,7 @@ public class ProductServiceImpl implements ProductService {
 					if (oldProduct != null) {
 
 						if (oldProduct.getEffectiveDate().after(new Date())) {
-							oldProduct.setProductName(productDTO.getProductName().trim());
+							oldProduct.setProductName(WebServiceUtil.formatFullName(productDTO.getProductName()));
 							oldProduct.setPackQuantity(productDTO.getPackQuantity());
 							oldProduct.setProductPrice(productDTO.getProductPrice());
 							oldProduct.setCurrentStockPackageCount(productDTO.getCurrentStockPackageCount());
@@ -135,7 +135,7 @@ public class ProductServiceImpl implements ProductService {
 						oldProduct.setUpdatedDate(new Date());
 
 						Product newProduct = new Product();
-						newProduct.setProductName(productDTO.getProductName().trim());
+						newProduct.setProductName(WebServiceUtil.formatFullName(productDTO.getProductName()));
 						newProduct.setPackQuantity(productDTO.getPackQuantity());
 						newProduct.setProductPrice(productDTO.getProductPrice());
 						newProduct.setCurrentStockPackageCount(productDTO.getCurrentStockPackageCount());
@@ -173,42 +173,41 @@ public class ProductServiceImpl implements ProductService {
 		if (productDTO.getProductName() == null || productDTO.getProductName().isBlank()
 				|| !ValidationUtil.isValidName(productDTO.getProductName())) {
 			ErrorResponse errorResponse = new ErrorResponse();
-			errorResponse.setFieldName("productName");
-			errorResponse.setErrorMessage("Product Name Should Only Contain Alphabets and Should Not be Null");
+			errorResponse.setFieldName(WebServiceUtil.PRODUCT_NAME);
+			errorResponse.setErrorMessage("Product Name Should Only Contain Alphabets and Should Not be null");
 			errorResponseList.add(errorResponse);
 		}
 
 		if (productDTO.getEffectiveDate() == null) {
 			ErrorResponse errorResponse = new ErrorResponse();
-			errorResponse.setFieldName("effectiveDate");
+			errorResponse.setFieldName(WebServiceUtil.PRODUCT_EFFECTIVEDATE);
 			errorResponse.setErrorMessage("Date is Invalid");
 			errorResponseList.add(errorResponse);
 		} else if (productDTO.getEffectiveDate().before(new Date())) {
 			ErrorResponse errorResponse = new ErrorResponse();
-			errorResponse.setFieldName("effectiveDate");
+			errorResponse.setFieldName(WebServiceUtil.PRODUCT_EFFECTIVEDATE);
 			errorResponse.setErrorMessage("Date Should be after current date");
 			errorResponseList.add(errorResponse);
 		}
 
 		if (productDTO.getPackQuantity() == null || productDTO.getPackQuantity() <= 0) {
 			ErrorResponse errorResponse = new ErrorResponse();
-			errorResponse.setFieldName("packQuantity");
-			errorResponse.setErrorMessage("Pack Quantity Should be greater than 0 and Should Not be Null");
+			errorResponse.setFieldName(WebServiceUtil.PRODUCT_PACKQUANTITY);
+			errorResponse.setErrorMessage("Pack Quantity Should be greater than 0 and Should Not be null");
 			errorResponseList.add(errorResponse);
 		}
 
 		if (productDTO.getCurrentStockPackageCount() == null || productDTO.getCurrentStockPackageCount() <= 0) {
 			ErrorResponse errorResponse = new ErrorResponse();
-			errorResponse.setFieldName("currentStockPackageCount");
-			errorResponse
-					.setErrorMessage("Current Stock Package Count Should be greater than 0 and Should Not be Null");
+			errorResponse.setFieldName(WebServiceUtil.PRODUCT_CURRENTSTOCKPACKAGECOUNT);
+			errorResponse.setErrorMessage("Current Stock Package Count Should be greater than 0 and Should Not be null");
 			errorResponseList.add(errorResponse);
 		}
 
 		if (productDTO.getProductPrice() == null || productDTO.getProductPrice() <= 0) {
 			ErrorResponse errorResponse = new ErrorResponse();
-			errorResponse.setFieldName("productPrice");
-			errorResponse.setErrorMessage("Product Price Should be greater than 0 and Should Not be Null");
+			errorResponse.setFieldName(WebServiceUtil.PRODUCT_PRICE);
+			errorResponse.setErrorMessage("Product Price Should be greater than 0 and Should Not be null");
 			errorResponseList.add(errorResponse);
 		}
 		return errorResponseList;
@@ -260,7 +259,7 @@ public class ProductServiceImpl implements ProductService {
 			}
 		} else {
 			response.setStatus(WebServiceUtil.FAILURE);
-			response.setData("productId Should not be Null");
+			response.setData("productId Should not be null");
 		}
 
 		return response;
@@ -282,7 +281,7 @@ public class ProductServiceImpl implements ProductService {
 
 		if (productId == null) {
 			response.setStatus(WebServiceUtil.FAILURE);
-			response.setData("Product ID Should not be Null");
+			response.setData("Product ID Should not be null");
 		} else {
 
 			ProductDTO productDTO = productDAO.getProductDTOById(productId);
@@ -315,15 +314,15 @@ public class ProductServiceImpl implements ProductService {
 
 			Map<String, Object> resultMap = productDAO.listProducts(productFilterList);
 
-			if ((Long) resultMap.get("filteredCount") > 0) {
+			if ((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT) > 0) {
 				filterResponse.setStatus(WebServiceUtil.SUCCESS);
-				filterResponse.setTotalCount((Long) resultMap.get("totalCount"));
-				filterResponse.setFilteredCount((Long) resultMap.get("filteredCount"));
-				filterResponse.setData(resultMap.get("data"));
+				filterResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
+				filterResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
+				filterResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
 			} else {
 				filterResponse.setStatus(WebServiceUtil.SUCCESS);
-				filterResponse.setTotalCount((Long) resultMap.get("totalCount"));
-				filterResponse.setFilteredCount((Long) resultMap.get("filteredCount"));
+				filterResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
+				filterResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
 				filterResponse.setData(resultMap.get("No Matching Records Found"));
 			}
 		} else {
@@ -340,26 +339,26 @@ public class ProductServiceImpl implements ProductService {
 
 		if (productFilterList.getLength() == null || productFilterList.getLength() < 1) {
 			ErrorResponse errorResponse = new ErrorResponse();
-			errorResponse.setFieldName("length");
-			errorResponse.setErrorMessage("Length Should be greater than 0 and Should not be Null");
+			errorResponse.setFieldName(WebServiceUtil.FILTERLIST_LENGTH);
+			errorResponse.setErrorMessage("Length Should be greater than 0 and Should not be null");
 			errorResponseList.add(errorResponse);
 		}
 
 		if (productFilterList.getStart() == null) {
 			ErrorResponse errorResponse = new ErrorResponse();
-			errorResponse.setFieldName("start");
-			errorResponse.setErrorMessage("Start Should not be Null");
+			errorResponse.setFieldName(WebServiceUtil.FILTERLIST_START);
+			errorResponse.setErrorMessage("Start Should not be null");
 			errorResponseList.add(errorResponse);
 		}
 
 		if ( !(productFilterList.getFilter().getStatus() == null || productFilterList.getFilter().getStatus().isBlank()
-				|| productFilterList.getFilter().getStatus().equalsIgnoreCase(WebServiceUtil.ACTIVE)
-				|| productFilterList.getFilter().getStatus().equalsIgnoreCase(WebServiceUtil.INACTIVE)
-				|| productFilterList.getFilter().getStatus().equalsIgnoreCase(WebServiceUtil.UPCOMING))) {
+				|| productFilterList.getFilter().getStatus().equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_ACTIVE)
+				|| productFilterList.getFilter().getStatus().equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_INACTIVE)
+				|| productFilterList.getFilter().getStatus().equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_UPCOMING))) {
 			
 			ErrorResponse errorResponse = new ErrorResponse();
-			errorResponse.setFieldName("status");
-			errorResponse.setErrorMessage("Status Should Contain only ACTIVE (or) INACTIVE (or) UPCOMING");
+			errorResponse.setFieldName(WebServiceUtil.PRODUCT_STATUS);
+			errorResponse.setErrorMessage("Status Should Contain only active (or) inactive (or) upcoming");
 			errorResponseList.add(errorResponse);
 		}
 
@@ -369,11 +368,11 @@ public class ProductServiceImpl implements ProductService {
 //		if( !(ValidationUtil.isNotEmpty(productFilterList.getSearchColumn()) || productFilterList.getSearchColumn().equalsIgnoreCase("productname")) ) {
 			
 		if ( !(productFilterList.getSearchColumn() == null || productFilterList.getSearchColumn().trim().isEmpty()
-				|| productFilterList.getSearchColumn().equalsIgnoreCase("productName")) ) {
+				|| productFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.PRODUCT_NAME)) ) {
 			
 			ErrorResponse errorResponse = new ErrorResponse();
-			errorResponse.setFieldName("searchColumn");
-			errorResponse.setErrorMessage("searchColumn Should Contain only PRODUCTNAME");
+			errorResponse.setFieldName(WebServiceUtil.FILTERLIST_SEARCHCOLUMN);
+			errorResponse.setErrorMessage("searchColumn Should Contain only productname");
 			errorResponseList.add(errorResponse);
 		} 
 		
@@ -381,21 +380,21 @@ public class ProductServiceImpl implements ProductService {
 				&& ValidationUtil.isNotEmpty(productFilterList.getOrderBy().getType())
 				&& ValidationUtil.isNotEmpty(productFilterList.getOrderBy().getColumn())) {
 			
-			if (!(productFilterList.getOrderBy().getColumn().equalsIgnoreCase("productname")
-					|| productFilterList.getOrderBy().getColumn().equalsIgnoreCase("productprice")
-					|| productFilterList.getOrderBy().getColumn().equalsIgnoreCase("availablestock")
-					|| productFilterList.getOrderBy().getColumn().equalsIgnoreCase("effectivedate"))) {
+			if (!(productFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.PRODUCT_NAME)
+					|| productFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.PRODUCT_PRICE)
+					|| productFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.PRODUCT_CURRENTSTOCKPACKAGECOUNT)
+					|| productFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.PRODUCT_EFFECTIVEDATE))) {
 				ErrorResponse errorResponse = new ErrorResponse();
-				errorResponse.setFieldName("column");
-				errorResponse.setErrorMessage("column Should Contain Only PRODUCTNAME (or) PRODUCTPRICE (or) AVAILABLESTOCK (or) EFFECTIVEDATE (or) NULL");
+				errorResponse.setFieldName(WebServiceUtil.FILTERLIST_ORDERBY_COLUMN);
+				errorResponse.setErrorMessage("column Should Contain Only productname (or) productprice (or) CurrentStockPackageCount (or) effectivedate (or) null");
 				errorResponseList.add(errorResponse);
 			}
 			
-			if( !(productFilterList.getOrderBy().getType().equalsIgnoreCase("asc")
-					|| productFilterList.getOrderBy().getType().equalsIgnoreCase("desc")) ) {
+			if( !(productFilterList.getOrderBy().getType().equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)
+					|| productFilterList.getOrderBy().getType().equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_DESC)) ) {
 				ErrorResponse errorResponse = new ErrorResponse();
-				errorResponse.setFieldName("type");
-				errorResponse.setErrorMessage("type Should Contain Only ASC (or) DESC (or) NULL");
+				errorResponse.setFieldName(WebServiceUtil.FILTERLIST_ORDERBY_TYPE);
+				errorResponse.setErrorMessage("type Should Contain Only asc (or) desc (or) null");
 				errorResponseList.add(errorResponse);
 			}
 		}
