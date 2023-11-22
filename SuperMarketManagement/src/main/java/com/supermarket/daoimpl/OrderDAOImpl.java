@@ -9,11 +9,9 @@ import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -248,7 +246,7 @@ public class OrderDAOImpl implements OrderDAO {
 
 		if (orderFilterList.getSearch() != null && !orderFilterList.getSearch().trim().isEmpty()) {
 
-			if (!orderFilterList.getSearchColumn().trim().isEmpty()) {
+			if (orderFilterList.getSearchColumn() != null && !orderFilterList.getSearchColumn().trim().isEmpty()) {
 
 				if (orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_ID)) {
 					criteria.add(Restrictions.eq("customer.customerId", Integer.parseInt(orderFilterList.getSearch())));

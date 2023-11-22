@@ -77,7 +77,7 @@ public class CustomerDAOImpl implements CustomerDAO {
 
 		if (customerFilterList.getSearch() != null && !customerFilterList.getSearch().trim().isEmpty()) {
 			
-			if(!customerFilterList.getSearchColumn().trim().isEmpty()) {
+			if(customerFilterList.getSearchColumn() != null && !customerFilterList.getSearchColumn().trim().isEmpty()) {
 				
 				if(customerFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.CUSTOMER_ID)) {
 					criteria.add(Restrictions.eq("customerId", Integer.parseInt(customerFilterList.getSearch())));

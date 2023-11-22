@@ -373,12 +373,12 @@ public class ProductServiceImpl implements ProductService {
 			
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.FILTERLIST_SEARCHCOLUMN);
-			errorResponse.setErrorMessage("searchColumn Should Contain only productname");
+			errorResponse.setErrorMessage("searchColumn Should Contain only productid (or) productname");
 			errorResponseList.add(errorResponse);
-		} else if(productFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_ID)
+		} else if(productFilterList.getSearchColumn() != null && productFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_ID)
 				&& !ValidationUtil.isValidNumber(productFilterList.getSearch())) {
 			
-			productFilterList.setSearch("0");
+			productFilterList.setSearch("-1");
 		}
 		
 		if (productFilterList.getOrderBy() != null

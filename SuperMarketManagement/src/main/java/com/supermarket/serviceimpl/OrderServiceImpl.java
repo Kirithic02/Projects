@@ -664,11 +664,12 @@ public class OrderServiceImpl implements OrderService {
 			errorResponse.setErrorMessage("searchColumn Should Contain only customerid (or) customername");
 			errorResponseList.add(errorResponse);
 			
-		} else if ((orderFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.CUSTOMER_ID)
+		} else if ((orderFilterList.getSearchColumn() !=null 
+				&& orderFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.CUSTOMER_ID)
 				|| orderFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_ID))
 				&& !ValidationUtil.isValidNumber(orderFilterList.getSearch())) {
 			
-			orderFilterList.setSearch("0");
+			orderFilterList.setSearch("-1");
 		}
 
 		if (orderFilterList.getOrderBy() != null && ValidationUtil.isNotEmpty(orderFilterList.getOrderBy().getType())

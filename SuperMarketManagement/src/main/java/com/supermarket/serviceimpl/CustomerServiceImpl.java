@@ -255,9 +255,9 @@ public class CustomerServiceImpl implements CustomerService {
 			errorResponse.setFieldName(WebServiceUtil.FILTERLIST_SEARCHCOLUMN);
 			errorResponse.setErrorMessage("searchColumn Should Contain Only customerid (or) customername (or) mobileno (or) mail");
 			errorResponseList.add(errorResponse);
-		} else if(customerFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_ID)
+		} else if(customerFilterList.getSearchColumn() != null && customerFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_ID)
 				&& !ValidationUtil.isValidNumber(customerFilterList.getSearch())) {
-			customerFilterList.setSearch("0");
+			customerFilterList.setSearch("-1");
 		}
 		
 		if (customerFilterList.getOrderBy() != null
