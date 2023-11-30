@@ -78,12 +78,12 @@ public class ProductDAOImpl implements ProductDAO {
 
 		if (filterList.getSearch() != null && !filterList.getSearch().trim().isEmpty()) {
 			
-			if(filterList.getSearchColumn() !=null && !filterList.getSearchColumn().trim().isEmpty()) {
+			if(filterList.getSearchColumn() != null && !filterList.getSearchColumn().trim().isEmpty()) {
 				
 				if(filterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_ID)) {
 					criteria.add(Restrictions.eq("productId", Integer.parseInt(filterList.getSearch())));
 				} else if(filterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_NAME)) {
-					criteria.add(Restrictions.ilike("productName", filterList.getSearch(), MatchMode.ANYWHERE));
+					criteria.add(Restrictions.ilike("productName", filterList.getSearch().trim(), MatchMode.ANYWHERE));
 				}
 			} else {
 //				criteria.add(Restrictions.disjunction()
@@ -91,7 +91,7 @@ public class ProductDAOImpl implements ProductDAO {
 				if(ValidationUtil.isValidNumber(filterList.getSearch())) {
 					criteria.add(Restrictions.eq("productId", Integer.parseInt(filterList.getSearch())));
 				} else {
-					criteria.add(Restrictions.ilike("productName", filterList.getSearch(), MatchMode.ANYWHERE));
+					criteria.add(Restrictions.ilike("productName", filterList.getSearch().trim(), MatchMode.ANYWHERE));
 				}
 			}
 		}

@@ -249,13 +249,13 @@ public class OrderDAOImpl implements OrderDAO {
 			if (orderFilterList.getSearchColumn() != null && !orderFilterList.getSearchColumn().trim().isEmpty()) {
 
 				if (orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_ID)) {
-					criteria.add(Restrictions.eq("customer.customerId", Integer.parseInt(orderFilterList.getSearch())));
+					criteria.add(Restrictions.eq("customer.customerId", Integer.parseInt(orderFilterList.getSearch().trim())));
 				} else if(orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_NAME)) {
-					criteria.add(Restrictions.ilike("customer.customerName", orderFilterList.getSearch(), MatchMode.ANYWHERE));
+					criteria.add(Restrictions.ilike("customer.customerName", orderFilterList.getSearch().trim(), MatchMode.ANYWHERE));
 				} else if(orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.PRODUCT_ID)) {
-					criteria.add(Restrictions.eq("product.productId", Integer.parseInt(orderFilterList.getSearch())));
+					criteria.add(Restrictions.eq("product.productId", Integer.parseInt(orderFilterList.getSearch().trim())));
 				} else {
-					criteria.add(Restrictions.ilike("product.productName", orderFilterList.getSearch(), MatchMode.ANYWHERE));
+					criteria.add(Restrictions.ilike("product.productName", orderFilterList.getSearch().trim(), MatchMode.ANYWHERE));
 				}
 			} else {
 //				criteria.add(Restrictions.disjunction()
@@ -263,8 +263,8 @@ public class OrderDAOImpl implements OrderDAO {
 //						.add(Restrictions.eq("customer.customerId", Integer.parseInt(orderFilterList.getSearch()))));
 				if(ValidationUtil.isValidNumber(orderFilterList.getSearch())) {
 					criteria.add(Restrictions.disjunction()
-							.add(Restrictions.eq("customer.customerId", Integer.parseInt(orderFilterList.getSearch())))
-							.add(Restrictions.eq("product.productId", Integer.parseInt(orderFilterList.getSearch()))));
+							.add(Restrictions.eq("customer.customerId", Integer.parseInt(orderFilterList.getSearch().trim())))
+							.add(Restrictions.eq("product.productId", Integer.parseInt(orderFilterList.getSearch().trim()))));
 				} else {
 					criteria.add(Restrictions.disjunction()
 							.add(Restrictions.ilike("customer.customerName", orderFilterList.getSearch(), MatchMode.ANYWHERE))

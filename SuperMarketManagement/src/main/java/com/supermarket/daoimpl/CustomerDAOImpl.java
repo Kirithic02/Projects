@@ -37,7 +37,7 @@ public class CustomerDAOImpl implements CustomerDAO {
 				.add(Restrictions.neOrIsNotNull("customerId", customerId)).add(Restrictions.disjunction()
 						.add(Restrictions.eq("mail", mail)).add(Restrictions.eq("mobileNo", mobileNo)));
 
-		return criteria.uniqueResult() == null;
+		return criteria.list().isEmpty();
 	}
 
 	@Override

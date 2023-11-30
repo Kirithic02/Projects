@@ -65,7 +65,8 @@ public class CustomerServiceImpl implements CustomerService {
 					customer.setCreatedDate(new Date());
 
 					response.setStatus(WebServiceUtil.SUCCESS);
-					response.setData("Customer Added Successfully, ID : " + customerDAO.addCustomer(customer));
+					customerDAO.addCustomer(customer);
+					response.setData("Customer Added Successfully"); // + customerDAO.addCustomer(customer));
 
 				} else {
 					Customer ExistingCustomer = customerDAO.getCustomerById(customerDTO.getCustomerId());
@@ -111,7 +112,7 @@ public class CustomerServiceImpl implements CustomerService {
 				|| !ValidationUtil.isValidName(customerDTO.getCustomerName())) {
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_NAME);
-			errorResponse.setErrorMessage("Customer Name Should Contain only Alphabets and Should Not be null");
+			errorResponse.setErrorMessage("Customer Name Should Contain only Alphabets");
 			errorResponseList.add(errorResponse);
 		}
 
@@ -119,14 +120,15 @@ public class CustomerServiceImpl implements CustomerService {
 				|| !ValidationUtil.isValidPhoneNumber(customerDTO.getMobileNo())) {
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_MOBILE_NUMBER);
-			errorResponse.setErrorMessage("Mobile Number Should Contain only Numbers and Should Not be null");
+//			errorResponse.setErrorMessage("Mobile Number Should Contain only Numbers and Should Not be null");
+			errorResponse.setErrorMessage("Invalid Mobile Number");
 			errorResponseList.add(errorResponse);
 		}
 
 		if (!ValidationUtil.isValidAddressLine(customerDTO.getAddress())) {
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_ADDRESS);
-			errorResponse.setErrorMessage("Address is invalid or null");
+			errorResponse.setErrorMessage("Invalid Address");
 			errorResponseList.add(errorResponse);
 		}
 
@@ -134,7 +136,7 @@ public class CustomerServiceImpl implements CustomerService {
 				|| !ValidationUtil.isValidName(customerDTO.getLocation())) {
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_LOCATION);
-			errorResponse.setErrorMessage("Location Should Contain only Alphabets and Should Not be null");
+			errorResponse.setErrorMessage("Location Should Contain only Alphabets");
 			errorResponseList.add(errorResponse);
 		}
 
@@ -142,7 +144,7 @@ public class CustomerServiceImpl implements CustomerService {
 				|| !ValidationUtil.isValidName(customerDTO.getCity())) {
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_CITY);
-			errorResponse.setErrorMessage("City Name Should Contain only Alphabets and Should Not be null");
+			errorResponse.setErrorMessage("City Name Should Contain only Alphabets");
 			errorResponseList.add(errorResponse);
 		}
 
@@ -150,7 +152,8 @@ public class CustomerServiceImpl implements CustomerService {
 				|| !ValidationUtil.isValidPincode(customerDTO.getPincode())) {
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_PINCODE);
-			errorResponse.setErrorMessage("Pincode Should Contain only Numbers and Should Not be null");
+//			errorResponse.setErrorMessage("Pincode Should Contain only Numbers and Should Not be null");
+			errorResponse.setErrorMessage("Invalid Pincode Number");
 			errorResponseList.add(errorResponse);
 		}
 
@@ -158,7 +161,7 @@ public class CustomerServiceImpl implements CustomerService {
 				|| !ValidationUtil.isValidEmail(customerDTO.getMail())) {
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_MAIL);
-			errorResponse.setErrorMessage("Email is invalid or null");
+			errorResponse.setErrorMessage("Email is invalid");
 			errorResponseList.add(errorResponse);
 		}
 		return errorResponseList;
