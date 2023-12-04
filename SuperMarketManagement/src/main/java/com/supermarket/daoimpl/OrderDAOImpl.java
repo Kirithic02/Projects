@@ -254,7 +254,9 @@ public class OrderDAOImpl implements OrderDAO {
 					criteria.add(Restrictions.ilike("customer.customerName", orderFilterList.getSearch().trim(), MatchMode.ANYWHERE));
 				} else if(orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.PRODUCT_ID)) {
 					criteria.add(Restrictions.eq("product.productId", Integer.parseInt(orderFilterList.getSearch().trim())));
-				} else {
+				} else if(orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.ORDERDETAILS_ID)) {
+					criteria.add(Restrictions.eq("order.orderId", Integer.parseInt(orderFilterList.getSearch().trim())));
+				} else if(orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.PRODUCT_NAME)){
 					criteria.add(Restrictions.ilike("product.productName", orderFilterList.getSearch().trim(), MatchMode.ANYWHERE));
 				}
 			} else {
@@ -277,13 +279,25 @@ public class OrderDAOImpl implements OrderDAO {
 
 			criteria.add(Restrictions.eq("order.orderStatus", orderFilterList.getFilter().getOrderStatus()));
 		}
-
+		
+//		if(orderFilterList.getFilter().getFromDate() != null && orderFilterList.getFilter().getToDate() != null) {
+//			if(orderFilterList.getFilter().getFromDate().equals(orderFilterList.getFilter().getToDate()))
+//			{
+//				System.out.println(orderFilterList.getFilter().getFromDate());
+////				criteria.add(Restrictions.eq("order.orderedDate", orderFilterList.getFilter().getFromDate()));
+//				criteria.add(Restrictions.sqlRestriction("DATE(OLID_created_date) = ?",
+//						orderFilterList.getFilter().getFromDate(), StandardBasicTypes.DATE));
+//			} else {
+//				criteria.add(Restrictions.ge("order.orderedDate", orderFilterList.getFilter().getFromDate()))
+//						.add(Restrictions.le("order.orderedDate", orderFilterList.getFilter().getToDate()));
+//			}
+//		} else 
+			
 		if (orderFilterList.getFilter().getFromDate() != null) {
-			criteria.add(Restrictions.gt("order.orderedDate", orderFilterList.getFilter().getFromDate()));
+			criteria.add(Restrictions.ge("order.orderExpectedDate", orderFilterList.getFilter().getFromDate()));
 		}
-
 		if (orderFilterList.getFilter().getToDate() != null) {
-			criteria.add(Restrictions.le("order.orderedDate", orderFilterList.getFilter().getToDate()));
+			criteria.add(Restrictions.le("order.orderExpectedDate", orderFilterList.getFilter().getToDate()));
 		}
 		
 		if (orderFilterList.getOrderBy() != null) {
@@ -291,7 +305,7 @@ public class OrderDAOImpl implements OrderDAO {
 			if (ValidationUtil.isNotEmpty(orderFilterList.getOrderBy().getColumn())
 					&& orderFilterList.getOrderBy().getType() != null) {
 
-				if (orderFilterList.getOrderBy().getColumn().equalsIgnoreCase("order.ordereddate")) {
+				if (orderFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.ORDERDETAILS_ORDEREDDATE)) {
 
 					if (orderFilterList.getOrderBy().getType() == null
 							|| orderFilterList.getOrderBy().getType().trim().isEmpty()
@@ -300,7 +314,7 @@ public class OrderDAOImpl implements OrderDAO {
 					} else {
 						criteria.addOrder(Order.desc("order.orderedDate"));
 					}
-				} else if (orderFilterList.getOrderBy().getColumn().equalsIgnoreCase("order.expecteddate")) {
+				} else if (orderFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.ORDERDETAILS_ORDEREXPECTEDDATE)) {
 
 					if (orderFilterList.getOrderBy().getType() == null
 							|| orderFilterList.getOrderBy().getType().trim().isEmpty()
@@ -309,11 +323,12 @@ public class OrderDAOImpl implements OrderDAO {
 					} else {
 						criteria.addOrder(Order.desc("order.orderExpectedDate"));
 					}
-				} else if (orderFilterList.getOrderBy().getColumn().equalsIgnoreCase("order.orderstatus")) {
+				} else if (orderFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.ORDERDETAILS_STATUS)) {
 
 					if (orderFilterList.getOrderBy().getType() == null
 							|| orderFilterList.getOrderBy().getType().trim().isEmpty()
-							|| orderFilterList.getOrderBy().getType().equalsIgnoreCase("asc")) {
+							|| orderFilterList.getOrderBy().getType().equalsIgnoreCase("asc"))
+					{
 						criteria.addOrder(Order.asc("order.orderStatus"));
 					} else {
 						criteria.addOrder(Order.desc("order.orderStatus"));

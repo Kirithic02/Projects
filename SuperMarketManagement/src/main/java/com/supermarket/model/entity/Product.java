@@ -97,12 +97,10 @@ public class Product {
 	}
 
 	public Date getLastEffectiveDate() {
-		System.out.println(lastEffectiveDate);
 		return lastEffectiveDate;
 	}
 
 	public void setLastEffectiveDate(Date lastEffectiveDate) {
-		System.out.println(lastEffectiveDate);
 		this.lastEffectiveDate = lastEffectiveDate;
 	}
 

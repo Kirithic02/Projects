@@ -49,17 +49,26 @@ public class CustomerServiceImpl implements CustomerService {
 		List<ErrorResponse> errorResponseList = customerValiation(customerDTO);
 
 		if (errorResponseList.isEmpty()) {
-
-			if (customerDAO.isUniqueCustomer(customerDTO.getCustomerId(), customerDTO.getMobileNo(),
-					customerDTO.getMail())) {
+			
+			int checkValue = 0;
+					
+			if(customerDAO.isNotUniqueMobileno(customerDTO.getCustomerId(), customerDTO.getMobileNo())) {
+				checkValue += 1;
+			}
+			
+			if(customerDAO.isNotUniqueMail(customerDTO.getCustomerId(), customerDTO.getMail())) {
+				checkValue += 2;
+			}
+			
+			if (checkValue == 0) {
 
 				if (customerDTO.getCustomerId() == null) {
 					Customer customer = new Customer();
-					customer.setCustomerName(WebServiceUtil.formatFullName(customerDTO.getCustomerName()));
+					customer.setCustomerName(WebServiceUtil.formatFullName(customerDTO.getCustomerName()).trim()); // need changes
 					customer.setMobileNo(customerDTO.getMobileNo());
 					customer.setAddress(customerDTO.getAddress());
-					customer.setLocation(WebServiceUtil.formatFullName(customerDTO.getLocation()));
-					customer.setCity(WebServiceUtil.formatFullName(customerDTO.getCity()));
+					customer.setLocation(WebServiceUtil.formatFullName(customerDTO.getLocation()).trim());
+					customer.setCity(WebServiceUtil.formatFullName(customerDTO.getCity()).trim());
 					customer.setPincode(customerDTO.getPincode());
 					customer.setMail(customerDTO.getMail());
 					customer.setCreatedDate(new Date());
@@ -72,11 +81,11 @@ public class CustomerServiceImpl implements CustomerService {
 					Customer ExistingCustomer = customerDAO.getCustomerById(customerDTO.getCustomerId());
 
 					if (ExistingCustomer != null) {
-						ExistingCustomer.setCustomerName(WebServiceUtil.formatFullName(customerDTO.getCustomerName()));
+						ExistingCustomer.setCustomerName(WebServiceUtil.formatFullName(customerDTO.getCustomerName()).trim());
 						ExistingCustomer.setMobileNo(customerDTO.getMobileNo());
 						ExistingCustomer.setAddress(customerDTO.getAddress());
-						ExistingCustomer.setCity(WebServiceUtil.formatFullName(customerDTO.getCity()));
-						ExistingCustomer.setLocation(WebServiceUtil.formatFullName(customerDTO.getLocation()));
+						ExistingCustomer.setCity(WebServiceUtil.formatFullName(customerDTO.getCity()).trim());
+						ExistingCustomer.setLocation(WebServiceUtil.formatFullName(customerDTO.getLocation()).trim());
 						ExistingCustomer.setPincode(customerDTO.getPincode());
 						ExistingCustomer.setMail(customerDTO.getMail());
 
@@ -85,13 +94,19 @@ public class CustomerServiceImpl implements CustomerService {
 
 					} else {
 						response.setStatus(WebServiceUtil.FAILURE);
-						response.setData("Customer Id " + customerDTO.getCustomerId() + " Not Found");
+						response.setData("Customer Not Found");
 					}
 				}
 
+			} else if(checkValue == 1){
+				response.setStatus(WebServiceUtil.FAILURE);
+				response.setData("MobileNo Already Exist");
+			} else if(checkValue == 2) {
+				response.setStatus(WebServiceUtil.FAILURE);
+				response.setData("Mail Already Exist");
 			} else {
 				response.setStatus(WebServiceUtil.FAILURE);
-				response.setData("mail or mobileNo Already Exist");
+				response.setData("MobileNo and Mail Already Exist");
 			}
 
 		} else {
@@ -188,7 +203,7 @@ public class CustomerServiceImpl implements CustomerService {
 			return response;
 		} else {
 			response.setStatus(WebServiceUtil.FAILURE);
-			response.setData("Customer ID " + customerId + " Not Found");
+			response.setData("Customer Not Found");
 			return response;
 		}
 	}
@@ -238,7 +253,7 @@ public class CustomerServiceImpl implements CustomerService {
 		if (customerFilterList.getLength() == null || customerFilterList.getLength() < 1) {
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.FILTERLIST_LENGTH);
-			errorResponse.setErrorMessage("Length Should be greater than 0 and Should not be null");
+			errorResponse.setErrorMessage("Length Should be greater than 0");
 			errorResponseList.add(errorResponse);
 		}
 
@@ -263,26 +278,26 @@ public class CustomerServiceImpl implements CustomerService {
 			customerFilterList.setSearch("-1");
 		}
 		
-		if (customerFilterList.getOrderBy() != null
-				&& ValidationUtil.isNotEmpty(customerFilterList.getOrderBy().getType())
-				&& ValidationUtil.isNotEmpty(customerFilterList.getOrderBy().getColumn())) {
-			
-			if (!(customerFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_NAME)
-					|| customerFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_CREATEDDATE))) {
-				ErrorResponse errorResponse = new ErrorResponse();
-				errorResponse.setFieldName(WebServiceUtil.FILTERLIST_ORDERBY_COLUMN);
-				errorResponse.setErrorMessage("column Should Contain Only customername (or) createddate (or) null");
-				errorResponseList.add(errorResponse);
-			}
-			
-			if( !(customerFilterList.getOrderBy().getType().equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)
-					|| customerFilterList.getOrderBy().getType().equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_DESC)) ) {
-				ErrorResponse errorResponse = new ErrorResponse();
-				errorResponse.setFieldName(WebServiceUtil.FILTERLIST_ORDERBY_TYPE);
-				errorResponse.setErrorMessage("type Should Contain Only asc (or) desc (or) null");
-				errorResponseList.add(errorResponse);
-			}
-		}
+//		if (customerFilterList.getOrderBy() != null
+//				&& ValidationUtil.isNotEmpty(customerFilterList.getOrderBy().getType())
+//				&& ValidationUtil.isNotEmpty(customerFilterList.getOrderBy().getColumn())) {
+//			
+//			if (!(customerFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_NAME)
+//					|| customerFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_CREATEDDATE))) {
+//				ErrorResponse errorResponse = new ErrorResponse();
+//				errorResponse.setFieldName(WebServiceUtil.FILTERLIST_ORDERBY_COLUMN);
+//				errorResponse.setErrorMessage("column Should Contain Only customername (or) createddate (or) null");
+//				errorResponseList.add(errorResponse);
+//			}
+//			
+//			if( !(customerFilterList.getOrderBy().getType().equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)
+//					|| customerFilterList.getOrderBy().getType().equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_DESC)) ) {
+//				ErrorResponse errorResponse = new ErrorResponse();
+//				errorResponse.setFieldName(WebServiceUtil.FILTERLIST_ORDERBY_TYPE);
+//				errorResponse.setErrorMessage("type Should Contain Only asc (or) desc (or) null");
+//				errorResponseList.add(errorResponse);
+//			}
+//		}
 
 		return errorResponseList;
 	}

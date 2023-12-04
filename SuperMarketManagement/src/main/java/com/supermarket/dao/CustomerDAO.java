@@ -18,6 +18,10 @@ public interface CustomerDAO {
 
 	CustomerDTO getCustomerDTOById(int customerId);
 
-	boolean isUniqueCustomer(Integer customerId, String mobileNo, String mail);
+	boolean isNotUniqueMobileno(Integer customerId, String mobileNo);
+
+	boolean isNotUniqueMail(Integer customerId, String mail);
+
+//	int isUniqueCustomer(Integer customerId, String mobileNo, String mail);
 
 }

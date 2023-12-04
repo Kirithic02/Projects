@@ -90,7 +90,7 @@ public class OrderServiceImpl implements OrderService {
 			if (customer == null) {
 				ErrorResponse errorResponse = new ErrorResponse();
 				errorResponse.setFieldName(WebServiceUtil.CUSTOMER_ID);
-				errorResponse.setErrorMessage("Customer ID " + customerOrderDTO.getCustomerId() + " Not Found");
+				errorResponse.setErrorMessage("Customer Not Found");
 				errorResponseList.add(errorResponse);
 			}
 		}
@@ -100,11 +100,11 @@ public class OrderServiceImpl implements OrderService {
 			Customer customer = customerDAO.getCustomerById(customerOrderDTO.getCustomerId());
 
 			LocalDateTime now = LocalDateTime.now();
-			LocalDateTime futureDateTime = now.plus(24, ChronoUnit.HOURS);
+			LocalDateTime futureDateTime = now.plus(4, ChronoUnit.DAYS);
 
 			OrderDetails order = new OrderDetails();
 			order.setCustomerId(customer);
-			order.setOrderExpectedDate(Date.from(futureDateTime.atZone(ZoneId.systemDefault()).toInstant()));
+			order.setOrderExpectedDate(Date.from(futureDateTime.atZone(ZoneId.systemDefault()).toInstant())); //4 days
 			order.setOrderStatus(WebServiceUtil.NEW);
 			order.setOrderedDate(new Date());
 			order.setOrderCreatedDate(new Date());
@@ -117,9 +117,7 @@ public class OrderServiceImpl implements OrderService {
 					"Dear Customer, \n\n              Thank you for choosing FreshMart! Your order has been successfully placed, "
 							+ "and we're busy \npreparing your items. Here are the details: \n\nOrder ID : "
 							+ order.getOrderId() + "\nOrder Date : " + order.getOrderedDate() + "\nExpected Date : "
-							+ order.getOrderExpectedDate() + "\n\n\nShipping Details:"
-							+ "\n\nYour order will be carefully packed and shipped as soon as possible. We will send you another \nemail once your order is on its way."
-							+ "\n\n\nProducts:\n");
+							+ order.getOrderExpectedDate() + "\n\n\nProducts Details:\n");
 
 			for (OrderLineItemDetailsDTO itemDTO : customerOrderDTO.getOrderList()) {
 
@@ -136,15 +134,16 @@ public class OrderServiceImpl implements OrderService {
 
 				totalPrice += item.getQuantityInPackage() * product.getProductPrice();
 
-				bodyStringBuilder.append("\nName : " + product.getProductName() + "\nQuantity : "
+				bodyStringBuilder.append("\nProduct Name : " + product.getProductName() + "\nQuantity : "
 						+ item.getQuantityIndividualUnit() + "\nProduct Price : " + product.getProductPrice()
 						+ "\nNet Price : " + (item.getQuantityInPackage() * product.getProductPrice()) + "\n");
 
 				orderDAO.orderProduct(item);
 			}
 
-//			bodyStringBuilder.append("\nMode of Payment : Cash on Delivery\n" + "Total Price : " + totalPrice);
-			bodyStringBuilder.append("\n\nMode of Payment : Cash on Delivery\n" + "Total Price : " + totalPrice
+			bodyStringBuilder.append("\n\n\nShipping Details:"
+					+ "\n\nYour order will be carefully packed and shipped as soon as possible. We will send you another \nemail once your order is on its way.");
+			bodyStringBuilder.append("\n\n\nMode of Payment : Cash on Delivery\n" + "Total Price : " + totalPrice
 					+ "\n\n\nDelivery Address :\n\n" + customer.getCustomerName() + "\n" + customer.getAddress() + "\n"
 					+ customer.getLocation() + "\n" + customer.getCity() + " - " + customer.getPincode() + "\nMobile : "
 					+ customer.getMobileNo() + "\n\n\nIf you have any questions about your order, "
@@ -162,7 +161,7 @@ public class OrderServiceImpl implements OrderService {
 			}
 			
 			response.setStatus(WebServiceUtil.SUCCESS);
-			response.setData("Order Has Been Placed, Order ID : " + order.getOrderId());
+			response.setData("Your Order Has Been Placed");
 			
 		} else {
 			response.setStatus(WebServiceUtil.FAILURE);
@@ -201,13 +200,13 @@ public class OrderServiceImpl implements OrderService {
 					ErrorResponse errorResponse = new ErrorResponse();
 					errorResponse.setFieldName(WebServiceUtil.PRODUCT_ID);
 					errorResponse
-							.setErrorMessage("Product ID " + orderLineItemDetailsDTO.getProductId() + " Not Found");
+							.setErrorMessage("Product Not Found");
 					errorResponseList.add(errorResponse);
 					
 				} else if (product.getLastEffectiveDate() != null || product.getEffectiveDate().after(new Date())) {
 					ErrorResponse errorResponse = new ErrorResponse();
 					errorResponse.setFieldName(WebServiceUtil.PRODUCT_ID);
-					errorResponse.setErrorMessage("Product ID " + product.getProductId() + " Not Effective For Sale");
+					errorResponse.setErrorMessage(product.getProductName() + " is Not Effective For Sale");
 					errorResponseList.add(errorResponse);
 					
 				} else {
@@ -221,7 +220,7 @@ public class OrderServiceImpl implements OrderService {
 					if (!isProductStockAvailable(orderLineItemDetailsDTO, customerOrderDTO.getOrderId(), product)) {
 						ErrorResponse errorResponse = new ErrorResponse();
 						errorResponse.setFieldName(WebServiceUtil.PRODUCT_ID);
-						errorResponse.setErrorMessage("Stock Not Available For Product ID : " + product.getProductId());
+						errorResponse.setErrorMessage("Stock Not Available For " + product.getProductName());
 						errorResponseList.add(errorResponse);
 					}
 				}
@@ -281,7 +280,7 @@ public class OrderServiceImpl implements OrderService {
 				if (order == null) {
 					ErrorResponse errorResponse = new ErrorResponse();
 					errorResponse.setFieldName(WebServiceUtil.ORDERDETAILS_ID);
-					errorResponse.setErrorMessage("Order ID " + customerOrderDTO.getOrderId() + " Not Found");
+					errorResponse.setErrorMessage("Order Not Found");
 					errorResponseList.add(errorResponse);
 					
 				} else if (!order.getOrderStatus().equalsIgnoreCase(WebServiceUtil.NEW)) {
@@ -319,7 +318,7 @@ public class OrderServiceImpl implements OrderService {
 							ErrorResponse errorResponse = new ErrorResponse();
 							errorResponse.setFieldName(WebServiceUtil.ORDERLINEITEMDETAILS_QUANTITYINDIVIDUALUNIT);
 							errorResponse
-									.setErrorMessage("Stock Not Available For Product ID : " + product.getProductId());
+									.setErrorMessage("Stock Not Available For " + product.getProductName());
 							errorResponseList.add(errorResponse);
 						}
 					}
@@ -484,7 +483,7 @@ public class OrderServiceImpl implements OrderService {
 
 			} else {
 				response.setStatus(WebServiceUtil.FAILURE);
-				response.setData("Order ID " + orderId + " Not Found");
+				response.setData("Order Not Found");
 			}
 			
 		} else {
@@ -627,7 +626,7 @@ public class OrderServiceImpl implements OrderService {
 			
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.FILTERLIST_LENGTH);
-			errorResponse.setErrorMessage("Length Should be greater than 0 and Should not be null");
+			errorResponse.setErrorMessage("Length Should be greater than 0");
 			errorResponseList.add(errorResponse);
 		}
 
@@ -657,11 +656,12 @@ public class OrderServiceImpl implements OrderService {
 				|| orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_ID)
 				|| orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_NAME)
 				|| orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.PRODUCT_ID)
-				|| orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.PRODUCT_NAME))) {
+				|| orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.PRODUCT_NAME)
+				|| orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.ORDERDETAILS_ID))) {
 
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.FILTERLIST_SEARCHCOLUMN);
-			errorResponse.setErrorMessage("searchColumn Should Contain only customerid (or) customername");
+			errorResponse.setErrorMessage("searchColumn Should Contain only customerid (or) customername (or) productid (or) productname (or) orderdid");
 			errorResponseList.add(errorResponse);
 			
 		} else if ((orderFilterList.getSearchColumn() !=null 
@@ -672,31 +672,31 @@ public class OrderServiceImpl implements OrderService {
 			orderFilterList.setSearch("-1");
 		}
 
-		if (orderFilterList.getOrderBy() != null && ValidationUtil.isNotEmpty(orderFilterList.getOrderBy().getType())
-				&& ValidationUtil.isNotEmpty(orderFilterList.getOrderBy().getColumn())) {
-
-			if (!(orderFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.ORDERDETAILS_ORDEREDDATE)
-					|| orderFilterList.getOrderBy().getColumn()
-							.equalsIgnoreCase(WebServiceUtil.ORDERDETAILS_ORDEREXPECTEDDATE)
-					|| orderFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.ORDERDETAILS_STATUS))) {
-				
-				ErrorResponse errorResponse = new ErrorResponse();
-				errorResponse.setFieldName(WebServiceUtil.FILTERLIST_ORDERBY_COLUMN);
-				errorResponse.setErrorMessage(
-						"column Should Contain Only orderdate (or) expecteddate (or) orderstatus (or) null");
-				errorResponseList.add(errorResponse);
-			}
-
-			if (!(orderFilterList.getOrderBy().getType().equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)
-					|| orderFilterList.getOrderBy().getType()
-							.equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_DESC))) {
-				
-				ErrorResponse errorResponse = new ErrorResponse();
-				errorResponse.setFieldName(WebServiceUtil.FILTERLIST_ORDERBY_TYPE);
-				errorResponse.setErrorMessage("type Should Contain Only asc (or) desc (or) null");
-				errorResponseList.add(errorResponse);
-			}
-		}
+//		if (orderFilterList.getOrderBy() != null && ValidationUtil.isNotEmpty(orderFilterList.getOrderBy().getType())
+//				&& ValidationUtil.isNotEmpty(orderFilterList.getOrderBy().getColumn())) {
+//
+//			if (!(orderFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.ORDERDETAILS_ORDEREDDATE)
+//					|| orderFilterList.getOrderBy().getColumn()
+//							.equalsIgnoreCase(WebServiceUtil.ORDERDETAILS_ORDEREXPECTEDDATE)
+//					|| orderFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.ORDERDETAILS_STATUS))) {
+//				
+//				ErrorResponse errorResponse = new ErrorResponse();
+//				errorResponse.setFieldName(WebServiceUtil.FILTERLIST_ORDERBY_COLUMN);
+//				errorResponse.setErrorMessage(
+//						"column Should Contain Only orderdate (or) expecteddate (or) orderstatus (or) null");
+//				errorResponseList.add(errorResponse);
+//			}
+//
+//			if (!(orderFilterList.getOrderBy().getType().equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)
+//					|| orderFilterList.getOrderBy().getType()
+//							.equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_DESC))) {
+//				
+//				ErrorResponse errorResponse = new ErrorResponse();
+//				errorResponse.setFieldName(WebServiceUtil.FILTERLIST_ORDERBY_TYPE);
+//				errorResponse.setErrorMessage("type Should Contain Only asc (or) desc (or) null");
+//				errorResponseList.add(errorResponse);
+//			}
+//		}
 
 		return errorResponseList;
 	}

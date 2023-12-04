@@ -41,9 +41,13 @@ public class ProductDAOImpl implements ProductDAO {
 	@Override
 	public boolean isUniqueProduct(Integer productId, String productName) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Product.class)
-				.add(Restrictions.ilike("productName", productName)).add(Restrictions.isNull("lastEffectiveDate"))
-				.add(Restrictions.neOrIsNotNull("productId", productId));
+				.add(Restrictions.eq("productName", productName)).add(Restrictions.isNull("lastEffectiveDate"));
+//				.add(Restrictions.ne("productId", productId));
 
+		if(productId != null) {
+			criteria.add(Restrictions.ne("productId", productId));
+		}
+		
 		return criteria.uniqueResult() == null;
 	}
 

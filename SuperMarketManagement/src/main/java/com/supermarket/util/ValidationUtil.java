@@ -48,6 +48,12 @@ public class ValidationUtil {
 		Matcher matcher = pattern.matcher(pincode);
 		return matcher.matches();
 	}
+	
+	public static boolean isValidProductName(String productName) {
+		Pattern pattern = Pattern.compile("^[A-Za-z\\s]+[\\d\\s]*[A-Za-z]*$");
+		Matcher matcher = pattern.matcher(productName);
+		return matcher.matches();
+	}
 
 	public static boolean isValidStockQuantity(String quantity) {
 		Pattern pattern = Pattern.compile("^[1-9]+$");

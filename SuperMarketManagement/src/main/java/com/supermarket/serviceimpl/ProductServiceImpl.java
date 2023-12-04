@@ -58,23 +58,27 @@ public class ProductServiceImpl implements ProductService {
 
 				if (productDTO.getProductId() == null) {
 					Product product = new Product();
-					product.setProductName(WebServiceUtil.formatFullName(productDTO.getProductName()));
+					product.setProductName(WebServiceUtil.formatFullName(productDTO.getProductName()).trim());
+//					product.setProductName(productDTO.getProductName().trim());
 					product.setPackQuantity(productDTO.getPackQuantity());
 					product.setProductPrice(productDTO.getProductPrice());
 					product.setCurrentStockPackageCount(productDTO.getCurrentStockPackageCount());
 					product.setEffectiveDate(productDTO.getEffectiveDate());
 					product.setCreatedDate(new Date());
 					product.setUpdatedDate(new Date());
-
+					
+					productDAO.addProduct(product);
+					
 					response.setStatus(WebServiceUtil.SUCCESS);
-					response.setData("New Product Has Been Added, ID: " + productDAO.addProduct(product));
+					response.setData("New Product Has Been Added");
 				} else {
 					Product oldProduct = productDAO.getProductById(productDTO.getProductId());
 
 					if (oldProduct != null) {
 
 						if (oldProduct.getEffectiveDate().after(new Date())) {
-							oldProduct.setProductName(WebServiceUtil.formatFullName(productDTO.getProductName()));
+							oldProduct.setProductName(WebServiceUtil.formatFullName(productDTO.getProductName()).trim());
+//							oldProduct.setProductName(productDTO.getProductName().trim());
 							oldProduct.setPackQuantity(productDTO.getPackQuantity());
 							oldProduct.setProductPrice(productDTO.getProductPrice());
 							oldProduct.setCurrentStockPackageCount(productDTO.getCurrentStockPackageCount());
@@ -135,7 +139,8 @@ public class ProductServiceImpl implements ProductService {
 						oldProduct.setUpdatedDate(new Date());
 
 						Product newProduct = new Product();
-						newProduct.setProductName(WebServiceUtil.formatFullName(productDTO.getProductName()));
+						newProduct.setProductName(WebServiceUtil.formatFullName(productDTO.getProductName()).trim());
+//						newProduct.setProductName(productDTO.getProductName().trim());
 						newProduct.setPackQuantity(productDTO.getPackQuantity());
 						newProduct.setProductPrice(productDTO.getProductPrice());
 						newProduct.setCurrentStockPackageCount(productDTO.getCurrentStockPackageCount());
@@ -143,10 +148,11 @@ public class ProductServiceImpl implements ProductService {
 						newProduct.setOldProductId(oldProduct);
 						newProduct.setCreatedDate(new Date());
 						newProduct.setUpdatedDate(new Date());
-
+						
+						productDAO.addProduct(newProduct);
+						
 						response.setStatus(WebServiceUtil.SUCCESS);
-						response.setData(
-								"Product Details Are Updated, New Product ID: " + productDAO.addProduct(newProduct));
+						response.setData("Product Details Are Updated, New Product");
 					} else {
 						response.setStatus(WebServiceUtil.SUCCESS);
 						response.setData("Product Name Already Exist");
@@ -157,7 +163,7 @@ public class ProductServiceImpl implements ProductService {
 				}
 			} else {
 				response.setStatus(WebServiceUtil.FAILURE);
-				response.setData("Product ID " + productDTO.getProductId() + " Not Found");
+				response.setData("Product Not Found");
 			}
 		} else {
 			response.setStatus(WebServiceUtil.FAILURE);
@@ -171,10 +177,10 @@ public class ProductServiceImpl implements ProductService {
 		List<ErrorResponse> errorResponseList = new ArrayList<ErrorResponse>();
 
 		if (productDTO.getProductName() == null || productDTO.getProductName().isBlank()
-				|| !ValidationUtil.isValidName(productDTO.getProductName())) {
+				|| !ValidationUtil.isValidProductName(productDTO.getProductName())) {
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.PRODUCT_NAME);
-			errorResponse.setErrorMessage("Product Name Should Only Contain Alphabets and Should Not be null");
+			errorResponse.setErrorMessage("Product Name Should Only Contain Alphabets and Numbers");
 			errorResponseList.add(errorResponse);
 		}
 
@@ -193,21 +199,21 @@ public class ProductServiceImpl implements ProductService {
 		if (productDTO.getPackQuantity() == null || productDTO.getPackQuantity() <= 0) {
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.PRODUCT_PACKQUANTITY);
-			errorResponse.setErrorMessage("Pack Quantity Should be greater than 0 and Should Not be null");
+			errorResponse.setErrorMessage("Pack Quantity Should be greater than 0");
 			errorResponseList.add(errorResponse);
 		}
 
 		if (productDTO.getCurrentStockPackageCount() == null || productDTO.getCurrentStockPackageCount() <= 0) {
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.PRODUCT_CURRENTSTOCKPACKAGECOUNT);
-			errorResponse.setErrorMessage("Current Stock Package Count Should be greater than 0 and Should Not be null");
+			errorResponse.setErrorMessage("Current Stock Package Count Should be greater than 0");
 			errorResponseList.add(errorResponse);
 		}
 
 		if (productDTO.getProductPrice() == null || productDTO.getProductPrice() <= 0) {
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.PRODUCT_PRICE);
-			errorResponse.setErrorMessage("Product Price Should be greater than 0 and Should Not be null");
+			errorResponse.setErrorMessage("Product Price Should be greater than 0");
 			errorResponseList.add(errorResponse);
 		}
 		return errorResponseList;
@@ -255,7 +261,7 @@ public class ProductServiceImpl implements ProductService {
 				}
 			} else {
 				response.setStatus(WebServiceUtil.FAILURE);
-				response.setData("Product ID " + productId + " Not Found");
+				response.setData("Product Not Found");
 			}
 		} else {
 			response.setStatus(WebServiceUtil.FAILURE);
@@ -290,7 +296,7 @@ public class ProductServiceImpl implements ProductService {
 				response.setData(productDTO);
 			} else {
 				response.setStatus(WebServiceUtil.FAILURE);
-				response.setData("Product ID " + productId + " Not Found");
+				response.setData("Product Not Found");
 			}
 		}
 		return response;
@@ -381,28 +387,28 @@ public class ProductServiceImpl implements ProductService {
 			productFilterList.setSearch("-1");
 		}
 		
-		if (productFilterList.getOrderBy() != null
-				&& ValidationUtil.isNotEmpty(productFilterList.getOrderBy().getType())
-				&& ValidationUtil.isNotEmpty(productFilterList.getOrderBy().getColumn())) {
-			
-			if (!(productFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.PRODUCT_NAME)
-					|| productFilterList.getOrderBy().getColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_PRICE)
-					|| productFilterList.getOrderBy().getColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_CURRENTSTOCKPACKAGECOUNT)
-					|| productFilterList.getOrderBy().getColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_EFFECTIVEDATE))) {
-				ErrorResponse errorResponse = new ErrorResponse();
-				errorResponse.setFieldName(WebServiceUtil.FILTERLIST_ORDERBY_COLUMN);
-				errorResponse.setErrorMessage("column Should Contain Only productname (or) productprice (or) CurrentStockPackageCount (or) effectivedate (or) null");
-				errorResponseList.add(errorResponse);
-			}
-			
-			if( !(productFilterList.getOrderBy().getType().trim().equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)
-					|| productFilterList.getOrderBy().getType().trim().equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_DESC)) ) {
-				ErrorResponse errorResponse = new ErrorResponse();
-				errorResponse.setFieldName(WebServiceUtil.FILTERLIST_ORDERBY_TYPE);
-				errorResponse.setErrorMessage("type Should Contain Only asc (or) desc (or) null");
-				errorResponseList.add(errorResponse);
-			}
-		}
+//		if (productFilterList.getOrderBy() != null
+//				&& ValidationUtil.isNotEmpty(productFilterList.getOrderBy().getType())
+//				&& ValidationUtil.isNotEmpty(productFilterList.getOrderBy().getColumn())) {
+//			
+//			if (!(productFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.PRODUCT_NAME)
+//					|| productFilterList.getOrderBy().getColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_PRICE)
+//					|| productFilterList.getOrderBy().getColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_CURRENTSTOCKPACKAGECOUNT)
+//					|| productFilterList.getOrderBy().getColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_EFFECTIVEDATE))) {
+//				ErrorResponse errorResponse = new ErrorResponse();
+//				errorResponse.setFieldName(WebServiceUtil.FILTERLIST_ORDERBY_COLUMN);
+//				errorResponse.setErrorMessage("column Should Contain Only productname (or) productprice (or) CurrentStockPackageCount (or) effectivedate (or) null");
+//				errorResponseList.add(errorResponse);
+//			}
+//			
+//			if( !(productFilterList.getOrderBy().getType().trim().equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)
+//					|| productFilterList.getOrderBy().getType().trim().equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_DESC)) ) {
+//				ErrorResponse errorResponse = new ErrorResponse();
+//				errorResponse.setFieldName(WebServiceUtil.FILTERLIST_ORDERBY_TYPE);
+//				errorResponse.setErrorMessage("type Should Contain Only asc (or) desc (or) null");
+//				errorResponseList.add(errorResponse);
+//			}
+//		}
 
 		return errorResponseList;
 	}

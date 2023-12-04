@@ -73,7 +73,6 @@ public class OrderLineItemDetails {
 	}
 
 	public void setQuantityIndividualUnit(Integer quantityIndividualUnit) {
-		System.out.println(quantityIndividualUnit);
 		this.quantityIndividualUnit = quantityIndividualUnit;
 	}
 

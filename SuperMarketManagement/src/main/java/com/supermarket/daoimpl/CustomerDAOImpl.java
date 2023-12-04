@@ -31,13 +31,45 @@ public class CustomerDAOImpl implements CustomerDAO {
 		return (int) sessionFactory.getCurrentSession().save(customer);
 	}
 
+//	@Override
+//	public int isUniqueCustomer(Integer customerId, String mobileNo, String mail) {
+//		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Customer.class);
+////				.add(Restrictions.neOrIsNotNull("customerId", customerId)).add(Restrictions.disjunction()
+////						.add(Restrictions.eq("mail", mail)).add(Restrictions.eq("mobileNo", mobileNo)));
+//		
+//		criteria.add(Restrictions.neOrIsNotNull("customerId", customerId)).add(Restrictions.eq("mobileNo", mobileNo));
+//		
+//		int checkValue = 0;
+//		
+//		if(criteria.uniqueResult() != null) {
+//			checkValue = 1;
+//		}
+//		
+//		criteria.add(Restrictions.neOrIsNotNull("customerId", customerId)).add(Restrictions.eq("mail", mail));
+//		
+//		if(criteria.uniqueResult() != null) {
+//			checkValue += 2;
+//		}
+//		
+//		return checkValue;
+//	}
+	
 	@Override
-	public boolean isUniqueCustomer(Integer customerId, String mobileNo, String mail) {
+	public boolean isNotUniqueMobileno(Integer customerId, String mobileNo) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Customer.class)
-				.add(Restrictions.neOrIsNotNull("customerId", customerId)).add(Restrictions.disjunction()
-						.add(Restrictions.eq("mail", mail)).add(Restrictions.eq("mobileNo", mobileNo)));
-
-		return criteria.list().isEmpty();
+				.add(Restrictions.neOrIsNotNull("customerId", customerId))
+						.add(Restrictions.eq("mobileNo", mobileNo));
+		
+		return !criteria.list().isEmpty();
+	}
+	
+	@Override
+	public boolean isNotUniqueMail(Integer customerId, String mail) {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Customer.class)
+				.add(Restrictions.neOrIsNotNull("customerId", customerId))
+						.add(Restrictions.eq("mail", mail));
+		
+		return !criteria.list().isEmpty();
 	}
 
 	@Override
@@ -139,7 +171,7 @@ public class CustomerDAOImpl implements CustomerDAO {
 				.setFirstResult(customerFilterList.getStart()).setMaxResults(customerFilterList.getLength())
 				.setResultTransformer(Transformers.aliasToBean(CustomerDTO.class));
 
-		resultMap.put("data", criteria.list());
+		resultMap.put(WebServiceUtil.FILTEREDRESPONSE_DATA, criteria.list());
 
 		return resultMap;
 	}
