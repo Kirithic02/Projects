@@ -552,7 +552,7 @@ public class OrderServiceImpl implements OrderService {
 			if (resultMap.get(WebServiceUtil.CUSTOMER_ID) == null) {
 				
 				response.setStatus(WebServiceUtil.SUCCESS);
-				response.setData("No Data Found for Order ID : " + orderId);
+				response.setData("No Data Found for This Order");
 				
 			} else {
 				

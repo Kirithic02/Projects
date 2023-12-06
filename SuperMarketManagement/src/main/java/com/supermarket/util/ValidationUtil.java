@@ -50,7 +50,7 @@ public class ValidationUtil {
 	}
 	
 	public static boolean isValidProductName(String productName) {
-		Pattern pattern = Pattern.compile("^[A-Za-z\\s]+[\\d\\s]*[A-Za-z]*$");
+		Pattern pattern = Pattern.compile("^[A-Za-z\\s]+[\\dA-Za-z]*$");
 		Matcher matcher = pattern.matcher(productName);
 		return matcher.matches();
 	}
