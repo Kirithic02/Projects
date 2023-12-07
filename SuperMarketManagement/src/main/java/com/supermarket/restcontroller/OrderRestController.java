@@ -55,7 +55,7 @@ public class OrderRestController {
 	 * Update Order Status
 	 * 
 	 * @param orderId
-	 * @param newStatus
+	 * @param orderStatus
 	 * @return
 	 */
 	@CrossOrigin
