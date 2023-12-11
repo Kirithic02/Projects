@@ -3,17 +3,17 @@ package com.supermarket.model.custom.product;
 import com.supermarket.model.custom.OrderBy;
 
 public class ProductFilterList {
-	
+
 	private Integer length;
-	
+
 	private Integer start;
-	
+
 	private ProductFilter filter;
-	
+
 	private OrderBy orderBy;
-	
+
 	private String search;
-	
+
 	private String searchColumn;
 
 	public Integer getLength() {
@@ -63,5 +63,5 @@ public class ProductFilterList {
 	public void setSearchColumn(String searchColumn) {
 		this.searchColumn = searchColumn;
 	}
-	
+
 }

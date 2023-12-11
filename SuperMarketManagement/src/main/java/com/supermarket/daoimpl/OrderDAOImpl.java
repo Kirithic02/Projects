@@ -228,21 +228,19 @@ public class OrderDAOImpl implements OrderDAO {
 	public Map<String, Object> listOrder(OrderFilterList orderFilterList) {
 
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(OrderLineItemDetails.class, "olid")
-				.createAlias("olid.orderId", "order")
-				.createAlias("order.customerId", "customer")
-				.createAlias("olid.productId", "product")
-				.setProjection(Projections.countDistinct("orderId"));
+				.createAlias("olid.orderId", "order").createAlias("order.customerId", "customer")
+				.createAlias("olid.productId", "product").setProjection(Projections.countDistinct("orderId"));
 //				.setProjection(Projections.projectionList()
 //						.add(Projections.groupProperty("order.orderId"))
 ////						.add(Projections.count("order.orderId")));
 //						.add(Projections.rowCount()));
 ////				criteria.setProjection(Projections.groupProperty("olid.orderId"));
 //		criteria.setProjection(Projections.rowCount());
-				
+
 //				criteria.setProjection(Projections.count("order.orderId"));
-		
+
 //		criteria.add(Restrictions.)
-				
+
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap.put("totalCount", criteria.uniqueResult());
 
@@ -251,37 +249,47 @@ public class OrderDAOImpl implements OrderDAO {
 			if (orderFilterList.getSearchColumn() != null && !orderFilterList.getSearchColumn().trim().isEmpty()) {
 
 				if (orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_ID)) {
-					criteria.add(Restrictions.eq("customer.customerId", Integer.parseInt(orderFilterList.getSearch().trim())));
-				} else if(orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_NAME)) {
-					criteria.add(Restrictions.ilike("customer.customerName", orderFilterList.getSearch().trim(), MatchMode.ANYWHERE));
-				} else if(orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.PRODUCT_ID)) {
-					criteria.add(Restrictions.eq("product.productId", Integer.parseInt(orderFilterList.getSearch().trim())));
-				} else if(orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.ORDERDETAILS_ID)) {
-					criteria.add(Restrictions.eq("order.orderId", Integer.parseInt(orderFilterList.getSearch().trim())));
-				} else if(orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.PRODUCT_NAME)){
-					criteria.add(Restrictions.ilike("product.productName", orderFilterList.getSearch().trim(), MatchMode.ANYWHERE));
+					criteria.add(Restrictions.eq("customer.customerId",
+							Integer.parseInt(orderFilterList.getSearch().trim())));
+				} else if (orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_NAME)) {
+					criteria.add(Restrictions.ilike("customer.customerName", orderFilterList.getSearch().trim(),
+							MatchMode.ANYWHERE));
+				} else if (orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.PRODUCT_ID)) {
+					criteria.add(
+							Restrictions.eq("product.productId", Integer.parseInt(orderFilterList.getSearch().trim())));
+				} else if (orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.ORDERDETAILS_ID)) {
+					criteria.add(
+							Restrictions.eq("order.orderId", Integer.parseInt(orderFilterList.getSearch().trim())));
+				} else if (orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.PRODUCT_NAME)) {
+					criteria.add(Restrictions.ilike("product.productName", orderFilterList.getSearch().trim(),
+							MatchMode.ANYWHERE));
 				}
 			} else {
 //				criteria.add(Restrictions.disjunction()
 //						.add(Restrictions.ilike("customer.customerName", orderFilterList.getSearch(), MatchMode.ANYWHERE))
 //						.add(Restrictions.eq("customer.customerId", Integer.parseInt(orderFilterList.getSearch()))));
-				if(ValidationUtil.isValidNumber(orderFilterList.getSearch())) {
+				if (ValidationUtil.isValidNumber(orderFilterList.getSearch())) {
 					criteria.add(Restrictions.disjunction()
-							.add(Restrictions.eq("customer.customerId", Integer.parseInt(orderFilterList.getSearch().trim())))
-							.add(Restrictions.eq("product.productId", Integer.parseInt(orderFilterList.getSearch().trim()))));
+							.add(Restrictions.eq("customer.customerId",
+									Integer.parseInt(orderFilterList.getSearch().trim())))
+							.add(Restrictions.eq("product.productId",
+									Integer.parseInt(orderFilterList.getSearch().trim()))));
 				} else {
 					criteria.add(Restrictions.disjunction()
-							.add(Restrictions.ilike("customer.customerName", orderFilterList.getSearch(), MatchMode.ANYWHERE))
-							.add(Restrictions.ilike("product.productName", orderFilterList.getSearch(), MatchMode.ANYWHERE)));
+							.add(Restrictions.ilike("customer.customerName", orderFilterList.getSearch(),
+									MatchMode.ANYWHERE))
+							.add(Restrictions.ilike("product.productName", orderFilterList.getSearch(),
+									MatchMode.ANYWHERE)));
 				}
 			}
 		}
-		
-		if (orderFilterList.getFilter().getOrderStatus() != null && !orderFilterList.getFilter().getOrderStatus().trim().isEmpty()) {
+
+		if (orderFilterList.getFilter().getOrderStatus() != null
+				&& !orderFilterList.getFilter().getOrderStatus().trim().isEmpty()) {
 
 			criteria.add(Restrictions.eq("order.orderStatus", orderFilterList.getFilter().getOrderStatus()));
 		}
-		
+
 //		if(orderFilterList.getFilter().getFromDate() != null && orderFilterList.getFilter().getToDate() != null) {
 //			if(orderFilterList.getFilter().getFromDate().equals(orderFilterList.getFilter().getToDate()))
 //			{
@@ -294,20 +302,21 @@ public class OrderDAOImpl implements OrderDAO {
 //						.add(Restrictions.le("order.orderedDate", orderFilterList.getFilter().getToDate()));
 //			}
 //		} else 
-			
+
 		if (orderFilterList.getFilter().getFromDate() != null) {
 			criteria.add(Restrictions.ge("order.orderExpectedDate", orderFilterList.getFilter().getFromDate()));
 		}
 		if (orderFilterList.getFilter().getToDate() != null) {
 			criteria.add(Restrictions.le("order.orderExpectedDate", orderFilterList.getFilter().getToDate()));
 		}
-		
+
 		if (orderFilterList.getOrderBy() != null) {
 
 			if (ValidationUtil.isNotEmpty(orderFilterList.getOrderBy().getColumn())
 					&& orderFilterList.getOrderBy().getType() != null) {
 
-				if (orderFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.ORDERDETAILS_ORDEREDDATE)) {
+				if (orderFilterList.getOrderBy().getColumn()
+						.equalsIgnoreCase(WebServiceUtil.ORDERDETAILS_ORDEREDDATE)) {
 
 					if (orderFilterList.getOrderBy().getType() == null
 							|| orderFilterList.getOrderBy().getType().trim().isEmpty()
@@ -316,7 +325,8 @@ public class OrderDAOImpl implements OrderDAO {
 					} else {
 						criteria.addOrder(Order.desc("order.orderedDate"));
 					}
-				} else if (orderFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.ORDERDETAILS_ORDEREXPECTEDDATE)) {
+				} else if (orderFilterList.getOrderBy().getColumn()
+						.equalsIgnoreCase(WebServiceUtil.ORDERDETAILS_ORDEREXPECTEDDATE)) {
 
 					if (orderFilterList.getOrderBy().getType() == null
 							|| orderFilterList.getOrderBy().getType().trim().isEmpty()
@@ -325,12 +335,12 @@ public class OrderDAOImpl implements OrderDAO {
 					} else {
 						criteria.addOrder(Order.desc("order.orderExpectedDate"));
 					}
-				} else if (orderFilterList.getOrderBy().getColumn().equalsIgnoreCase(WebServiceUtil.ORDERDETAILS_STATUS)) {
+				} else if (orderFilterList.getOrderBy().getColumn()
+						.equalsIgnoreCase(WebServiceUtil.ORDERDETAILS_STATUS)) {
 
 					if (orderFilterList.getOrderBy().getType() == null
 							|| orderFilterList.getOrderBy().getType().trim().isEmpty()
-							|| orderFilterList.getOrderBy().getType().equalsIgnoreCase("asc"))
-					{
+							|| orderFilterList.getOrderBy().getType().equalsIgnoreCase("asc")) {
 						criteria.addOrder(Order.asc("order.orderStatus"));
 					} else {
 						criteria.addOrder(Order.desc("order.orderStatus"));

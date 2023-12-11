@@ -7,7 +7,7 @@ public class CustomerFilterList {
 	private Integer length;
 
 	private Integer start;
-	
+
 	private OrderBy orderBy;
 
 	private String search;

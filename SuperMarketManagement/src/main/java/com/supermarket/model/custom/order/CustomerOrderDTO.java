@@ -3,15 +3,15 @@ package com.supermarket.model.custom.order;
 import java.util.List;
 
 public class CustomerOrderDTO {
-	
+
 	private Integer orderId;
-	
+
 	private Integer customerId;
-	
+
 	private String customerName;
-	
+
 	private String orderStatus;
-	
+
 	private List<OrderLineItemDetailsDTO> orderList;
 
 	public Integer getOrderId() {
@@ -53,5 +53,5 @@ public class CustomerOrderDTO {
 	public void setOrderList(List<OrderLineItemDetailsDTO> orderList) {
 		this.orderList = orderList;
 	}
-	
+
 }

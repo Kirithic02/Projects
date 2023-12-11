@@ -3,17 +3,17 @@ package com.supermarket.model.custom.order;
 import com.supermarket.model.custom.OrderBy;
 
 public class OrderFilterList {
-	
+
 	private Integer length;
-	
+
 	private Integer start;
-	
+
 	private OrderFilter filter;
-	
+
 	private OrderBy orderBy;
-	
+
 	private String search;
-	
+
 	private String searchColumn;
 
 	public OrderFilter getFilter() {

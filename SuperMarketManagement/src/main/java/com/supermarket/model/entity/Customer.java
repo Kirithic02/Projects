@@ -12,33 +12,33 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "customer_master")
 public class Customer {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "CUST_id")
 	private Integer customerId;
-	
+
 	@Column(name = "CUST_name")
 	private String customerName;
-	
+
 	@Column(name = "CUST_mobileno")
 	private String mobileNo;
-	
+
 	@Column(name = "CUST_address")
 	private String address;
-	
+
 	@Column(name = "CUST_location")
 	private String location;
-	
+
 	@Column(name = "CUST_city")
 	private String city;
-	
+
 	@Column(name = "CUST_pincode")
 	private String pincode;
-	
+
 	@Column(name = "CUST_createdDate")
 	private Date createdDate;
-	
+
 	@Column(name = "CUST_mail")
 	private String mail;
 

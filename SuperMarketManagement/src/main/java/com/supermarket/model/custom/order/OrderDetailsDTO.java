@@ -11,9 +11,9 @@ public class OrderDetailsDTO {
 
 	@JsonSerialize(using = TimestampSerializer.class)
 	private Date orderedDate;
-	
+
 	private Integer customerId;
-	
+
 	private String customerName;
 
 	@JsonSerialize(using = TimestampSerializer.class)

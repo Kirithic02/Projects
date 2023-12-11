@@ -3,13 +3,13 @@ package com.supermarket.model.custom;
 public class Response {
 
 	private String status;
-	
+
 	private Object data;
-	
+
 	public Response() {
-		
+
 	}
-	
+
 	public Response(String status, Object data) {
 		this.status = status;
 		this.data = data;
@@ -35,5 +35,5 @@ public class Response {
 	public String toString() {
 		return "Response [status=" + status + ", data=" + data + "]";
 	}
-	
+
 }

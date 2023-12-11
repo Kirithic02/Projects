@@ -405,10 +405,11 @@ public class OrderServiceImpl implements OrderService {
 						|| newStatus.equalsIgnoreCase(WebServiceUtil.CANCELLED)) {
 
 					if (isValidTransition(order.getOrderStatus(), newStatus)) {
-						
+
 						List<OrderLineItemDetails> orderItemList = orderDAO.getOrderItemListByOrderId(orderId);
 
 						if (newStatus.equalsIgnoreCase(WebServiceUtil.PACKED)) {
+
 							Product resultProduct = checkStock(orderItemList);
 
 							if (resultProduct == null) {
@@ -487,7 +488,8 @@ public class OrderServiceImpl implements OrderService {
 					}
 				} else {
 					response.setStatus(WebServiceUtil.FAILURE);
-					response.setData("Order Status Should Only Contain new (or) shipped (or) packed (or) delivered (or) cancelled");
+					response.setData(
+							"Order Status Should Only Contain new (or) shipped (or) packed (or) delivered (or) cancelled");
 				}
 
 			} else {
@@ -564,7 +566,7 @@ public class OrderServiceImpl implements OrderService {
 				response.setData("No Data Found for This Order");
 
 			} else {
-				
+
 				Customer customer = (Customer) resultMap.get("customer");
 				customerOrderDTO.setCustomerId(customer.getCustomerId());
 				customerOrderDTO.setCustomerName(customer.getCustomerName());

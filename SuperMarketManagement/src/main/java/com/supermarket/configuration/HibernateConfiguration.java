@@ -16,13 +16,12 @@ import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-
 @Configuration
 @EnableWebMvc
 @EnableTransactionManagement
 @ComponentScan("com.supermarket")
 public class HibernateConfiguration {
-	
+
 	@Bean
 	public DataSource dataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
@@ -32,7 +31,7 @@ public class HibernateConfiguration {
 		dataSource.setPassword("5595");
 		return dataSource;
 	}
-	
+
 	public Properties hibernateProprties() {
 		Properties properties = new Properties();
 		properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
@@ -41,7 +40,7 @@ public class HibernateConfiguration {
 		properties.setProperty("hibernate.hbm2ddl.auto", "update");
 		return properties;
 	}
-	
+
 	@Bean
 	public LocalSessionFactoryBean sessionFactory() {
 		LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
@@ -50,31 +49,30 @@ public class HibernateConfiguration {
 		sessionFactory.setHibernateProperties(hibernateProprties());
 		return sessionFactory;
 	}
-	
+
 	@Bean
 	public HibernateTransactionManager transactionManager(SessionFactory sessionFactory) {
 		HibernateTransactionManager htManager = new HibernateTransactionManager();
 		htManager.setSessionFactory(sessionFactory);
 		return htManager;
 	}
-	
-	@Bean
-    public JavaMailSender javaMailSender()
-	{
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        
-        mailSender.setHost("smtp.mail.yahoo.com");
-        mailSender.setPort(587); 
-        mailSender.setUsername("kirithic@humworld.in");
-        mailSender.setPassword("pxpxyqlipziuhauz");
 
-        Properties props = mailSender.getJavaMailProperties();
-        props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.debug", "true");
-        props.put("mail.smtp.ssl.protocols", "TLSv1.2");
-        
-        return mailSender;
-    }
+	@Bean
+	public JavaMailSender javaMailSender() {
+		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+
+		mailSender.setHost("smtp.mail.yahoo.com");
+		mailSender.setPort(587);
+		mailSender.setUsername("kirithic@humworld.in");
+		mailSender.setPassword("pxpxyqlipziuhauz");
+
+		Properties props = mailSender.getJavaMailProperties();
+		props.put("mail.transport.protocol", "smtp");
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.starttls.enable", "true");
+		props.put("mail.debug", "true");
+		props.put("mail.smtp.ssl.protocols", "TLSv1.2");
+
+		return mailSender;
+	}
 }

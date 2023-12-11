@@ -44,10 +44,10 @@ public class ProductDAOImpl implements ProductDAO {
 				.add(Restrictions.eq("productName", productName)).add(Restrictions.isNull("lastEffectiveDate"));
 //				.add(Restrictions.ne("productId", productId));
 
-		if(productId != null) {
+		if (productId != null) {
 			criteria.add(Restrictions.ne("productId", productId));
 		}
-		
+
 		return criteria.uniqueResult() == null;
 	}
 
@@ -81,18 +81,18 @@ public class ProductDAOImpl implements ProductDAO {
 		resultMap.put("totalCount", criteria.uniqueResult());
 
 		if (filterList.getSearch() != null && !filterList.getSearch().trim().isEmpty()) {
-			
-			if(filterList.getSearchColumn() != null && !filterList.getSearchColumn().trim().isEmpty()) {
-				
-				if(filterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_ID)) {
+
+			if (filterList.getSearchColumn() != null && !filterList.getSearchColumn().trim().isEmpty()) {
+
+				if (filterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_ID)) {
 					criteria.add(Restrictions.eq("productId", Integer.parseInt(filterList.getSearch())));
-				} else if(filterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_NAME)) {
+				} else if (filterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_NAME)) {
 					criteria.add(Restrictions.ilike("productName", filterList.getSearch().trim(), MatchMode.ANYWHERE));
 				}
 			} else {
 //				criteria.add(Restrictions.disjunction()
 //						.add(Restrictions.ilike("productName", "%" + filterList.getSearch() + "%")));
-				if(ValidationUtil.isValidNumber(filterList.getSearch())) {
+				if (ValidationUtil.isValidNumber(filterList.getSearch())) {
 					criteria.add(Restrictions.eq("productId", Integer.parseInt(filterList.getSearch())));
 				} else {
 					criteria.add(Restrictions.ilike("productName", filterList.getSearch().trim(), MatchMode.ANYWHERE));
@@ -114,53 +114,57 @@ public class ProductDAOImpl implements ProductDAO {
 				criteria.add(Restrictions.le("effectiveDate", new Date()))
 						.add(Restrictions.disjunction().add(Restrictions.gt("lastEffectiveDate", new Date()))
 								.add(Restrictions.isNull("lastEffectiveDate")));
-			} else if (filterList.getFilter().getStatus().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_INACTIVE)) {
+			} else if (filterList.getFilter().getStatus().trim()
+					.equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_INACTIVE)) {
 				criteria.add(Restrictions.disjunction()
 						.add(Restrictions.conjunction().add(Restrictions.gt("effectiveDate", new Date())))
 						.add(Restrictions.conjunction().add(Restrictions.isNotNull("lastEffectiveDate"))
 								.add(Restrictions.lt("lastEffectiveDate", new Date()))));
-			} else if (filterList.getFilter().getStatus().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_UPCOMING)) {
+			} else if (filterList.getFilter().getStatus().trim()
+					.equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_UPCOMING)) {
 				criteria.add(Restrictions.gt("effectiveDate", new Date()));
 			}
 		}
-		
+
 		if (filterList.getOrderBy() != null) {
 
 			if (ValidationUtil.isNotEmpty(filterList.getOrderBy().getColumn())
 					&& filterList.getOrderBy().getType() != null) {
-				
+
 				if (filterList.getOrderBy().getColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_NAME)) {
 
-					if (filterList.getOrderBy().getType() == null
-							|| filterList.getOrderBy().getType().trim().isEmpty()
-							|| filterList.getOrderBy().getType().trim().equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)) {
+					if (filterList.getOrderBy().getType() == null || filterList.getOrderBy().getType().trim().isEmpty()
+							|| filterList.getOrderBy().getType().trim()
+									.equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)) {
 						criteria.addOrder(Order.asc("productName"));
 					} else {
 						criteria.addOrder(Order.desc("productName"));
 					}
 				} else if (filterList.getOrderBy().getColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_PRICE)) {
 
-					if (filterList.getOrderBy().getType() == null
-							|| filterList.getOrderBy().getType().trim().isEmpty()
-							|| filterList.getOrderBy().getType().trim().equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)) {
+					if (filterList.getOrderBy().getType() == null || filterList.getOrderBy().getType().trim().isEmpty()
+							|| filterList.getOrderBy().getType().trim()
+									.equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)) {
 						criteria.addOrder(Order.asc("productPrice"));
 					} else {
 						criteria.addOrder(Order.desc("productPrice"));
 					}
-				} else if (filterList.getOrderBy().getColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_CURRENTSTOCKPACKAGECOUNT)) {
+				} else if (filterList.getOrderBy().getColumn().trim()
+						.equalsIgnoreCase(WebServiceUtil.PRODUCT_CURRENTSTOCKPACKAGECOUNT)) {
 
-					if (filterList.getOrderBy().getType() == null
-							|| filterList.getOrderBy().getType().trim().isEmpty()
-							|| filterList.getOrderBy().getType().trim().equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)) {
+					if (filterList.getOrderBy().getType() == null || filterList.getOrderBy().getType().trim().isEmpty()
+							|| filterList.getOrderBy().getType().trim()
+									.equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)) {
 						criteria.addOrder(Order.asc("currentStockPackageCount"));
 					} else {
 						criteria.addOrder(Order.desc("currentStockPackageCount"));
 					}
-				} else if (filterList.getOrderBy().getColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_EFFECTIVEDATE)) {
+				} else if (filterList.getOrderBy().getColumn().trim()
+						.equalsIgnoreCase(WebServiceUtil.PRODUCT_EFFECTIVEDATE)) {
 
-					if (filterList.getOrderBy().getType() == null
-							|| filterList.getOrderBy().getType().trim().isEmpty()
-							|| filterList.getOrderBy().getType().trim().equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)) {
+					if (filterList.getOrderBy().getType() == null || filterList.getOrderBy().getType().trim().isEmpty()
+							|| filterList.getOrderBy().getType().trim()
+									.equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)) {
 						criteria.addOrder(Order.asc("effectiveDate"));
 					} else {
 						criteria.addOrder(Order.desc("effectiveDate"));

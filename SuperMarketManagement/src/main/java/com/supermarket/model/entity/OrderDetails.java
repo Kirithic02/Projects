@@ -14,29 +14,28 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "order_details")
 public class OrderDetails {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ORDE_id")
 	private Integer orderId;
-	
+
 	@Column(name = "ORDE_date", insertable = false, updatable = false)
 	private Date orderedDate;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "ORDE_customer_id")
 	private Customer customerId;
-	
+
 	@Column(name = "ORDE_expected_date")
 	private Date orderExpectedDate;
-	
-	
+
 	@Column(name = "ORDE_status")
 	private String orderStatus;
-	
+
 	@Column(name = "ORDE_created_date")
 	private Date orderCreatedDate;
-	
+
 	@Column(name = "ORDE_update_date")
 	private Date orderUpdatedDate;
 
@@ -95,5 +94,5 @@ public class OrderDetails {
 	public void setOrderUpdatedDate(Date orderUpdatedDate) {
 		this.orderUpdatedDate = orderUpdatedDate;
 	}
-	
+
 }

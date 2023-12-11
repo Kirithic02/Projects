@@ -4,11 +4,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ValidationUtil {
-	
+
 	public static boolean isNotEmpty(String field) {
 		return ((field != null) && (field.trim().length() > 0));
 	}
-	
+
 	public static boolean isValidName(String name) {
 		Pattern pattern = Pattern.compile("^[A-Za-z\\s]+$");
 		Matcher matcher = pattern.matcher(name);
@@ -29,7 +29,7 @@ public class ValidationUtil {
 		Matcher matcher = pattern.matcher(phoneNumber);
 		return matcher.matches();
 	}
-	
+
 	public static boolean isValidNumber(String Number) {
 		Pattern pattern = Pattern.compile("\\d+");
 		Matcher matcher = pattern.matcher(Number);
@@ -48,7 +48,7 @@ public class ValidationUtil {
 		Matcher matcher = pattern.matcher(pincode);
 		return matcher.matches();
 	}
-	
+
 	public static boolean isValidProductName(String productName) {
 		Pattern pattern = Pattern.compile("^[A-Za-z\\s]+[\\dA-Za-z]*$");
 		Matcher matcher = pattern.matcher(productName);

@@ -49,22 +49,23 @@ public class CustomerServiceImpl implements CustomerService {
 		List<ErrorResponse> errorResponseList = customerValiation(customerDTO);
 
 		if (errorResponseList.isEmpty()) {
-			
+
 			int checkValue = 0;
-					
-			if(customerDAO.isNotUniqueMobileno(customerDTO.getCustomerId(), customerDTO.getMobileNo())) {
+
+			if (customerDAO.isNotUniqueMobileno(customerDTO.getCustomerId(), customerDTO.getMobileNo())) {
 				checkValue += 1;
 			}
-			
-			if(customerDAO.isNotUniqueMail(customerDTO.getCustomerId(), customerDTO.getMail())) {
+
+			if (customerDAO.isNotUniqueMail(customerDTO.getCustomerId(), customerDTO.getMail())) {
 				checkValue += 2;
 			}
-			
+
 			if (checkValue == 0) {
 
 				if (customerDTO.getCustomerId() == null) {
 					Customer customer = new Customer();
-					customer.setCustomerName(WebServiceUtil.formatFullName(customerDTO.getCustomerName()).trim()); // need changes
+					customer.setCustomerName(WebServiceUtil.formatFullName(customerDTO.getCustomerName()).trim()); // need
+																													// changes
 					customer.setMobileNo(customerDTO.getMobileNo());
 					customer.setAddress(customerDTO.getAddress());
 					customer.setLocation(WebServiceUtil.formatFullName(customerDTO.getLocation()).trim());
@@ -81,7 +82,8 @@ public class CustomerServiceImpl implements CustomerService {
 					Customer ExistingCustomer = customerDAO.getCustomerById(customerDTO.getCustomerId());
 
 					if (ExistingCustomer != null) {
-						ExistingCustomer.setCustomerName(WebServiceUtil.formatFullName(customerDTO.getCustomerName()).trim());
+						ExistingCustomer
+								.setCustomerName(WebServiceUtil.formatFullName(customerDTO.getCustomerName()).trim());
 						ExistingCustomer.setMobileNo(customerDTO.getMobileNo());
 						ExistingCustomer.setAddress(customerDTO.getAddress());
 						ExistingCustomer.setCity(WebServiceUtil.formatFullName(customerDTO.getCity()).trim());
@@ -98,10 +100,10 @@ public class CustomerServiceImpl implements CustomerService {
 					}
 				}
 
-			} else if(checkValue == 1){
+			} else if (checkValue == 1) {
 				response.setStatus(WebServiceUtil.FAILURE);
 				response.setData("MobileNo Already Exist");
-			} else if(checkValue == 2) {
+			} else if (checkValue == 2) {
 				response.setStatus(WebServiceUtil.FAILURE);
 				response.setData("Mail Already Exist");
 			} else {
@@ -264,20 +266,23 @@ public class CustomerServiceImpl implements CustomerService {
 			errorResponseList.add(errorResponse);
 		}
 
-		if ( !(customerFilterList.getSearchColumn() == null || customerFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_ID)
+		if (!(customerFilterList.getSearchColumn() == null
+				|| customerFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_ID)
 				|| customerFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_NAME)
 				|| customerFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_MOBILE_NUMBER)
 				|| customerFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_MAIL)
-				|| customerFilterList.getSearchColumn().isBlank()) ) {
+				|| customerFilterList.getSearchColumn().isBlank())) {
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.FILTERLIST_SEARCHCOLUMN);
-			errorResponse.setErrorMessage("searchColumn Should Contain Only customerid (or) customername (or) mobileno (or) mail");
+			errorResponse.setErrorMessage(
+					"searchColumn Should Contain Only customerid (or) customername (or) mobileno (or) mail");
 			errorResponseList.add(errorResponse);
-		} else if(customerFilterList.getSearchColumn() != null && customerFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_ID)
+		} else if (customerFilterList.getSearchColumn() != null
+				&& customerFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_ID)
 				&& !ValidationUtil.isValidNumber(customerFilterList.getSearch())) {
 			customerFilterList.setSearch("-1");
 		}
-		
+
 //		if (customerFilterList.getOrderBy() != null
 //				&& ValidationUtil.isNotEmpty(customerFilterList.getOrderBy().getType())
 //				&& ValidationUtil.isNotEmpty(customerFilterList.getOrderBy().getColumn())) {

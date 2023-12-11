@@ -6,12 +6,12 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.supermarket.util.serializer.TimestampSerializer;
 
 public class PriceHistoryDTO {
-	
+
 	private Integer productPrice;
-	
+
 	@JsonSerialize(using = TimestampSerializer.class)
 	private Date effectiveDate;
-	
+
 //	@JsonSerialize(using = TimestampSerializer.class)
 //	private Date lastEffectiveDate;
 
@@ -39,5 +39,5 @@ public class PriceHistoryDTO {
 //		this.lastEffectiveDate = lastEffectiveDate;
 //	}
 //	
-	
+
 }

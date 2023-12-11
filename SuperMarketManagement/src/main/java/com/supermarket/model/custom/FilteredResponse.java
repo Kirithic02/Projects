@@ -1,13 +1,13 @@
 package com.supermarket.model.custom;
 
 public class FilteredResponse {
-	
+
 	private String status;
-	
+
 	private Long totalCount;
-	
+
 	private Long filteredCount;
-	
+
 	private Object data;
 
 	public String getStatus() {
@@ -41,6 +41,5 @@ public class FilteredResponse {
 	public void setData(Object data) {
 		this.data = data;
 	}
-	
-	
+
 }

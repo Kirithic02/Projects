@@ -1,7 +1,6 @@
- package com.supermarket.model.custom.product;
+package com.supermarket.model.custom.product;
 
 import java.util.Date;
-
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -9,27 +8,27 @@ import com.supermarket.util.deserializer.DateDeserializer;
 import com.supermarket.util.serializer.TimestampSerializer;
 
 public class ProductDTO {
-	
+
 	private Integer productId;
-	
+
 	private String productName;
-	
+
 	private Integer packQuantity;
-	
+
 	private Integer productPrice;
-	
+
 	private Integer currentStockPackageCount;
-	
+
 	@JsonSerialize(using = TimestampSerializer.class)
 	@JsonDeserialize(using = DateDeserializer.class)
 	private Date effectiveDate;
-	
+
 	@JsonSerialize(using = TimestampSerializer.class)
 	@JsonDeserialize(using = DateDeserializer.class)
 	private Date lastEffectiveDate;
-	
+
 	private Integer oldProductId;
-	
+
 	public Integer getProductId() {
 		return productId;
 	}
@@ -105,6 +104,5 @@ public class ProductDTO {
 //			this.oldProductId = oldProductId.getProductId();
 //		}
 //	}
-	
-	
+
 }

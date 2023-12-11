@@ -5,14 +5,13 @@ import java.util.Date;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.supermarket.util.deserializer.DateDeserializer;
 
-
 public class OrderFilter {
-	
+
 	private String orderStatus;
-	
+
 	@JsonDeserialize(using = DateDeserializer.class)
 	private Date fromDate;
-	
+
 	@JsonDeserialize(using = DateDeserializer.class)
 	private Date toDate;
 
@@ -39,5 +38,5 @@ public class OrderFilter {
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
 	}
-	
+
 }

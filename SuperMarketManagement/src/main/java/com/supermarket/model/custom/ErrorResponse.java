@@ -1,9 +1,9 @@
 package com.supermarket.model.custom;
 
-public class ErrorResponse 
-{
-	private String fieldName;
+public class ErrorResponse {
 	
+	private String fieldName;
+
 	private String errorMessage;
 
 	public String getFieldName() {

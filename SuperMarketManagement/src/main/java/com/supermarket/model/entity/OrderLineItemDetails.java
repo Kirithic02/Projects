@@ -14,36 +14,35 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "order_line_item_details")
 public class OrderLineItemDetails {
-	
+
 	@ManyToOne
 	@JoinColumn(name = "OLID_order_id")
 	private OrderDetails orderId;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "OLID_id")
 	private Integer olidId;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "OLID_product_id")
 	private Product productId;
-	
+
 	@Column(name = "OLID_quantity_individual_unit")
 	private Integer quantityIndividualUnit;
-	
+
 	@Column(name = "OLID_quantity_in_package")
 	private Integer quantityInPackage;
-	
+
 	@Column(name = "OLID_status")
 	private String olidStatus;
-	
+
 	@Column(name = "OLID_created_date")
 	private Date createdDate;
-	
+
 	@Column(name = "OLID_update_date")
 	private Date updateDate;
 
-	
 	public OrderDetails getOrderId() {
 		return orderId;
 	}
@@ -107,5 +106,5 @@ public class OrderLineItemDetails {
 	public void setUpdateDate(Date updateDate) {
 		this.updateDate = updateDate;
 	}
-	
+
 }

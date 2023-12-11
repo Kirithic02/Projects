@@ -11,43 +11,43 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-@Entity 
+@Entity
 @Table(name = "Product_info")
 public class Product {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "PROD_id")
 	private Integer productId;
-	
+
 	@Column(name = "PROD_name")
 	private String productName;
-	
+
 	@Column(name = "PROD_pack_quantity")
 	private Integer packQuantity;
-	
+
 	@Column(name = "PROD_price")
 	private Integer productPrice;
-	
+
 	@Column(name = "PROD_current_stock_package_count")
 	private Integer currentStockPackageCount;
-	
+
 	@Column(name = "PROD_effective_date")
 	private Date effectiveDate;
-	
+
 	@Column(name = "PROD_last_effective_date")
 	private Date lastEffectiveDate;
-	
+
 	@OneToOne
 	@JoinColumn(name = "PROD_old_id")
 	private Product oldProductId;
-	
+
 	@Column(name = "PROD_created_date")
 	private Date createdDate;
-	
+
 	@Column(name = "PROD_updated_date")
 	private Date updatedDate;
-	
+
 	public Integer getProductId() {
 		return productId;
 	}
@@ -127,5 +127,5 @@ public class Product {
 	public void setUpdatedDate(Date updatedDate) {
 		this.updatedDate = updatedDate;
 	}
-	
+
 }

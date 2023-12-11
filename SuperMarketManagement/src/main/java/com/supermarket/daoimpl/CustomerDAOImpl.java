@@ -53,22 +53,20 @@ public class CustomerDAOImpl implements CustomerDAO {
 //		
 //		return checkValue;
 //	}
-	
+
 	@Override
 	public boolean isNotUniqueMobileno(Integer customerId, String mobileNo) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Customer.class)
-				.add(Restrictions.neOrIsNotNull("customerId", customerId))
-						.add(Restrictions.eq("mobileNo", mobileNo));
-		
+				.add(Restrictions.neOrIsNotNull("customerId", customerId)).add(Restrictions.eq("mobileNo", mobileNo));
+
 		return !criteria.list().isEmpty();
 	}
-	
+
 	@Override
 	public boolean isNotUniqueMail(Integer customerId, String mail) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Customer.class)
-				.add(Restrictions.neOrIsNotNull("customerId", customerId))
-						.add(Restrictions.eq("mail", mail));
-		
+				.add(Restrictions.neOrIsNotNull("customerId", customerId)).add(Restrictions.eq("mail", mail));
+
 		return !criteria.list().isEmpty();
 	}
 
@@ -108,20 +106,23 @@ public class CustomerDAOImpl implements CustomerDAO {
 		resultMap.put("totalCount", criteria.uniqueResult());
 
 		if (customerFilterList.getSearch() != null && !customerFilterList.getSearch().trim().isEmpty()) {
-			
-			if(customerFilterList.getSearchColumn() != null && !customerFilterList.getSearchColumn().trim().isEmpty()) {
-				
-				if(customerFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.CUSTOMER_ID)) {
+
+			if (customerFilterList.getSearchColumn() != null
+					&& !customerFilterList.getSearchColumn().trim().isEmpty()) {
+
+				if (customerFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.CUSTOMER_ID)) {
 					criteria.add(Restrictions.eq("customerId", Integer.parseInt(customerFilterList.getSearch())));
-				} else if(customerFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.CUSTOMER_NAME)) {
-					criteria.add(Restrictions.ilike("customerName", customerFilterList.getSearch(), MatchMode.ANYWHERE));
-				} else if(customerFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.CUSTOMER_MOBILE_NUMBER)) {
+				} else if (customerFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.CUSTOMER_NAME)) {
+					criteria.add(
+							Restrictions.ilike("customerName", customerFilterList.getSearch(), MatchMode.ANYWHERE));
+				} else if (customerFilterList.getSearchColumn().trim()
+						.equalsIgnoreCase(WebServiceUtil.CUSTOMER_MOBILE_NUMBER)) {
 					criteria.add(Restrictions.ilike("mobileNo", customerFilterList.getSearch(), MatchMode.ANYWHERE));
 				} else {
 					criteria.add(Restrictions.ilike("mail", customerFilterList.getSearch(), MatchMode.ANYWHERE));
 				}
 			} else {
-				if(ValidationUtil.isValidNumber(customerFilterList.getSearch())) {
+				if (ValidationUtil.isValidNumber(customerFilterList.getSearch())) {
 					criteria.add(Restrictions.disjunction()
 							.add(Restrictions.eq("customerId", Integer.parseInt(customerFilterList.getSearch())))
 							.add(Restrictions.ilike("mobileNo", customerFilterList.getSearch(), MatchMode.ANYWHERE)));
@@ -132,26 +133,29 @@ public class CustomerDAOImpl implements CustomerDAO {
 				}
 			}
 		}
-		
-		if(customerFilterList.getOrderBy() != null) {
-			
+
+		if (customerFilterList.getOrderBy() != null) {
+
 //			 && customerFilterList.getOrderBy().getType() != null
-			if(ValidationUtil.isNotEmpty(customerFilterList.getOrderBy().getColumn())) {
-				
-				if(customerFilterList.getOrderBy().getColumn().trim().equalsIgnoreCase(WebServiceUtil.CUSTOMER_NAME)) {
-					
+			if (ValidationUtil.isNotEmpty(customerFilterList.getOrderBy().getColumn())) {
+
+				if (customerFilterList.getOrderBy().getColumn().trim().equalsIgnoreCase(WebServiceUtil.CUSTOMER_NAME)) {
+
 					if (customerFilterList.getOrderBy().getType() == null
 							|| customerFilterList.getOrderBy().getType().trim().isEmpty()
-							|| customerFilterList.getOrderBy().getType().trim().equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)) {
+							|| customerFilterList.getOrderBy().getType().trim()
+									.equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)) {
 						criteria.addOrder(Order.asc("customerName"));
 					} else {
 						criteria.addOrder(Order.desc("customerName"));
 					}
-				} else if(customerFilterList.getOrderBy().getColumn().trim().equalsIgnoreCase(WebServiceUtil.CUSTOMER_CREATEDDATE)) {
-					
-					if(customerFilterList.getOrderBy().getType() == null
+				} else if (customerFilterList.getOrderBy().getColumn().trim()
+						.equalsIgnoreCase(WebServiceUtil.CUSTOMER_CREATEDDATE)) {
+
+					if (customerFilterList.getOrderBy().getType() == null
 							|| customerFilterList.getOrderBy().getType().trim().isEmpty()
-							|| customerFilterList.getOrderBy().getType().trim().equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)) {
+							|| customerFilterList.getOrderBy().getType().trim()
+									.equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)) {
 						criteria.addOrder(Order.asc("createdDate"));
 					} else {
 						criteria.addOrder(Order.desc("createdDate"));

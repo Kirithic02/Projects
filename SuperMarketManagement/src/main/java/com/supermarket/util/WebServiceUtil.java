@@ -4,13 +4,13 @@ public final class WebServiceUtil {
 
 	public static final String SUCCESS = "success";
 	public static final String FAILURE = "failure";
-	
-	// ***********************  FilteredResponse *****************************
+
+	// *********************** FilteredResponse *****************************
 	public static final String FILTEREDRESPONSE_FILTEREDCOUNT = "filteredCount";
 	public static final String FILTEREDRESPONSE_TOTALCOUNT = "totalCount";
 	public static final String FILTEREDRESPONSE_DATA = "data";
-	
-	// ***********************  FilterList *****************************
+
+	// *********************** FilterList *****************************
 	public static final String FILTERLIST_LENGTH = "length";
 	public static final String FILTERLIST_START = "start";
 	public static final String FILTERLIST_SEARCHCOLUMN = "searchColumn";
@@ -31,8 +31,8 @@ public final class WebServiceUtil {
 	public static final String PRODUCT_STATUS_ACTIVE = "ACTIVE";
 	public static final String PRODUCT_STATUS_INACTIVE = "INACTIVE";
 	public static final String PRODUCT_STATUS_UPCOMING = "UPCOMING";
-	
-	// ***********************  Customer *****************************
+
+	// *********************** Customer *****************************
 	public static final String CUSTOMER_ID = "customerId";
 	public static final String CUSTOMER_NAME = "customerName";
 	public static final String CUSTOMER_MOBILE_NUMBER = "mobileNo";
@@ -42,8 +42,8 @@ public final class WebServiceUtil {
 	public static final String CUSTOMER_PINCODE = "pincode";
 	public static final String CUSTOMER_MAIL = "mail";
 	public static final String CUSTOMER_CREATEDDATE = "createdDate";
-	
-	// ***********************  Product *****************************
+
+	// *********************** Product *****************************
 	public static final String PRODUCT_ID = "productId";
 	public static final String PRODUCT_NAME = "productName";
 	public static final String PRODUCT_PACKQUANTITY = "packQuantity";
@@ -51,22 +51,21 @@ public final class WebServiceUtil {
 	public static final String PRODUCT_CURRENTSTOCKPACKAGECOUNT = "currentStockPackageCount";
 	public static final String PRODUCT_EFFECTIVEDATE = "effectiveDate";
 //	public static final String PRODUCT_ = "";
-	
-	// ***********************  OrderDetails *****************************
+
+	// *********************** OrderDetails *****************************
 	public static final String ORDERDETAILS_ID = "orderId";
 	public static final String ORDERDETAILS_ORDEREDDATE = "orderedDate";
 	public static final String ORDERDETAILS_ORDEREXPECTEDDATE = "orderExpectedDate";
 	public static final String ORDERDETAILS_STATUS = "orderStatus";
 	public static final String ORDERDETAILS_ORDERCREATEDDATE = "orderCreatedDate";
-	
-	// ***********************  OrderLineItemDetails *****************************
+
+	// *********************** OrderLineItemDetails *****************************
 	public static final String ORDERLINEITEMDETAILS_OLIDID = "olidId";
 	public static final String ORDERLINEITEMDETAILS_QUANTITYINDIVIDUALUNIT = "quantityIndividualUnit";
 	public static final String ORDERLINEITEMDETAILS_QUANTITYINPACKAGE = "quantityInPackage";
 	public static final String ORDERLINEITEMDETAILS_STATUS = "olidStatus";
 	public static final String ORDERLINEITEMDETAILS_CREATEDDATE = "createdDate";
-	
-	
+
 	public static String formatFullName(String fullName) {
 
 		if (fullName == null || fullName.trim().length() <= 0) {
@@ -85,5 +84,5 @@ public final class WebServiceUtil {
 
 		return formattedFullName;
 	}
-	
+
 }

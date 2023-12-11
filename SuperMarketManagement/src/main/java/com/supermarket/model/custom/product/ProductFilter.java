@@ -1,11 +1,11 @@
 package com.supermarket.model.custom.product;
 
 public class ProductFilter {
-	
+
 	private String status;
-	
+
 	private Integer minPrice;
-	
+
 	private Integer maxPrice;
 
 	public String getStatus() {
@@ -31,6 +31,5 @@ public class ProductFilter {
 	public void setMaxPrice(Integer maxPrice) {
 		this.maxPrice = maxPrice;
 	}
-	
-	
+
 }
