@@ -6,6 +6,10 @@ public class OrderLineItemDetailsDTO {
 	
 	private Integer productId;
 	
+	private String productName;
+	
+	private Integer productPrice;
+	
 	private Integer quantityIndividualUnit;
 	
 	private Integer quantityInPackage;
@@ -28,6 +32,14 @@ public class OrderLineItemDetailsDTO {
 		this.productId = productId;
 	}
 
+	public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
 	public Integer getQuantityIndividualUnit() {
 		return quantityIndividualUnit;
 	}
@@ -42,6 +54,14 @@ public class OrderLineItemDetailsDTO {
 
 	public void setQuantityInPackage(Integer quantityInPackage) {
 		this.quantityInPackage = quantityInPackage;
+	}
+
+	public Integer getProductPrice() {
+		return productPrice;
+	}
+
+	public void setProductPrice(Integer productPrice) {
+		this.productPrice = productPrice;
 	}
 
 	public String getOlidStatus() {

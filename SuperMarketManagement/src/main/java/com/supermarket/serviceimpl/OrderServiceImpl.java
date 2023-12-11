@@ -558,15 +558,22 @@ public class OrderServiceImpl implements OrderService {
 			CustomerOrderDTO customerOrderDTO = new CustomerOrderDTO();
 			Map<String, Object> resultMap = orderDAO.getOrderItemListDTOByOrderId(orderId);
 
-			if (resultMap.get(WebServiceUtil.CUSTOMER_ID) == null) {
+			if (resultMap.get("customer") == null) {
 
 				response.setStatus(WebServiceUtil.SUCCESS);
 				response.setData("No Data Found for This Order");
 
 			} else {
-
-				customerOrderDTO.setCustomerId((Integer) resultMap.get(WebServiceUtil.CUSTOMER_ID));
-				customerOrderDTO.setOrderId((Integer) resultMap.get(WebServiceUtil.ORDERDETAILS_ID));
+				
+				Customer customer = (Customer) resultMap.get("customer");
+				customerOrderDTO.setCustomerId(customer.getCustomerId());
+				customerOrderDTO.setCustomerName(customer.getCustomerName());
+//				customerOrderDTO.setCustomerId((Integer) resultMap.get(WebServiceUtil.CUSTOMER_ID));
+//				customerOrderDTO.setCustomerName();
+				OrderDetails orderDetails = (OrderDetails) resultMap.get("order");
+				customerOrderDTO.setOrderId(orderDetails.getOrderId());
+				customerOrderDTO.setOrderStatus(orderDetails.getOrderStatus());
+//				customerOrderDTO.setOrderId((Integer) resultMap.get(WebServiceUtil.ORDERDETAILS_ID));
 				customerOrderDTO.setOrderList(
 						(List<OrderLineItemDetailsDTO>) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
 				response.setStatus(WebServiceUtil.SUCCESS);

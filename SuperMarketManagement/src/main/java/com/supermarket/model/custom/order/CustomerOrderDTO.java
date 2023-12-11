@@ -8,7 +8,19 @@ public class CustomerOrderDTO {
 	
 	private Integer customerId;
 	
+	private String customerName;
+	
+	private String orderStatus;
+	
 	private List<OrderLineItemDetailsDTO> orderList;
+
+	public Integer getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(Integer orderId) {
+		this.orderId = orderId;
+	}
 
 	public Integer getCustomerId() {
 		return customerId;
@@ -18,12 +30,20 @@ public class CustomerOrderDTO {
 		this.customerId = customerId;
 	}
 
-	public Integer getOrderId() {
-		return orderId;
+	public String getCustomerName() {
+		return customerName;
 	}
 
-	public void setOrderId(Integer orderId) {
-		this.orderId = orderId;
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
+
+	public String getOrderStatus() {
+		return orderStatus;
+	}
+
+	public void setOrderStatus(String orderStatus) {
+		this.orderStatus = orderStatus;
 	}
 
 	public List<OrderLineItemDetailsDTO> getOrderList() {

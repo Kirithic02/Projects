@@ -66,9 +66,9 @@ public class ProductServiceImpl implements ProductService {
 					product.setEffectiveDate(productDTO.getEffectiveDate());
 					product.setCreatedDate(new Date());
 					product.setUpdatedDate(new Date());
-					
+
 					productDAO.addProduct(product);
-					
+
 					response.setStatus(WebServiceUtil.SUCCESS);
 					response.setData("New Product Has Been Added");
 				} else {
@@ -77,7 +77,8 @@ public class ProductServiceImpl implements ProductService {
 					if (oldProduct != null) {
 
 						if (oldProduct.getEffectiveDate().after(new Date())) {
-							oldProduct.setProductName(WebServiceUtil.formatFullName(productDTO.getProductName()).trim());
+							oldProduct
+									.setProductName(WebServiceUtil.formatFullName(productDTO.getProductName()).trim());
 //							oldProduct.setProductName(productDTO.getProductName().trim());
 							oldProduct.setPackQuantity(productDTO.getPackQuantity());
 							oldProduct.setProductPrice(productDTO.getProductPrice());
@@ -121,7 +122,7 @@ public class ProductServiceImpl implements ProductService {
 	public Response deactivateAndUpdate(ProductDTO productDTO) {
 
 		LOGGER.info("Deactivate and Update details for Product ID : " + productDTO.getProductId());
-		
+
 		Response response = new Response();
 
 		List<ErrorResponse> errorResponseList = productValidation(productDTO);
@@ -148,9 +149,9 @@ public class ProductServiceImpl implements ProductService {
 						newProduct.setOldProductId(oldProduct);
 						newProduct.setCreatedDate(new Date());
 						newProduct.setUpdatedDate(new Date());
-						
+
 						productDAO.addProduct(newProduct);
-						
+
 						response.setStatus(WebServiceUtil.SUCCESS);
 						response.setData("Product Details Are Updated, New Product");
 					} else {
@@ -358,11 +359,14 @@ public class ProductServiceImpl implements ProductService {
 			errorResponseList.add(errorResponse);
 		}
 
-		if ( !(productFilterList.getFilter().getStatus() == null || productFilterList.getFilter().getStatus().isBlank()
-				|| productFilterList.getFilter().getStatus().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_ACTIVE)
-				|| productFilterList.getFilter().getStatus().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_INACTIVE)
-				|| productFilterList.getFilter().getStatus().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_UPCOMING))) {
-			
+		if (!(productFilterList.getFilter().getStatus() == null || productFilterList.getFilter().getStatus().isBlank()
+				|| productFilterList.getFilter().getStatus().trim()
+						.equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_ACTIVE)
+				|| productFilterList.getFilter().getStatus().trim()
+						.equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_INACTIVE)
+				|| productFilterList.getFilter().getStatus().trim()
+						.equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_UPCOMING))) {
+
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.PRODUCT_STATUS);
 			errorResponse.setErrorMessage("Status Should Contain only active (or) inactive (or) upcoming");
@@ -371,23 +375,24 @@ public class ProductServiceImpl implements ProductService {
 
 //		if ( !(productFilterList.getSearchColumn() == null || productFilterList.getSearchColumn().isBlank()
 //				|| productFilterList.getSearchColumn().equalsIgnoreCase("productName")) ) {
-			
+
 //		if( !(ValidationUtil.isNotEmpty(productFilterList.getSearchColumn()) || productFilterList.getSearchColumn().equalsIgnoreCase("productname")) ) {
-			
-		if ( !(productFilterList.getSearchColumn() == null || productFilterList.getSearchColumn().trim().isEmpty()
+
+		if (!(productFilterList.getSearchColumn() == null || productFilterList.getSearchColumn().trim().isEmpty()
 				|| productFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_ID)
-				|| productFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_NAME)) ) {
-			
+				|| productFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_NAME))) {
+
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.FILTERLIST_SEARCHCOLUMN);
 			errorResponse.setErrorMessage("searchColumn Should Contain only productid (or) productname");
 			errorResponseList.add(errorResponse);
-		} else if(productFilterList.getSearchColumn() != null && productFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_ID)
+		} else if (productFilterList.getSearchColumn() != null
+				&& productFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_ID)
 				&& !ValidationUtil.isValidNumber(productFilterList.getSearch())) {
-			
+
 			productFilterList.setSearch("-1");
 		}
-		
+
 //		if (productFilterList.getOrderBy() != null
 //				&& ValidationUtil.isNotEmpty(productFilterList.getOrderBy().getType())
 //				&& ValidationUtil.isNotEmpty(productFilterList.getOrderBy().getColumn())) {

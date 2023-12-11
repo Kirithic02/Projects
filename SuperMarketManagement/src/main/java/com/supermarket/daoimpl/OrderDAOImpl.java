@@ -80,18 +80,20 @@ public class OrderDAOImpl implements OrderDAO {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(OrderLineItemDetails.class)
 				.createAlias("orderId", "order").createAlias("order.customerId", "customer")
 				.createAlias("productId", "product").add(Restrictions.eq("order.orderId", orderId))
-				.setProjection(Projections.property("customer.customerId"));
+				.setProjection(Projections.property("order.customerId"));
 //						.add(Projections.property("order.orderId"), "orderId"));
 
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		resultMap.put("customerId", (Integer) criteria.uniqueResult());
+		resultMap.put("customer", criteria.uniqueResult());
 
-		criteria.setProjection(Projections.property("order.orderId"));
-		resultMap.put("orderId", criteria.uniqueResult());
+		criteria.setProjection(Projections.property("orderId"));
+		resultMap.put("order", criteria.uniqueResult());
 
 		ProjectionList projectionList = Projections.projectionList();
 		projectionList.add(Projections.property("olidId"), "olidId");
 		projectionList.add(Projections.property("product.productId"), "productId");
+		projectionList.add(Projections.property("product.productName"), "productName");
+		projectionList.add(Projections.property("product.productPrice"), "productPrice");
 		projectionList.add(Projections.property("quantityIndividualUnit"), "quantityIndividualUnit");
 		projectionList.add(Projections.property("quantityInPackage"), "quantityInPackage");
 		projectionList.add(Projections.property("olidStatus"), "olidStatus");
