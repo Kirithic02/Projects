@@ -1,5 +1,8 @@
 package com.supermarket.util;
 
+import java.util.Arrays;
+import java.util.List;
+
 public final class WebServiceUtil {
 
 	public static final String SUCCESS = "success";
@@ -31,6 +34,29 @@ public final class WebServiceUtil {
 	public static final String PRODUCT_STATUS_ACTIVE = "ACTIVE";
 	public static final String PRODUCT_STATUS_INACTIVE = "INACTIVE";
 	public static final String PRODUCT_STATUS_UPCOMING = "UPCOMING";
+	public static final String PRODUCT_STATUS_STOCKUNAVAILABLE = "STOCKUNAVAILABLE";
+
+	// *********************** Product Category *****************************
+
+	public static final List<String> PRODUCT_CATEGORIES = Arrays.asList("SNACKS", "GROCERIES", "STATIONERY",
+			"BEVERAGES", "CHOCOLATES", "DAIRYANDEGGS", "BAKERY", "FROZENFOODS", "PERSONALCARE", "HEALTHANDWELLNESS",
+			"BABYANDCHILDCARE", "ELECTRONICSANDAPPLIANCES", "HOMEANDKITCHEN");
+	
+//	public static final String PRODUCT_CATEGORY_SNACKS = "SNACKS";
+//	public static final String PRODUCT_CATEGORY_GROCERIES = "GROCERIES";
+//	public static final String PRODUCT_CATEGORY_STATIONERY = "STATIONERY";
+//	public static final String PRODUCT_CATEGORY_BEVERAGES = "BEVERAGES";
+//	public static final String PRODUCT_CATEGORY_CHOCOLATES = "CHOCOLATES";
+//	public static final String PRODUCT_CATEGORY_DAIRYANDEGGS = "DAIRYANDEGGS";
+//	public static final String PRODUCT_CATEGORY_BAKERY = "BAKERY";
+//	public static final String PRODUCT_CATEGORY_FROZENFOODS = "FROZENFOODS";
+//	public static final String PRODUCT_CATEGORY_PERSONALCARE = "PERSONALCARE";
+//	public static final String PRODUCT_CATEGORY_HEALTHANDWELLNESS = "HEALTHANDWELLNESS";
+//	public static final String PRODUCT_CATEGORY_BABYANDCHILDCARE = "BABYANDCHILDCARE";
+//	public static final String PRODUCT_CATEGORY_ELECTRONICSANDAPPLIANCES = "ELECTRONICSANDAPPLIANCES";
+//	public static final String PRODUCT_CATEGORY_HOMEANDKITCHEN = "HOMEANDKITCHEN";
+//	public static final String PRODUCT_CATEGORY_ = "";
+//	public static final String PRODUCT_CATEGORY_ = "";
 
 	// *********************** Customer *****************************
 	public static final String CUSTOMER_ID = "customerId";
@@ -49,6 +75,7 @@ public final class WebServiceUtil {
 	public static final String PRODUCT_PACKQUANTITY = "packQuantity";
 	public static final String PRODUCT_PRICE = "productPrice";
 	public static final String PRODUCT_CURRENTSTOCKPACKAGECOUNT = "currentStockPackageCount";
+	public static final String PRODUCT_CATEGORY = "CATEGORY";
 	public static final String PRODUCT_EFFECTIVEDATE = "effectiveDate";
 //	public static final String PRODUCT_ = "";
 

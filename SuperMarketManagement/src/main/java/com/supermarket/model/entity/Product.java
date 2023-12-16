@@ -31,6 +31,9 @@ public class Product {
 
 	@Column(name = "PROD_current_stock_package_count")
 	private Integer currentStockPackageCount;
+	
+	@Column(name = "PROD_category")
+	private String productCategory;
 
 	@Column(name = "PROD_effective_date")
 	private Date effectiveDate;
@@ -86,6 +89,14 @@ public class Product {
 
 	public void setCurrentStockPackageCount(Integer currentStockPackageCount) {
 		this.currentStockPackageCount = currentStockPackageCount;
+	}
+
+	public String getProductCategory() {
+		return productCategory;
+	}
+
+	public void setProductCategory(String productCategory) {
+		this.productCategory = productCategory;
 	}
 
 	public Date getEffectiveDate() {

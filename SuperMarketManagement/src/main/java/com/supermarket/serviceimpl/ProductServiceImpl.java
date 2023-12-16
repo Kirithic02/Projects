@@ -19,6 +19,7 @@ import com.supermarket.model.custom.ErrorResponse;
 import com.supermarket.model.custom.FilteredResponse;
 import com.supermarket.model.custom.Response;
 import com.supermarket.model.custom.product.ProductFilterList;
+import com.supermarket.model.custom.product.ProductSalesFilterList;
 import com.supermarket.model.custom.product.PriceHistoryDTO;
 import com.supermarket.model.custom.product.ProductDTO;
 import com.supermarket.model.entity.Product;
@@ -45,71 +46,179 @@ public class ProductServiceImpl implements ProductService {
 	 */
 	@Override
 	@Transactional
-	public Response saveOrUpdate(ProductDTO productDTO) {
-
-		LOGGER.info("Save or Update Product ID : " + productDTO.getProductId());
+	public Response saveOrUpdate(List<ProductDTO> productDTOList) {
 
 		Response response = new Response();
 
-		List<ErrorResponse> errorResponseList = productValidation(productDTO);
-		if (errorResponseList.isEmpty()) {
+		List<ErrorResponse> duplicateResponseList = new ArrayList<ErrorResponse>();
 
-			if (productDAO.isUniqueProduct(productDTO.getProductId(), productDTO.getProductName())) {
+		for (int i = 0; i < productDTOList.size(); i++) {
 
-				if (productDTO.getProductId() == null) {
-					Product product = new Product();
-					product.setProductName(WebServiceUtil.formatFullName(productDTO.getProductName()).trim());
-//					product.setProductName(productDTO.getProductName().trim());
-					product.setPackQuantity(productDTO.getPackQuantity());
-					product.setProductPrice(productDTO.getProductPrice());
-					product.setCurrentStockPackageCount(productDTO.getCurrentStockPackageCount());
-					product.setEffectiveDate(productDTO.getEffectiveDate());
-					product.setCreatedDate(new Date());
-					product.setUpdatedDate(new Date());
+			ProductDTO productDTO = productDTOList.get(i);
 
-					productDAO.addProduct(product);
+			List<ErrorResponse> errorResponseList = productValidation(productDTO);
 
-					response.setStatus(WebServiceUtil.SUCCESS);
-					response.setData("New Product Has Been Added");
-				} else {
-					Product oldProduct = productDAO.getProductById(productDTO.getProductId());
+			if (!errorResponseList.isEmpty()) {
 
-					if (oldProduct != null) {
-
-						if (oldProduct.getEffectiveDate().after(new Date())) {
-							oldProduct
-									.setProductName(WebServiceUtil.formatFullName(productDTO.getProductName()).trim());
-//							oldProduct.setProductName(productDTO.getProductName().trim());
-							oldProduct.setPackQuantity(productDTO.getPackQuantity());
-							oldProduct.setProductPrice(productDTO.getProductPrice());
-							oldProduct.setCurrentStockPackageCount(productDTO.getCurrentStockPackageCount());
-							oldProduct.setEffectiveDate(productDTO.getEffectiveDate());
-							oldProduct.setUpdatedDate(new Date());
-
-							response.setStatus(WebServiceUtil.SUCCESS);
-							response.setData("Product details updated successfully.");
-						} else {
-							response.setStatus(WebServiceUtil.FAILURE);
-							response.setData("Update Failed, Product is Effective For Sale.");
-						}
-					} else {
-						response.setStatus(WebServiceUtil.FAILURE);
-						response.setData("Product ID " + productDTO.getProductId() + " Not Found");
-					}
-				}
-
-			} else {
 				response.setStatus(WebServiceUtil.FAILURE);
-				response.setData("Product Name Already Exist");
+				response.setData(errorResponseList);
+				return response;
 			}
 
-		} else {
-			response.setStatus(WebServiceUtil.FAILURE);
-			response.setData(errorResponseList);
+			if (!productDAO.isUniqueProduct(productDTO.getProductId(), productDTO.getProductName())) {
+
+				ErrorResponse duplicateResponse = new ErrorResponse();
+				duplicateResponse.setFieldName(WebServiceUtil.PRODUCT_NAME);
+				duplicateResponse.setErrorMessage("Product " + productDTO.getProductName() + " Already Exist");
+				duplicateResponseList.add(duplicateResponse);
+			} else {
+
+				for (int j = i + 1; j < productDTOList.size(); j++) {
+
+					ProductDTO checkProductDTO = productDTOList.get(j);
+
+					if (productDTO.getProductName().trim().equalsIgnoreCase(checkProductDTO.getProductName().trim())) {
+
+						ErrorResponse duplicateResponse = new ErrorResponse();
+						duplicateResponse.setFieldName(WebServiceUtil.PRODUCT_NAME);
+						duplicateResponse.setErrorMessage("Product " + productDTO.getProductName() + " Is Duplicate");
+						duplicateResponseList.add(duplicateResponse);
+					}
+				}
+			}
+
+		}
+
+		if (!duplicateResponseList.isEmpty()) {
+			response.setStatus(WebServiceUtil.SUCCESS);
+			response.setData(duplicateResponseList);
+			return response;
+		}
+
+		for (ProductDTO productDTO : productDTOList) {
+
+			LOGGER.info("Save or Update Product ID : " + productDTO.getProductId());
+
+			if (productDTO.getProductId() == null) {
+				Product product = new Product();
+				product.setProductName(WebServiceUtil.formatFullName(productDTO.getProductName()).trim());
+				product.setPackQuantity(productDTO.getPackQuantity());
+				product.setProductPrice(productDTO.getProductPrice());
+				product.setCurrentStockPackageCount(productDTO.getCurrentStockPackageCount());
+				product.setProductCategory(productDTO.getProductCategory());
+				product.setEffectiveDate(productDTO.getEffectiveDate());
+				product.setCreatedDate(new Date());
+				product.setUpdatedDate(new Date());
+
+				productDAO.addProduct(product);
+
+				response.setStatus(WebServiceUtil.SUCCESS);
+				response.setData("New Products Has Been Added");
+			} else {
+				Product oldProduct = productDAO.getProductById(productDTO.getProductId());
+
+				if (oldProduct != null) {
+
+					if (oldProduct.getEffectiveDate().after(new Date())) {
+						oldProduct.setProductName(WebServiceUtil.formatFullName(productDTO.getProductName()).trim());
+						oldProduct.setPackQuantity(productDTO.getPackQuantity());
+						oldProduct.setProductPrice(productDTO.getProductPrice());
+						oldProduct.setCurrentStockPackageCount(productDTO.getCurrentStockPackageCount());
+						oldProduct.setProductCategory(productDTO.getProductCategory());
+						oldProduct.setEffectiveDate(productDTO.getEffectiveDate());
+						oldProduct.setUpdatedDate(new Date());
+
+						response.setStatus(WebServiceUtil.SUCCESS);
+						response.setData("Product details updated successfully.");
+					} else {
+						response.setStatus(WebServiceUtil.FAILURE);
+						response.setData("Update Failed, Product is Effective For Sale.");
+						return response;
+					}
+				} else {
+					response.setStatus(WebServiceUtil.FAILURE);
+					response.setData(productDTO.getProductName() + " Not Found");
+					return response;
+				}
+			}
 		}
 
 		return response;
 	}
+
+//	/**
+//	 * save or update product
+//	 * 
+//	 * @param productDTO
+//	 * @return
+//	 */
+//	@Override
+//	@Transactional
+//	public Response saveOrUpdate(ProductDTO productDTO) {
+//
+//		LOGGER.info("Save or Update Product ID : " + productDTO.getProductId());
+//
+//		Response response = new Response();
+//
+//		List<ErrorResponse> errorResponseList = productValidation(productDTO);
+//		if (errorResponseList.isEmpty()) {
+//
+//			if (productDAO.isUniqueProduct(productDTO.getProductId(), productDTO.getProductName())) {
+//
+//				if (productDTO.getProductId() == null) {
+//					Product product = new Product();
+//					product.setProductName(WebServiceUtil.formatFullName(productDTO.getProductName()).trim());
+//					product.setPackQuantity(productDTO.getPackQuantity());
+//					product.setProductPrice(productDTO.getProductPrice());
+//					product.setCurrentStockPackageCount(productDTO.getCurrentStockPackageCount());
+//					product.setProductCategory(productDTO.getProductCategory());
+//					product.setEffectiveDate(productDTO.getEffectiveDate());
+//					product.setCreatedDate(new Date());
+//					product.setUpdatedDate(new Date());
+//
+//					productDAO.addProduct(product);
+//
+//					response.setStatus(WebServiceUtil.SUCCESS);
+//					response.setData("New Product Has Been Added");
+//				} else {
+//					Product oldProduct = productDAO.getProductById(productDTO.getProductId());
+//
+//					if (oldProduct != null) {
+//
+//						if (oldProduct.getEffectiveDate().after(new Date())) {
+//							oldProduct
+//									.setProductName(WebServiceUtil.formatFullName(productDTO.getProductName()).trim());
+//							oldProduct.setPackQuantity(productDTO.getPackQuantity());
+//							oldProduct.setProductPrice(productDTO.getProductPrice());
+//							oldProduct.setCurrentStockPackageCount(productDTO.getCurrentStockPackageCount());
+//							oldProduct.setProductCategory(productDTO.getProductCategory());
+//							oldProduct.setEffectiveDate(productDTO.getEffectiveDate());
+//							oldProduct.setUpdatedDate(new Date());
+//
+//							response.setStatus(WebServiceUtil.SUCCESS);
+//							response.setData("Product details updated successfully.");
+//						} else {
+//							response.setStatus(WebServiceUtil.FAILURE);
+//							response.setData("Update Failed, Product is Effective For Sale.");
+//						}
+//					} else {
+//						response.setStatus(WebServiceUtil.FAILURE);
+//						response.setData("Product ID " + productDTO.getProductId() + " Not Found");
+//					}
+//				}
+//
+//			} else {
+//				response.setStatus(WebServiceUtil.FAILURE);
+//				response.setData("Product Name Already Exist");
+//			}
+//
+//		} else {
+//			response.setStatus(WebServiceUtil.FAILURE);
+//			response.setData(errorResponseList);
+//		}
+//
+//		return response;
+//	}
 
 	/**
 	 * deactivate And Update Product
@@ -141,10 +250,10 @@ public class ProductServiceImpl implements ProductService {
 
 						Product newProduct = new Product();
 						newProduct.setProductName(WebServiceUtil.formatFullName(productDTO.getProductName()).trim());
-//						newProduct.setProductName(productDTO.getProductName().trim());
 						newProduct.setPackQuantity(productDTO.getPackQuantity());
 						newProduct.setProductPrice(productDTO.getProductPrice());
 						newProduct.setCurrentStockPackageCount(productDTO.getCurrentStockPackageCount());
+						newProduct.setProductCategory(productDTO.getProductCategory());
 						newProduct.setEffectiveDate(productDTO.getEffectiveDate());
 						newProduct.setOldProductId(oldProduct);
 						newProduct.setCreatedDate(new Date());
@@ -177,44 +286,56 @@ public class ProductServiceImpl implements ProductService {
 	private List<ErrorResponse> productValidation(ProductDTO productDTO) {
 		List<ErrorResponse> errorResponseList = new ArrayList<ErrorResponse>();
 
-		if (productDTO.getProductName() == null || productDTO.getProductName().isBlank()
+		if (productDTO.getProductName() == null || productDTO.getProductName().trim().isEmpty()
 				|| !ValidationUtil.isValidProductName(productDTO.getProductName())) {
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.PRODUCT_NAME);
-			errorResponse.setErrorMessage("Product Name Should Only Contain Alphabets and Numbers");
+			errorResponse.setErrorMessage(
+					"Product Name Should Only Contain Alphabets and Numbers for " + productDTO.getProductName());
 			errorResponseList.add(errorResponse);
 		}
 
 		if (productDTO.getEffectiveDate() == null) {
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.PRODUCT_EFFECTIVEDATE);
-			errorResponse.setErrorMessage("Date is Invalid");
+			errorResponse.setErrorMessage("Date is Invalid for " + productDTO.getProductName());
 			errorResponseList.add(errorResponse);
 		} else if (productDTO.getEffectiveDate().before(new Date())) {
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.PRODUCT_EFFECTIVEDATE);
-			errorResponse.setErrorMessage("Date Should be after current date");
+			errorResponse.setErrorMessage("Date Should be after current date for " + productDTO.getProductName());
 			errorResponseList.add(errorResponse);
 		}
 
 		if (productDTO.getPackQuantity() == null || productDTO.getPackQuantity() <= 0) {
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.PRODUCT_PACKQUANTITY);
-			errorResponse.setErrorMessage("Pack Quantity Should be greater than 0");
+			errorResponse.setErrorMessage("Pack Quantity Should be greater than 0 for " + productDTO.getProductName());
 			errorResponseList.add(errorResponse);
 		}
 
 		if (productDTO.getCurrentStockPackageCount() == null || productDTO.getCurrentStockPackageCount() <= 0) {
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.PRODUCT_CURRENTSTOCKPACKAGECOUNT);
-			errorResponse.setErrorMessage("Current Stock Package Count Should be greater than 0");
+			errorResponse.setErrorMessage(
+					"Current Stock Package Count Should be greater than 0 for " + productDTO.getProductName());
+			errorResponseList.add(errorResponse);
+		}
+
+		if (productDTO.getProductCategory() == null || productDTO.getProductCategory().trim().isEmpty()
+				|| !(WebServiceUtil.PRODUCT_CATEGORIES
+						.contains(productDTO.getProductCategory().trim().toUpperCase()))) {
+
+			ErrorResponse errorResponse = new ErrorResponse();
+			errorResponse.setFieldName(WebServiceUtil.PRODUCT_CATEGORY);
+			errorResponse.setErrorMessage("Invalid Product Category for " + productDTO.getProductName());
 			errorResponseList.add(errorResponse);
 		}
 
 		if (productDTO.getProductPrice() == null || productDTO.getProductPrice() <= 0) {
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.PRODUCT_PRICE);
-			errorResponse.setErrorMessage("Product Price Should be greater than 0");
+			errorResponse.setErrorMessage("Product Price Should be greater than 0 for " + productDTO.getProductName());
 			errorResponseList.add(errorResponse);
 		}
 		return errorResponseList;
@@ -331,7 +452,7 @@ public class ProductServiceImpl implements ProductService {
 				filterResponse.setStatus(WebServiceUtil.SUCCESS);
 				filterResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
 				filterResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
-				filterResponse.setData(resultMap.get("No Matching Records Found"));
+				filterResponse.setData("No Matching Records Found");
 			}
 		} else {
 			filterResponse.setStatus(WebServiceUtil.FAILURE);
@@ -359,17 +480,30 @@ public class ProductServiceImpl implements ProductService {
 			errorResponseList.add(errorResponse);
 		}
 
-		if (!(productFilterList.getFilter().getStatus() == null || productFilterList.getFilter().getStatus().isBlank()
+		if (!(productFilterList.getFilter().getStatus() == null
+				|| productFilterList.getFilter().getStatus().trim().isEmpty()
 				|| productFilterList.getFilter().getStatus().trim()
 						.equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_ACTIVE)
 				|| productFilterList.getFilter().getStatus().trim()
 						.equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_INACTIVE)
 				|| productFilterList.getFilter().getStatus().trim()
-						.equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_UPCOMING))) {
+						.equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_UPCOMING)
+				|| productFilterList.getFilter().getStatus().trim()
+						.equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_STOCKUNAVAILABLE))) {
 
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.PRODUCT_STATUS);
 			errorResponse.setErrorMessage("Status Should Contain only active (or) inactive (or) upcoming");
+			errorResponseList.add(errorResponse);
+		}
+
+		if (!(productFilterList.getFilter().getCategory() == null
+				|| productFilterList.getFilter().getCategory().trim().isEmpty() || WebServiceUtil.PRODUCT_CATEGORIES
+						.contains(productFilterList.getFilter().getCategory().trim().toUpperCase()))) {
+
+			ErrorResponse errorResponse = new ErrorResponse();
+			errorResponse.setFieldName(WebServiceUtil.PRODUCT_CATEGORY);
+			errorResponse.setErrorMessage("Inavlid Category");
 			errorResponseList.add(errorResponse);
 		}
 
@@ -418,5 +552,38 @@ public class ProductServiceImpl implements ProductService {
 
 		return errorResponseList;
 	}
+
+//	/**
+//	 * Retrieves Product Sales Report List
+//	 * 
+//	 * @param productSalesFilterList
+//	 * @return
+//	 */
+//	@Override
+//	@Transactional
+//	public FilteredResponse listProductSales(ProductSalesFilterList productFilterList) {
+//
+//		Map<String, Object> resultMap = productDAO.listProductsSales(productFilterList);
+//		FilteredResponse filterResponse = new FilteredResponse();
+//
+////		if ((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT) > 0) {
+////			filterResponse.setStatus(WebServiceUtil.SUCCESS);
+////			filterResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
+////			filterResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
+////			filterResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
+////		} else {
+////			filterResponse.setStatus(WebServiceUtil.SUCCESS);
+////			filterResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
+////			filterResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
+////			filterResponse.setData("No Matching Records Found");
+////		}
+//
+//		filterResponse.setStatus(WebServiceUtil.SUCCESS);
+//		filterResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
+//		filterResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
+//		filterResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
+//
+//		return filterResponse;
+//	}
 
 }

@@ -3,6 +3,8 @@ package com.supermarket.model.custom.product;
 public class ProductFilter {
 
 	private String status;
+	
+	private String category;
 
 	private Integer minPrice;
 
@@ -14,6 +16,14 @@ public class ProductFilter {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
 	}
 
 	public Integer getMinPrice() {

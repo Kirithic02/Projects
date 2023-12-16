@@ -1,5 +1,7 @@
 package com.supermarket.restcontroller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.supermarket.model.custom.FilteredResponse;
 import com.supermarket.model.custom.Response;
 import com.supermarket.model.custom.product.ProductFilterList;
+import com.supermarket.model.custom.product.ProductSalesFilterList;
 import com.supermarket.model.custom.product.ProductDTO;
 import com.supermarket.service.ProductService;
 
@@ -32,8 +35,8 @@ public class ProductRestController {
 	 * @return
 	 */
 	@RequestMapping(value = "/saveorupdate", method = RequestMethod.POST)
-	public ResponseEntity<Response> saveOrUpdate(@RequestBody ProductDTO productDTO) {
-		return new ResponseEntity<>(productService.saveOrUpdate(productDTO), HttpStatus.OK);
+	public ResponseEntity<Response> saveOrUpdate(@RequestBody List<ProductDTO> productDTOList) {
+		return new ResponseEntity<>(productService.saveOrUpdate(productDTOList), HttpStatus.OK);
 	}
 
 	/**
@@ -79,5 +82,16 @@ public class ProductRestController {
 	public ResponseEntity<FilteredResponse> listProduct(@RequestBody ProductFilterList filterListDto) {
 		return new ResponseEntity<>(productService.listProduct(filterListDto), HttpStatus.OK);
 	}
+	
+//	/**
+//	 * Retrieves Product Sales Report List
+//	 * 
+//	 * @param productSalesFilterList
+//	 * @return
+//	 */
+//	@RequestMapping(value = "/listProductSales", method = RequestMethod.POST)
+//	public ResponseEntity<FilteredResponse> listProductSales(@RequestBody ProductSalesFilterList productSalesFilterList) {
+//		return new ResponseEntity<>(productService.listProductSales(productSalesFilterList), HttpStatus.OK);
+//	}
 
 }

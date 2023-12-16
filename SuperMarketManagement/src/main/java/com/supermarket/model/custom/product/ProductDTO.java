@@ -18,6 +18,8 @@ public class ProductDTO {
 	private Integer productPrice;
 
 	private Integer currentStockPackageCount;
+	
+	private String productCategory;
 
 	@JsonSerialize(using = TimestampSerializer.class)
 	@JsonDeserialize(using = DateDeserializer.class)
@@ -67,6 +69,14 @@ public class ProductDTO {
 
 	public void setCurrentStockPackageCount(Integer currentStockPackageCount) {
 		this.currentStockPackageCount = currentStockPackageCount;
+	}
+
+	public String getProductCategory() {
+		return productCategory;
+	}
+
+	public void setProductCategory(String productCategory) {
+		this.productCategory = productCategory;
 	}
 
 	public Date getEffectiveDate() {

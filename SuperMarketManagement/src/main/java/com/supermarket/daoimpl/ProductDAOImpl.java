@@ -17,6 +17,9 @@ import org.springframework.stereotype.Repository;
 
 import com.supermarket.dao.ProductDAO;
 import com.supermarket.model.custom.product.ProductFilterList;
+import com.supermarket.model.custom.product.ProductSales;
+import com.supermarket.model.custom.product.ProductSalesFilterList;
+import com.supermarket.model.custom.order.OrderLineItemDetailsDTO;
 import com.supermarket.model.custom.product.ProductDTO;
 import com.supermarket.model.entity.Product;
 import com.supermarket.util.ValidationUtil;
@@ -41,7 +44,7 @@ public class ProductDAOImpl implements ProductDAO {
 	@Override
 	public boolean isUniqueProduct(Integer productId, String productName) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Product.class)
-				.add(Restrictions.eq("productName", productName)).add(Restrictions.isNull("lastEffectiveDate"));
+				.add(Restrictions.eq("productName", productName.trim())).add(Restrictions.isNull("lastEffectiveDate"));
 //				.add(Restrictions.ne("productId", productId));
 
 		if (productId != null) {
@@ -62,6 +65,7 @@ public class ProductDAOImpl implements ProductDAO {
 						.add(Projections.property("packQuantity"), "packQuantity")
 						.add(Projections.property("productPrice"), "productPrice")
 						.add(Projections.property("currentStockPackageCount"), "currentStockPackageCount")
+						.add(Projections.property("productCategory"), "productCategory")
 						.add(Projections.property("effectiveDate"), "effectiveDate")
 						.add(Projections.property("lastEffectiveDate"), "lastEffectiveDate")
 						.add(Projections.property("oldproduct.productId"), "oldProductId"))
@@ -113,7 +117,8 @@ public class ProductDAOImpl implements ProductDAO {
 			if (filterList.getFilter().getStatus().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_ACTIVE)) {
 				criteria.add(Restrictions.le("effectiveDate", new Date()))
 						.add(Restrictions.disjunction().add(Restrictions.gt("lastEffectiveDate", new Date()))
-								.add(Restrictions.isNull("lastEffectiveDate")));
+								.add(Restrictions.isNull("lastEffectiveDate")))
+						.add(Restrictions.gt("currentStockPackageCount", 0));
 			} else if (filterList.getFilter().getStatus().trim()
 					.equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_INACTIVE)) {
 				criteria.add(Restrictions.disjunction()
@@ -123,7 +128,18 @@ public class ProductDAOImpl implements ProductDAO {
 			} else if (filterList.getFilter().getStatus().trim()
 					.equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_UPCOMING)) {
 				criteria.add(Restrictions.gt("effectiveDate", new Date()));
+			} else if (filterList.getFilter().getStatus().trim()
+					.equalsIgnoreCase(WebServiceUtil.PRODUCT_STATUS_STOCKUNAVAILABLE)) {
+				criteria.add(Restrictions.le("effectiveDate", new Date()))
+						.add(Restrictions.disjunction().add(Restrictions.gt("lastEffectiveDate", new Date()))
+								.add(Restrictions.isNull("lastEffectiveDate")))
+						.add(Restrictions.le("currentStockPackageCount", 0));
 			}
+		}
+
+		if (filterList.getFilter().getCategory() != null && !filterList.getFilter().getCategory().isBlank()) {
+
+			criteria.add(Restrictions.eq("productCategory", filterList.getFilter().getCategory()));
 		}
 
 		if (filterList.getOrderBy() != null) {
@@ -185,6 +201,7 @@ public class ProductDAOImpl implements ProductDAO {
 				.add(Projections.property("packQuantity"), "packQuantity")
 				.add(Projections.property("productPrice"), "productPrice")
 				.add(Projections.property("currentStockPackageCount"), "currentStockPackageCount")
+				.add(Projections.property("productCategory"), "productCategory")
 				.add(Projections.property("effectiveDate"), "effectiveDate")
 				.add(Projections.property("lastEffectiveDate"), "lastEffectiveDate")
 				.add(Projections.property("oldproduct.productId"), "oldProductId"))
@@ -195,5 +212,48 @@ public class ProductDAOImpl implements ProductDAO {
 
 		return resultMap;
 	}
+	
+
+//	@Override
+//	public Map<String, Object> listProductsSales(ProductSalesFilterList productSalesFilterList) {
+//
+//		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(OrderLineItemDetailsDTO.class)
+//				.createAlias("productId", "product").setProjection(Projections.countDistinct("productId"));
+//
+//		Map<String, Object> resultMap = new HashMap<String, Object>();
+//		resultMap.put("totalCount", criteria.uniqueResult());
+//		
+////		if(productSalesFilterList.getFilter().getFromDate() != null && productSalesFilterList.getFilter().getToDate() != null) {
+////			
+////			criteria.add(Restrictions.between("createdDate", productSalesFilterList.getFilter().getFromDate(), productSalesFilterList.getFilter().getToDate()));
+////		}
+//		
+////		if (productSalesFilterList.getFilter().getFromDate() != null) {
+////			criteria.add(Restrictions.ge("createdDate", productSalesFilterList.getFilter().getFromDate()));
+////		}
+////		if (productSalesFilterList.getFilter().getToDate() != null) {
+////			criteria.add(Restrictions.le("createdDate", productSalesFilterList.getFilter().getToDate()));
+////		}
+//
+////		if (productSalesFilterList.getOrderBy().getType() != null && productSalesFilterList.getOrderBy().getType()
+////				.equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)) {
+////			
+////			criteria.addOrder(Order.asc(""))
+////		}
+//		
+//		criteria.setProjection(Projections.countDistinct("productId"));
+//		resultMap.put("filteredCount", criteria.uniqueResult());
+//		
+//		criteria.setProjection(Projections.projectionList().add(Projections.groupProperty("productId"), "productId")
+//				.add(Projections.property("productName"), "productName")
+//				.add(Projections.sum("quantityInPackage"), "salesCount"))
+//				.setFirstResult(productSalesFilterList.getStart()).setMaxResults(productSalesFilterList.getLength())
+//				.setResultTransformer(Transformers.aliasToBean(ProductSales.class))
+//				.addOrder(Order.asc("salesCount"));
+//		
+//		resultMap.put("data", criteria.list());
+//
+//		return resultMap;
+//	}
 
 }
