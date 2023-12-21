@@ -6,7 +6,9 @@ public class ProductSales {
 	
 	private String productName;
 	
-	private Integer salesCount;
+	private String productCategory;
+	
+	private Long salesCount;
 
 	public Integer getProductId() {
 		return productId;
@@ -24,11 +26,19 @@ public class ProductSales {
 		this.productName = productName;
 	}
 
-	public Integer getSalesCount() {
+	public String getProductCategory() {
+		return productCategory;
+	}
+
+	public void setProductCategory(String productCategory) {
+		this.productCategory = productCategory;
+	}
+
+	public Long getSalesCount() {
 		return salesCount;
 	}
 
-	public void setSalesCount(Integer salesCount) {
+	public void setSalesCount(Long salesCount) {
 		this.salesCount = salesCount;
 	}
 	

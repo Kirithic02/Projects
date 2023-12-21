@@ -12,4 +12,6 @@ public interface CustomerService {
 	Response saveOrUpdate(CustomerDTO customerDTO);
 
 	FilteredResponse listCustomer(CustomerFilterList customerFilterList);
+
+	Response login(String mail, String password);
 }

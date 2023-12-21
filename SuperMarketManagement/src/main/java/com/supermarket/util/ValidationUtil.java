@@ -23,6 +23,12 @@ public class ValidationUtil {
 		Matcher matcher = pattern.matcher(email);
 		return matcher.matches();
 	}
+	
+	public static boolean isValidPassword(String password) {
+		Pattern pattern = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$");
+		Matcher matcher = pattern.matcher(password);
+		return matcher.matches();
+	}
 
 	public static boolean isValidPhoneNumber(String phoneNumber) {
 		Pattern pattern = Pattern.compile("^\\d{10}$");

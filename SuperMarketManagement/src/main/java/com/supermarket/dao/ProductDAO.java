@@ -23,5 +23,5 @@ public interface ProductDAO {
 
 	boolean isUniqueProduct(Integer productId, String productName);
 
-//	Map<String, Object> listProductsSales(ProductSalesFilterList productSalesFilterList);
+	Map<String, Object> listProductsSales(ProductSalesFilterList productSalesFilterList);
 }

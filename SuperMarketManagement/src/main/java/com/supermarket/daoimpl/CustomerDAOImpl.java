@@ -79,9 +79,19 @@ public class CustomerDAOImpl implements CustomerDAO {
 	public Customer getCustomerByName(String custName) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Customer.class)
 				.add(Restrictions.eq("customerName", custName));
+		
 		return (Customer) criteria;
 	}
+	
+	@Override
+	public Customer getCustomerDTOByMail(String mail) {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Customer.class)
+				.add(Restrictions.eq("mail", mail));
+		
+		return (Customer) criteria.uniqueResult();
+	}
 
+	
 	@Override
 	public CustomerDTO getCustomerDTOById(int customerId) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Customer.class)
@@ -89,9 +99,10 @@ public class CustomerDAOImpl implements CustomerDAO {
 				.setProjection(Projections.projectionList().add(Projections.property("customerId"), "customerId")
 						.add(Projections.property("customerName"), "customerName")
 						.add(Projections.property("mobileNo"), "mobileNo")
+						.add(Projections.property("mail"), "mail")
 						.add(Projections.property("address"), "address")
 						.add(Projections.property("location"), "location").add(Projections.property("city"), "city")
-						.add(Projections.property("pincode"), "pincode").add(Projections.property("mail"), "mail"))
+						.add(Projections.property("pincode"), "pincode"))
 				.setResultTransformer(Transformers.aliasToBean(CustomerDTO.class));
 
 		return (CustomerDTO) criteria.uniqueResult();

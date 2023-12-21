@@ -19,8 +19,8 @@ import com.supermarket.dao.ProductDAO;
 import com.supermarket.model.custom.product.ProductFilterList;
 import com.supermarket.model.custom.product.ProductSales;
 import com.supermarket.model.custom.product.ProductSalesFilterList;
-import com.supermarket.model.custom.order.OrderLineItemDetailsDTO;
 import com.supermarket.model.custom.product.ProductDTO;
+import com.supermarket.model.entity.OrderLineItemDetails;
 import com.supermarket.model.entity.Product;
 import com.supermarket.util.ValidationUtil;
 import com.supermarket.util.WebServiceUtil;
@@ -137,7 +137,7 @@ public class ProductDAOImpl implements ProductDAO {
 			}
 		}
 
-		if (filterList.getFilter().getCategory() != null && !filterList.getFilter().getCategory().isBlank()) {
+		if (filterList.getFilter().getCategory() != null && !filterList.getFilter().getCategory().trim().isEmpty()) {
 
 			criteria.add(Restrictions.eq("productCategory", filterList.getFilter().getCategory()));
 		}
@@ -214,46 +214,94 @@ public class ProductDAOImpl implements ProductDAO {
 	}
 	
 
+	@Override
+	public Map<String, Object> listProductsSales(ProductSalesFilterList productSalesFilterList) {
+
+		System.out.println("DAO");
+
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(OrderLineItemDetails.class)
+				.createAlias("productId", "product").setProjection(Projections.countDistinct("productId"));
+
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("totalCount", criteria.uniqueResult());
+
+//		if(productSalesFilterList.getFilter().getFromDate() != null && productSalesFilterList.getFilter().getToDate() != null) {
+//			
+//			criteria.add(Restrictions.between("createdDate", productSalesFilterList.getFilter().getFromDate(), productSalesFilterList.getFilter().getToDate()));
+//		}
+
+		if (productSalesFilterList.getFilter().getFromDate() != null) {
+			criteria.add(Restrictions.ge("createdDate", productSalesFilterList.getFilter().getFromDate()));
+		}
+		if (productSalesFilterList.getFilter().getToDate() != null) {
+			criteria.add(Restrictions.le("createdDate", productSalesFilterList.getFilter().getToDate()));
+		}
+
+		if (productSalesFilterList.getFilter().getProductCategory() != null
+				&& !productSalesFilterList.getFilter().getProductCategory().trim().isEmpty()) {
+
+			criteria.add(Restrictions.eq("product.productCategory",
+					productSalesFilterList.getFilter().getProductCategory()));
+		}
+
+//		if (productSalesFilterList.getOrderBy().getType() != null && productSalesFilterList.getOrderBy().getType()
+//				.equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)) {
+//			
+//			criteria.addOrder(Order.asc(""));
+//		}
+
+		criteria.setProjection(Projections.countDistinct("productId"));
+		resultMap.put("filteredCount", (Long) criteria.uniqueResult());
+
+		criteria.setProjection(
+				Projections.projectionList().add(Projections.groupProperty("product.productId"), "productId")
+						.add(Projections.property("product.productName"), "productName")
+						.add(Projections.property("product.productCategory"), "productCategory")
+						.add(Projections.sum("quantityInPackage"), "salesCount"))
+				.setFirstResult(productSalesFilterList.getStart()).setMaxResults(productSalesFilterList.getLength());
+
+		if (productSalesFilterList.getOrderBy() != null) {
+
+			if (ValidationUtil.isNotEmpty(productSalesFilterList.getOrderBy().getColumn())
+					&& productSalesFilterList.getOrderBy().getType() != null) {
+
+				if (productSalesFilterList.getOrderBy().getColumn().trim()
+						.equalsIgnoreCase(WebServiceUtil.PRODUCT_NAME)) {
+
+					if (productSalesFilterList.getOrderBy().getType() == null
+							|| productSalesFilterList.getOrderBy().getType().trim().isEmpty()
+							|| productSalesFilterList.getOrderBy().getType().trim()
+									.equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)) {
+						criteria.addOrder(Order.asc("product.productName"));
+					} else {
+						criteria.addOrder(Order.desc("product.productName"));
+					}
+				} else if (productSalesFilterList.getOrderBy().getColumn().trim()
+						.equalsIgnoreCase(WebServiceUtil.PRODUCT_SALESCOUNT)) {
+
+					if (productSalesFilterList.getOrderBy().getType() == null
+							|| productSalesFilterList.getOrderBy().getType().trim().isEmpty()
+							|| productSalesFilterList.getOrderBy().getType().trim()
+									.equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)) {
+						criteria.addOrder(Order.asc("salesCount"));
+					} else {
+						criteria.addOrder(Order.desc("salesCount"));
+					}
+				}
+			}
+		}
+		criteria.setResultTransformer(Transformers.aliasToBean(ProductSales.class));
+
+		resultMap.put("data", criteria.list());
+
+		return resultMap;
+	}
+	
+	
 //	@Override
-//	public Map<String, Object> listProductsSales(ProductSalesFilterList productSalesFilterList) {
-//
-//		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(OrderLineItemDetailsDTO.class)
-//				.createAlias("productId", "product").setProjection(Projections.countDistinct("productId"));
-//
-//		Map<String, Object> resultMap = new HashMap<String, Object>();
-//		resultMap.put("totalCount", criteria.uniqueResult());
+//	public Map<String, Object> listProductSales(ProductSalesFilterList productSalesFilterList) {
 //		
-////		if(productSalesFilterList.getFilter().getFromDate() != null && productSalesFilterList.getFilter().getToDate() != null) {
-////			
-////			criteria.add(Restrictions.between("createdDate", productSalesFilterList.getFilter().getFromDate(), productSalesFilterList.getFilter().getToDate()));
-////		}
-//		
-////		if (productSalesFilterList.getFilter().getFromDate() != null) {
-////			criteria.add(Restrictions.ge("createdDate", productSalesFilterList.getFilter().getFromDate()));
-////		}
-////		if (productSalesFilterList.getFilter().getToDate() != null) {
-////			criteria.add(Restrictions.le("createdDate", productSalesFilterList.getFilter().getToDate()));
-////		}
-//
-////		if (productSalesFilterList.getOrderBy().getType() != null && productSalesFilterList.getOrderBy().getType()
-////				.equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)) {
-////			
-////			criteria.addOrder(Order.asc(""))
-////		}
-//		
-//		criteria.setProjection(Projections.countDistinct("productId"));
-//		resultMap.put("filteredCount", criteria.uniqueResult());
-//		
-//		criteria.setProjection(Projections.projectionList().add(Projections.groupProperty("productId"), "productId")
-//				.add(Projections.property("productName"), "productName")
-//				.add(Projections.sum("quantityInPackage"), "salesCount"))
-//				.setFirstResult(productSalesFilterList.getStart()).setMaxResults(productSalesFilterList.getLength())
-//				.setResultTransformer(Transformers.aliasToBean(ProductSales.class))
-//				.addOrder(Order.asc("salesCount"));
-//		
-//		resultMap.put("data", criteria.list());
-//
-//		return resultMap;
+//		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(OrderLineItemDetails.class)
 //	}
 
 }

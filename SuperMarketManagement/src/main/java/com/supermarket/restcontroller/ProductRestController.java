@@ -83,15 +83,15 @@ public class ProductRestController {
 		return new ResponseEntity<>(productService.listProduct(filterListDto), HttpStatus.OK);
 	}
 	
-//	/**
-//	 * Retrieves Product Sales Report List
-//	 * 
-//	 * @param productSalesFilterList
-//	 * @return
-//	 */
-//	@RequestMapping(value = "/listProductSales", method = RequestMethod.POST)
-//	public ResponseEntity<FilteredResponse> listProductSales(@RequestBody ProductSalesFilterList productSalesFilterList) {
-//		return new ResponseEntity<>(productService.listProductSales(productSalesFilterList), HttpStatus.OK);
-//	}
+	/**
+	 * Retrieves Product Sales Report List
+	 * 
+	 * @param productSalesFilterList
+	 * @return
+	 */
+	@RequestMapping(value = "/listProductSales", method = RequestMethod.POST)
+	public ResponseEntity<FilteredResponse> listProductSales(@RequestBody ProductSalesFilterList productSalesFilterList) {
+		return new ResponseEntity<>(productService.listProductSales(productSalesFilterList), HttpStatus.OK);
+	}
 
 }

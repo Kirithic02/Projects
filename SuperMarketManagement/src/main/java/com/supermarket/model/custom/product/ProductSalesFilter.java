@@ -8,8 +8,8 @@ import com.supermarket.util.deserializer.DateDeserializer;
 public class ProductSalesFilter {
 
 //	private String status;
-//	
-//	private String category;
+	
+	private String productCategory;
 	
 	@JsonDeserialize(using = DateDeserializer.class)
 	private Date fromDate;
@@ -24,17 +24,17 @@ public class ProductSalesFilter {
 //	public void setStatus(String status) {
 //		this.status = status;
 //	}
-//
-//	public String getCategory() {
-//		return category;
-//	}
-//
-//	public void setCategory(String category) {
-//		this.category = category;
-//	}
 
 	public Date getFromDate() {
 		return fromDate;
+	}
+
+	public String getProductCategory() {
+		return productCategory;
+	}
+
+	public void setProductCategory(String productCategory) {
+		this.productCategory = productCategory;
 	}
 
 	public void setFromDate(Date fromDate) {

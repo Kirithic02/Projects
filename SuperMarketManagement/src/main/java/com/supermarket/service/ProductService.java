@@ -20,7 +20,7 @@ public interface ProductService {
 
 	Response priceHistory(Integer productId);
 
-//	FilteredResponse listProductSales(ProductSalesFilterList productFilterList);
+	FilteredResponse listProductSales(ProductSalesFilterList productFilterList);
 
 //	FilteredResponse listActiveProducts(Date date, Integer page, Integer limit);
 //	

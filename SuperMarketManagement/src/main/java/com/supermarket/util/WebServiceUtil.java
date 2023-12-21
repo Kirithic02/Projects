@@ -62,11 +62,12 @@ public final class WebServiceUtil {
 	public static final String CUSTOMER_ID = "customerId";
 	public static final String CUSTOMER_NAME = "customerName";
 	public static final String CUSTOMER_MOBILE_NUMBER = "mobileNo";
+	public static final String CUSTOMER_MAIL = "mail";
+	public static final String CUSTOMER_PASSWORD = "password";
 	public static final String CUSTOMER_ADDRESS = "address";
 	public static final String CUSTOMER_LOCATION = "location";
 	public static final String CUSTOMER_CITY = "city";
 	public static final String CUSTOMER_PINCODE = "pincode";
-	public static final String CUSTOMER_MAIL = "mail";
 	public static final String CUSTOMER_CREATEDDATE = "createdDate";
 
 	// *********************** Product *****************************
@@ -77,7 +78,7 @@ public final class WebServiceUtil {
 	public static final String PRODUCT_CURRENTSTOCKPACKAGECOUNT = "currentStockPackageCount";
 	public static final String PRODUCT_CATEGORY = "CATEGORY";
 	public static final String PRODUCT_EFFECTIVEDATE = "effectiveDate";
-//	public static final String PRODUCT_ = "";
+	public static final String PRODUCT_SALESCOUNT = "SALESCOUNT";
 
 	// *********************** OrderDetails *****************************
 	public static final String ORDERDETAILS_ID = "orderId";

@@ -8,6 +8,10 @@ public class CustomerDTO {
 
 	private String mobileNo;
 
+	private String mail;
+	
+	private String password;
+
 	private String address;
 
 	private String location;
@@ -15,8 +19,6 @@ public class CustomerDTO {
 	private String city;
 
 	private String pincode;
-
-	private String mail;
 
 	public Integer getCustomerId() {
 		return customerId;
@@ -80,6 +82,14 @@ public class CustomerDTO {
 
 	public void setMail(String mail) {
 		this.mail = mail;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 }

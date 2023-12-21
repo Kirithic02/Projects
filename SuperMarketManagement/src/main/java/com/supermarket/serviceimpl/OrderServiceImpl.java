@@ -657,7 +657,7 @@ public class OrderServiceImpl implements OrderService {
 		}
 
 		if (!(orderFilterList.getFilter().getOrderStatus() == null
-				|| orderFilterList.getFilter().getOrderStatus().isBlank()
+				|| orderFilterList.getFilter().getOrderStatus().trim().isEmpty()
 				|| orderFilterList.getFilter().getOrderStatus().equalsIgnoreCase(WebServiceUtil.NEW)
 				|| orderFilterList.getFilter().getOrderStatus().equalsIgnoreCase(WebServiceUtil.PACKED)
 				|| orderFilterList.getFilter().getOrderStatus().equalsIgnoreCase(WebServiceUtil.SHIPPED)

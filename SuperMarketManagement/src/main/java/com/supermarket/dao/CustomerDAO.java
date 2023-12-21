@@ -22,6 +22,8 @@ public interface CustomerDAO {
 
 	boolean isNotUniqueMail(Integer customerId, String mail);
 
+	Customer getCustomerDTOByMail(String Mail);
+
 //	int isUniqueCustomer(Integer customerId, String mobileNo, String mail);
 
 }

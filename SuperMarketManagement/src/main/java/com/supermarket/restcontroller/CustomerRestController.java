@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.supermarket.model.custom.FilteredResponse;
@@ -26,7 +27,19 @@ public class CustomerRestController {
 	 */
 	@Autowired
 	private CustomerService customerService;
-
+	
+	/**
+	 * Customer Login
+	 * 
+	 * @param customerDTO
+	 * @return
+	 */
+	@CrossOrigin
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	public ResponseEntity<Response> login(@RequestParam String mail, @RequestParam String password) {
+		return new ResponseEntity<Response>(customerService.login(mail, password), HttpStatus.OK);
+	}
+	
 	/**
 	 * Save or Update Customer
 	 * 

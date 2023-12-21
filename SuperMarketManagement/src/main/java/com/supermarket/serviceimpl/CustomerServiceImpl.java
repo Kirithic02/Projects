@@ -33,7 +33,66 @@ public class CustomerServiceImpl implements CustomerService {
 	 */
 	@Autowired
 	private CustomerDAO customerDAO;
-
+	
+	/**
+	 * Customer Login
+	 * 
+	 * @param customerDTO
+	 * @return
+	 */
+	@Override
+	@Transactional
+	public Response login(String mail, String password) {
+		
+		Customer customer = customerDAO.getCustomerDTOByMail(mail);
+		
+		List<ErrorResponse> errorResponseList = new ArrayList<ErrorResponse>();
+		Response response = new Response();
+		
+		if(customer != null) {
+			
+			System.out.println(customer.getMail());
+			System.out.println(customer.getPassword());
+			
+			if(password.equals(customer.getPassword())) {
+				
+				CustomerDTO customerDTO = new CustomerDTO();
+				
+				customerDTO.setCustomerId(customer.getCustomerId());
+				customerDTO.setCustomerName((customer.getCustomerName()));
+				customerDTO.setMobileNo(customer.getMobileNo());
+				customerDTO.setMail(customer.getMail());
+				customerDTO.setAddress(customer.getAddress());
+				customerDTO.setLocation(customer.getLocation());
+				customerDTO.setCity(customer.getCity());
+				customerDTO.setPincode(customer.getPincode());
+				
+				response.setStatus(WebServiceUtil.SUCCESS);
+				response.setData(customerDTO);
+			} else {
+				
+				ErrorResponse errorResponse = new ErrorResponse();
+				errorResponse.setFieldName(WebServiceUtil.CUSTOMER_PASSWORD);
+				errorResponse.setErrorMessage("Incorrect Password");
+				errorResponseList.add(errorResponse);
+			}
+		} else {
+			
+			ErrorResponse errorResponse = new ErrorResponse();
+			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_MAIL);
+			errorResponse.setErrorMessage("Incorrect Mail");
+			errorResponseList.add(errorResponse);
+		}
+		
+		if(!errorResponseList.isEmpty()) {
+			
+			response.setStatus(WebServiceUtil.FAILURE);
+			response.setData(errorResponseList);
+		}
+		
+		return response;
+	}
+	
 	/**
 	 * Save or Update Customer
 	 * 
@@ -67,11 +126,12 @@ public class CustomerServiceImpl implements CustomerService {
 					customer.setCustomerName(WebServiceUtil.formatFullName(customerDTO.getCustomerName()).trim()); // need
 																													// changes
 					customer.setMobileNo(customerDTO.getMobileNo());
+					customer.setMail(customerDTO.getMail());
+					customer.setPassword(customerDTO.getPassword());
 					customer.setAddress(customerDTO.getAddress());
 					customer.setLocation(WebServiceUtil.formatFullName(customerDTO.getLocation()).trim());
 					customer.setCity(WebServiceUtil.formatFullName(customerDTO.getCity()).trim());
 					customer.setPincode(customerDTO.getPincode());
-					customer.setMail(customerDTO.getMail());
 					customer.setCreatedDate(new Date());
 
 					response.setStatus(WebServiceUtil.SUCCESS);
@@ -85,11 +145,12 @@ public class CustomerServiceImpl implements CustomerService {
 						ExistingCustomer
 								.setCustomerName(WebServiceUtil.formatFullName(customerDTO.getCustomerName()).trim());
 						ExistingCustomer.setMobileNo(customerDTO.getMobileNo());
+						ExistingCustomer.setMail(customerDTO.getMail());
+						ExistingCustomer.setPassword(customerDTO.getPassword());
 						ExistingCustomer.setAddress(customerDTO.getAddress());
 						ExistingCustomer.setCity(WebServiceUtil.formatFullName(customerDTO.getCity()).trim());
 						ExistingCustomer.setLocation(WebServiceUtil.formatFullName(customerDTO.getLocation()).trim());
 						ExistingCustomer.setPincode(customerDTO.getPincode());
-						ExistingCustomer.setMail(customerDTO.getMail());
 
 						response.setStatus(WebServiceUtil.SUCCESS);
 						response.setData("Customer Details Updated Succesfully ");
@@ -100,15 +161,37 @@ public class CustomerServiceImpl implements CustomerService {
 					}
 				}
 
-			} else if (checkValue == 1) {
-				response.setStatus(WebServiceUtil.FAILURE);
-				response.setData("MobileNo Already Exist");
-			} else if (checkValue == 2) {
-				response.setStatus(WebServiceUtil.FAILURE);
-				response.setData("Mail Already Exist");
 			} else {
+				
+				if (checkValue == 1 || checkValue == 3) {
+					
+					ErrorResponse errorResponse = new ErrorResponse();
+					errorResponse.setFieldName(WebServiceUtil.CUSTOMER_MOBILE_NUMBER);
+					errorResponse.setErrorMessage("MobileNo Already Exist");
+					errorResponseList.add(errorResponse);
+				} 
+				
+				if (checkValue == 2 || checkValue == 3) {
+					
+					ErrorResponse errorResponse = new ErrorResponse();
+					errorResponse.setFieldName(WebServiceUtil.CUSTOMER_MAIL);
+					errorResponse.setErrorMessage("Mail Already Exist");
+					errorResponseList.add(errorResponse);
+//				} else {
+////					response.setStatus(WebServiceUtil.FAILURE);
+////					response.setData("MobileNo and Mail Already Exist");
+//					
+//					ErrorResponse errorResponse = new ErrorResponse();
+//					errorResponse.setFieldName(WebServiceUtil.CUSTOMER_);
+//					errorResponse.setErrorMessage("MobileNo Already Exist");
+//					errorResponseList.add(errorResponse);
+				}
+			}
+			
+			if(!errorResponseList.isEmpty()) {
+				
 				response.setStatus(WebServiceUtil.FAILURE);
-				response.setData("MobileNo and Mail Already Exist");
+				response.setData(errorResponseList);
 			}
 
 		} else {
@@ -125,7 +208,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 		List<ErrorResponse> errorResponseList = new ArrayList<ErrorResponse>();
 
-		if (customerDTO.getCustomerName() == null || customerDTO.getCustomerName().isBlank()
+		if (customerDTO.getCustomerName() == null || customerDTO.getCustomerName().trim().isEmpty()
 				|| !ValidationUtil.isValidName(customerDTO.getCustomerName())) {
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_NAME);
@@ -133,12 +216,29 @@ public class CustomerServiceImpl implements CustomerService {
 			errorResponseList.add(errorResponse);
 		}
 
-		if (customerDTO.getMobileNo() == null || customerDTO.getMobileNo().isBlank()
+		if (customerDTO.getMobileNo() == null || customerDTO.getMobileNo().trim().isEmpty()
 				|| !ValidationUtil.isValidPhoneNumber(customerDTO.getMobileNo())) {
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_MOBILE_NUMBER);
 //			errorResponse.setErrorMessage("Mobile Number Should Contain only Numbers and Should Not be null");
 			errorResponse.setErrorMessage("Invalid Mobile Number");
+			errorResponseList.add(errorResponse);
+		}
+		
+		if (customerDTO.getMail() == null || customerDTO.getMail().trim().isEmpty()
+				|| !ValidationUtil.isValidEmail(customerDTO.getMail())) {
+			ErrorResponse errorResponse = new ErrorResponse();
+			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_MAIL);
+			errorResponse.setErrorMessage("Email is invalid");
+			errorResponseList.add(errorResponse);
+		}
+		
+		if (customerDTO.getPassword() == null || customerDTO.getPassword().trim().isEmpty()
+				|| !ValidationUtil.isValidPassword(customerDTO.getPassword())) {
+			ErrorResponse errorResponse = new ErrorResponse();
+			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_PASSWORD);
+			errorResponse.setErrorMessage(
+					"Password must contain at least one alphabetical character, one number, one special character and minimum length of 8 characters.");
 			errorResponseList.add(errorResponse);
 		}
 
@@ -149,7 +249,7 @@ public class CustomerServiceImpl implements CustomerService {
 			errorResponseList.add(errorResponse);
 		}
 
-		if (customerDTO.getLocation() == null || customerDTO.getLocation().isBlank()
+		if (customerDTO.getLocation() == null || customerDTO.getLocation().trim().isEmpty()
 				|| !ValidationUtil.isValidName(customerDTO.getLocation())) {
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_LOCATION);
@@ -157,7 +257,7 @@ public class CustomerServiceImpl implements CustomerService {
 			errorResponseList.add(errorResponse);
 		}
 
-		if (customerDTO.getCity() == null || customerDTO.getCity().isBlank()
+		if (customerDTO.getCity() == null || customerDTO.getCity().trim().isEmpty()
 				|| !ValidationUtil.isValidName(customerDTO.getCity())) {
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_CITY);
@@ -165,7 +265,7 @@ public class CustomerServiceImpl implements CustomerService {
 			errorResponseList.add(errorResponse);
 		}
 
-		if (customerDTO.getPincode() == null || customerDTO.getPincode().isBlank()
+		if (customerDTO.getPincode() == null || customerDTO.getPincode().trim().isEmpty()
 				|| !ValidationUtil.isValidPincode(customerDTO.getPincode())) {
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_PINCODE);
@@ -174,13 +274,6 @@ public class CustomerServiceImpl implements CustomerService {
 			errorResponseList.add(errorResponse);
 		}
 
-		if (customerDTO.getMail() == null || customerDTO.getMail().isBlank()
-				|| !ValidationUtil.isValidEmail(customerDTO.getMail())) {
-			ErrorResponse errorResponse = new ErrorResponse();
-			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_MAIL);
-			errorResponse.setErrorMessage("Email is invalid");
-			errorResponseList.add(errorResponse);
-		}
 		return errorResponseList;
 	}
 
@@ -271,7 +364,7 @@ public class CustomerServiceImpl implements CustomerService {
 				|| customerFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_NAME)
 				|| customerFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_MOBILE_NUMBER)
 				|| customerFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_MAIL)
-				|| customerFilterList.getSearchColumn().isBlank())) {
+				|| customerFilterList.getSearchColumn().trim().isEmpty())) {
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.FILTERLIST_SEARCHCOLUMN);
 			errorResponse.setErrorMessage(

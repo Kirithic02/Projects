@@ -23,6 +23,12 @@ public class Customer {
 
 	@Column(name = "CUST_mobileno")
 	private String mobileNo;
+	
+	@Column(name = "CUST_mail")
+	private String mail;
+	
+	@Column(name = "CUST_password")
+	private String password;
 
 	@Column(name = "CUST_address")
 	private String address;
@@ -38,9 +44,6 @@ public class Customer {
 
 	@Column(name = "CUST_createdDate")
 	private Date createdDate;
-
-	@Column(name = "CUST_mail")
-	private String mail;
 
 	public Integer getCustomerId() {
 		return customerId;
@@ -112,5 +115,13 @@ public class Customer {
 
 	public void setMail(String mail) {
 		this.mail = mail;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 }
