@@ -186,11 +186,7 @@ public class ProductDAOImpl implements ProductDAO {
 						criteria.addOrder(Order.desc("effectiveDate"));
 					}
 				}
-//			} else {
-//				criteria.addOrder(Order.asc("productName"));
 			}
-//		} else {
-//			criteria.addOrder(Order.asc("productName"));
 		}
 
 		criteria.setProjection(Projections.rowCount());
@@ -212,7 +208,6 @@ public class ProductDAOImpl implements ProductDAO {
 
 		return resultMap;
 	}
-	
 
 	@Override
 	public Map<String, Object> listProductsSales(ProductSalesFilterList productSalesFilterList) {
@@ -224,11 +219,6 @@ public class ProductDAOImpl implements ProductDAO {
 
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap.put("totalCount", criteria.uniqueResult());
-
-//		if(productSalesFilterList.getFilter().getFromDate() != null && productSalesFilterList.getFilter().getToDate() != null) {
-//			
-//			criteria.add(Restrictions.between("createdDate", productSalesFilterList.getFilter().getFromDate(), productSalesFilterList.getFilter().getToDate()));
-//		}
 
 		if (productSalesFilterList.getFilter().getFromDate() != null) {
 			criteria.add(Restrictions.ge("createdDate", productSalesFilterList.getFilter().getFromDate()));
@@ -243,12 +233,6 @@ public class ProductDAOImpl implements ProductDAO {
 			criteria.add(Restrictions.eq("product.productCategory",
 					productSalesFilterList.getFilter().getProductCategory()));
 		}
-
-//		if (productSalesFilterList.getOrderBy().getType() != null && productSalesFilterList.getOrderBy().getType()
-//				.equalsIgnoreCase(WebServiceUtil.FILTERLIST_ORDERBY_TYPE_ASC)) {
-//			
-//			criteria.addOrder(Order.asc(""));
-//		}
 
 		criteria.setProjection(Projections.countDistinct("productId"));
 		resultMap.put("filteredCount", (Long) criteria.uniqueResult());
@@ -296,12 +280,5 @@ public class ProductDAOImpl implements ProductDAO {
 
 		return resultMap;
 	}
-	
-	
-//	@Override
-//	public Map<String, Object> listProductSales(ProductSalesFilterList productSalesFilterList) {
-//		
-//		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(OrderLineItemDetails.class)
-//	}
 
 }
