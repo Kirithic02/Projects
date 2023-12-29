@@ -328,10 +328,11 @@ public class CustomerServiceImpl implements CustomerService {
 				filteredResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
 				filteredResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
 			} else {
-				filteredResponse.setStatus(WebServiceUtil.SUCCESS);
+				filteredResponse.setStatus(WebServiceUtil.FAILURE);
 				filteredResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
 				filteredResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
-				filteredResponse.setData(resultMap.get("No Matching Records Found"));
+//				filteredResponse.setData(resultMap.get("No Matching Records Found"));
+				filteredResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
 			}
 		} else {
 			filteredResponse.setStatus(WebServiceUtil.FAILURE);

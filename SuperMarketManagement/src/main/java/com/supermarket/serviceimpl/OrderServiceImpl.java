@@ -14,6 +14,7 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.supermarket.dao.CustomerDAO;
@@ -62,6 +63,12 @@ public class OrderServiceImpl implements OrderService {
 	@Autowired
 	private MailService mailService;
 
+	@Scheduled(cron = "00 56 17 * * ?")
+	public void lowStockAlert() {
+		
+		System.out.println("S");
+	}
+	
 	/**
 	 * Place New Order
 	 * 
@@ -562,7 +569,7 @@ public class OrderServiceImpl implements OrderService {
 
 			if (resultMap.get("customer") == null) {
 
-				response.setStatus(WebServiceUtil.SUCCESS);
+				response.setStatus(WebServiceUtil.FAILURE);
 				response.setData("No Data Found for This Order");
 
 			} else {
@@ -621,10 +628,11 @@ public class OrderServiceImpl implements OrderService {
 
 			} else {
 
-				filteredResponse.setStatus(WebServiceUtil.SUCCESS);
+				filteredResponse.setStatus(WebServiceUtil.FAILURE);
 				filteredResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
 				filteredResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
-				filteredResponse.setData(resultMap.get("No Matching Records Found"));
+//				filteredResponse.setData(resultMap.get("No Matching Records Found"));
+				filteredResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
 			}
 
 		} else {

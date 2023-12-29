@@ -7,14 +7,14 @@ public class ProductSalesFilterList {
 	private Integer length;
 
 	private Integer start;
+	
+	private OrderBy orderBy;
 
 	private ProductSalesFilter filter;
 
-	private OrderBy orderBy;
+	private String search;
 
-//	private String search;
-
-//	private String searchColumn;
+	private String searchColumn;
 
 	public Integer getLength() {
 		return length;
@@ -46,6 +46,22 @@ public class ProductSalesFilterList {
 
 	public void setFilter(ProductSalesFilter filter) {
 		this.filter = filter;
+	}
+
+	public String getSearch() {
+		return search;
+	}
+
+	public void setSearch(String search) {
+		this.search = search;
+	}
+
+	public String getSearchColumn() {
+		return searchColumn;
+	}
+
+	public void setSearchColumn(String searchColumn) {
+		this.searchColumn = searchColumn;
 	}
 
 }

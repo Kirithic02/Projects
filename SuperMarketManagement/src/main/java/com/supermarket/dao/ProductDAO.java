@@ -1,5 +1,6 @@
 package com.supermarket.dao;
 
+import java.util.List;
 import java.util.Map;
 
 import com.supermarket.model.custom.product.ProductFilterList;
@@ -24,4 +25,6 @@ public interface ProductDAO {
 	boolean isUniqueProduct(Integer productId, String productName);
 
 	Map<String, Object> listProductsSales(ProductSalesFilterList productSalesFilterList);
+
+//	List<ProductDTO> lowStockAlert();
 }
