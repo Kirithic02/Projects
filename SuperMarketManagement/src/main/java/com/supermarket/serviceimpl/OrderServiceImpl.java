@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ import com.supermarket.model.custom.ErrorResponse;
 import com.supermarket.model.custom.FilteredResponse;
 import com.supermarket.model.custom.Response;
 import com.supermarket.model.custom.order.CustomerOrderDTO;
+import com.supermarket.model.custom.order.OrderDetailsDTO;
 import com.supermarket.model.custom.order.OrderFilterList;
 import com.supermarket.model.custom.order.OrderLineItemDetailsDTO;
 import com.supermarket.model.entity.Customer;
@@ -65,10 +67,10 @@ public class OrderServiceImpl implements OrderService {
 
 	@Scheduled(cron = "00 56 17 * * ?")
 	public void lowStockAlert() {
-		
+
 		System.out.println("S");
 	}
-	
+
 	/**
 	 * Place New Order
 	 * 
@@ -89,6 +91,7 @@ public class OrderServiceImpl implements OrderService {
 			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_ID);
 			errorResponse.setErrorMessage("Customer ID should not be null");
 			errorResponseList.add(errorResponse);
+//			throw new InternalError("Customer ID should not be null");
 
 		} else {
 
@@ -604,6 +607,7 @@ public class OrderServiceImpl implements OrderService {
 	 * @param orderFilterList
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
 	public FilteredResponse listOrder(OrderFilterList orderFilterList) {
@@ -619,21 +623,41 @@ public class OrderServiceImpl implements OrderService {
 
 			Map<String, Object> resultMap = orderDAO.listOrder(orderFilterList);
 
-			if ((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT) > 0) {
+//			if ((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT) > 0) {
+//
+//				filteredResponse.setStatus(WebServiceUtil.SUCCESS);
+//				filteredResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
+//				filteredResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
+//				filteredResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
+//
+//			} else {
+//
+//				filteredResponse.setStatus(WebServiceUtil.FAILURE);
+//				filteredResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
+//				filteredResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
+////				filteredResponse.setData(resultMap.get("No Matching Records Found"));
+//				filteredResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
+//			}
 
-				filteredResponse.setStatus(WebServiceUtil.SUCCESS);
-				filteredResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
-				filteredResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
-				filteredResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
+			List<OrderDetailsDTO> transactionDetails = (List<OrderDetailsDTO>) resultMap.get("data");
 
+			if (orderFilterList.getOrderBy().getColumn().equalsIgnoreCase("serialNumber")
+					&& orderFilterList.getOrderBy().getType().equalsIgnoreCase("desc")) {
+				Collections.reverse(transactionDetails);
+				for (Integer i = transactionDetails.size() - 1; i >= 0; i--) {
+					transactionDetails.get(i)
+							.setSerialNumber(orderFilterList.getStart() + transactionDetails.size() - i);
+				}
 			} else {
-
-				filteredResponse.setStatus(WebServiceUtil.FAILURE);
-				filteredResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
-				filteredResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
-//				filteredResponse.setData(resultMap.get("No Matching Records Found"));
-				filteredResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
+				for (Integer i = 0; i < transactionDetails.size(); i++) {
+					transactionDetails.get(i).setSerialNumber(orderFilterList.getStart() + i + 1);
+				}
 			}
+
+			filteredResponse.setStatus(WebServiceUtil.SUCCESS);
+			filteredResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
+			filteredResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
+			filteredResponse.setData(transactionDetails);
 
 		} else {
 

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration>
-    <appender name="file" class="ch.qos.logback.core.FileAppender">
-        <file>D:/logFileSuperMarket.log</file>
-        <append>true</append>
-        <encoder>
-            <pattern>%d{E yyyy-MM-dd HH:mm:ss z} %p: %m%n</pattern>
-        </encoder>
-    </appender>
-​
-    <root level="INFO">
-        <appender-ref ref="file" />
-    </root>
+	<appender name="file" class="ch.qos.logback.core.FileAppender">
+		<file>D:/logFileSuperMarket.log</file>
+		<append>true</append>
+		<encoder>
+			<pattern>%d{E yyyy-MM-dd HH:mm:ss z} %p: %m%n</pattern>
+		</encoder>
+	</appender>
+	​
+	<root level="INFO">
+		<appender-ref ref="file" />
+	</root>
 </configuration>

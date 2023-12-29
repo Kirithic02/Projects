@@ -32,6 +32,17 @@ public class HibernateConfiguration {
 		return dataSource;
 	}
 
+//	@Bean
+//	public DataSource dataSource() {
+//		org.apache.commons.dbcp.BasicDataSource dataSource = new org.apache.commons.dbcp.BasicDataSource();
+//		dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+//		dataSource.setUrl(
+//				"jdbc:mysql://humhealth-development-instance.cdxyrkms3ue9.us-east-2.rds.amazonaws.com:3306/supermarket_management");
+//		dataSource.setUsername("humhealthmobile");
+//		dataSource.setPassword("Pr0$HumHealth$%RDSMDB2o21");
+//		return dataSource;
+//	}
+
 	public Properties hibernateProprties() {
 		Properties properties = new Properties();
 		properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");

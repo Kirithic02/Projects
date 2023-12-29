@@ -2,13 +2,23 @@ package com.supermarket.model.custom.product;
 
 public class ProductSales {
 
+	private Integer serialNumber;
+
 	private Integer productId;
-	
+
 	private String productName;
-	
+
 	private String productCategory;
-	
+
 	private Long salesCount;
+
+	public Integer getSerialNumber() {
+		return serialNumber;
+	}
+
+	public void setSerialNumber(Integer serialNumber) {
+		this.serialNumber = serialNumber;
+	}
 
 	public Integer getProductId() {
 		return productId;
@@ -41,7 +51,5 @@ public class ProductSales {
 	public void setSalesCount(Long salesCount) {
 		this.salesCount = salesCount;
 	}
-	
-	
-	
+
 }

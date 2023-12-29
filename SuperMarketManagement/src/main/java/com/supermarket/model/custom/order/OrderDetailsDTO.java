@@ -7,6 +7,8 @@ import com.supermarket.util.serializer.TimestampSerializer;
 
 public class OrderDetailsDTO {
 
+	private Integer serialNumber;
+
 	private Integer orderId;
 
 	@JsonSerialize(using = TimestampSerializer.class)
@@ -20,6 +22,14 @@ public class OrderDetailsDTO {
 	private Date orderExpectedDate;
 
 	private String orderStatus;
+
+	public Integer getSerialNumber() {
+		return serialNumber;
+	}
+
+	public void setSerialNumber(Integer serialNumber) {
+		this.serialNumber = serialNumber;
+	}
 
 	public Integer getOrderId() {
 		return orderId;

@@ -9,6 +9,8 @@ import com.supermarket.util.serializer.TimestampSerializer;
 
 public class ProductDTO {
 
+	private Integer serialNumber;
+
 	private Integer productId;
 
 	private String productName;
@@ -18,7 +20,7 @@ public class ProductDTO {
 	private Integer productPrice;
 
 	private Integer currentStockPackageCount;
-	
+
 	private String productCategory;
 
 	@JsonSerialize(using = TimestampSerializer.class)
@@ -30,6 +32,14 @@ public class ProductDTO {
 	private Date lastEffectiveDate;
 
 	private Integer oldProductId;
+
+	public Integer getSerialNumber() {
+		return serialNumber;
+	}
+
+	public void setSerialNumber(Integer serialNumber) {
+		this.serialNumber = serialNumber;
+	}
 
 	public Integer getProductId() {
 		return productId;

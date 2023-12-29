@@ -2,7 +2,6 @@ package com.supermarket.daoimpl;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Criteria;
@@ -220,27 +219,33 @@ public class ProductDAOImpl implements ProductDAO {
 
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap.put("totalCount", criteria.uniqueResult());
-		
+
 		if (productSalesFilterList.getSearch() != null && !productSalesFilterList.getSearch().trim().isEmpty()) {
 
-			if (productSalesFilterList.getSearchColumn() != null && !productSalesFilterList.getSearchColumn().trim().isEmpty()) {
+			if (productSalesFilterList.getSearchColumn() != null
+					&& !productSalesFilterList.getSearchColumn().trim().isEmpty()) {
 
 				if (productSalesFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_ID)) {
-					criteria.add(Restrictions.eq("product.productId", Integer.parseInt(productSalesFilterList.getSearch())));
-				} else if (productSalesFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_NAME)) {
-					criteria.add(Restrictions.ilike("product.productName", productSalesFilterList.getSearch().trim(), MatchMode.ANYWHERE));
+					criteria.add(
+							Restrictions.eq("product.productId", Integer.parseInt(productSalesFilterList.getSearch())));
+				} else if (productSalesFilterList.getSearchColumn().trim()
+						.equalsIgnoreCase(WebServiceUtil.PRODUCT_NAME)) {
+					criteria.add(Restrictions.ilike("product.productName", productSalesFilterList.getSearch().trim(),
+							MatchMode.ANYWHERE));
 				}
 			} else {
 //				criteria.add(Restrictions.disjunction()
 //						.add(Restrictions.ilike("productName", "%" + filterList.getSearch() + "%")));
 				if (ValidationUtil.isValidNumber(productSalesFilterList.getSearch())) {
-					criteria.add(Restrictions.eq("product.productId", Integer.parseInt(productSalesFilterList.getSearch())));
+					criteria.add(
+							Restrictions.eq("product.productId", Integer.parseInt(productSalesFilterList.getSearch())));
 				} else {
-					criteria.add(Restrictions.ilike("product.productName", productSalesFilterList.getSearch().trim(), MatchMode.ANYWHERE));
+					criteria.add(Restrictions.ilike("product.productName", productSalesFilterList.getSearch().trim(),
+							MatchMode.ANYWHERE));
 				}
 			}
 		}
-		
+
 		if (productSalesFilterList.getFilter().getFromDate() != null) {
 			criteria.add(Restrictions.ge("createdDate", productSalesFilterList.getFilter().getFromDate()));
 		}
@@ -301,7 +306,7 @@ public class ProductDAOImpl implements ProductDAO {
 
 		return resultMap;
 	}
-	
+
 //	@Override
 //	@SuppressWarnings("unchecked")
 //	public List<ProductDTO> lowStockAlert(){

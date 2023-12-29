@@ -1,6 +1,7 @@
 package com.supermarket.serviceimpl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,7 @@ public class CustomerServiceImpl implements CustomerService {
 	 */
 	@Autowired
 	private CustomerDAO customerDAO;
-	
+
 	/**
 	 * Customer Login
 	 * 
@@ -43,21 +44,21 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	@Transactional
 	public Response login(String mail, String password) {
-		
+
 		Customer customer = customerDAO.getCustomerDTOByMail(mail);
-		
+
 		List<ErrorResponse> errorResponseList = new ArrayList<ErrorResponse>();
 		Response response = new Response();
-		
-		if(customer != null) {
-			
+
+		if (customer != null) {
+
 			System.out.println(customer.getMail());
 			System.out.println(customer.getPassword());
-			
-			if(password.equals(customer.getPassword())) {
-				
+
+			if (password.equals(customer.getPassword())) {
+
 				CustomerDTO customerDTO = new CustomerDTO();
-				
+
 				customerDTO.setCustomerId(customer.getCustomerId());
 				customerDTO.setCustomerName((customer.getCustomerName()));
 				customerDTO.setMobileNo(customer.getMobileNo());
@@ -66,33 +67,33 @@ public class CustomerServiceImpl implements CustomerService {
 				customerDTO.setLocation(customer.getLocation());
 				customerDTO.setCity(customer.getCity());
 				customerDTO.setPincode(customer.getPincode());
-				
+
 				response.setStatus(WebServiceUtil.SUCCESS);
 				response.setData(customerDTO);
 			} else {
-				
+
 				ErrorResponse errorResponse = new ErrorResponse();
 				errorResponse.setFieldName(WebServiceUtil.CUSTOMER_PASSWORD);
 				errorResponse.setErrorMessage("Incorrect Password");
 				errorResponseList.add(errorResponse);
 			}
 		} else {
-			
+
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_MAIL);
 			errorResponse.setErrorMessage("Incorrect Mail");
 			errorResponseList.add(errorResponse);
 		}
-		
-		if(!errorResponseList.isEmpty()) {
-			
+
+		if (!errorResponseList.isEmpty()) {
+
 			response.setStatus(WebServiceUtil.FAILURE);
 			response.setData(errorResponseList);
 		}
-		
+
 		return response;
 	}
-	
+
 	/**
 	 * Save or Update Customer
 	 * 
@@ -162,17 +163,17 @@ public class CustomerServiceImpl implements CustomerService {
 				}
 
 			} else {
-				
+
 				if (checkValue == 1 || checkValue == 3) {
-					
+
 					ErrorResponse errorResponse = new ErrorResponse();
 					errorResponse.setFieldName(WebServiceUtil.CUSTOMER_MOBILE_NUMBER);
 					errorResponse.setErrorMessage("MobileNo Already Exist");
 					errorResponseList.add(errorResponse);
-				} 
-				
+				}
+
 				if (checkValue == 2 || checkValue == 3) {
-					
+
 					ErrorResponse errorResponse = new ErrorResponse();
 					errorResponse.setFieldName(WebServiceUtil.CUSTOMER_MAIL);
 					errorResponse.setErrorMessage("Mail Already Exist");
@@ -187,9 +188,9 @@ public class CustomerServiceImpl implements CustomerService {
 //					errorResponseList.add(errorResponse);
 				}
 			}
-			
-			if(!errorResponseList.isEmpty()) {
-				
+
+			if (!errorResponseList.isEmpty()) {
+
 				response.setStatus(WebServiceUtil.FAILURE);
 				response.setData(errorResponseList);
 			}
@@ -224,7 +225,7 @@ public class CustomerServiceImpl implements CustomerService {
 			errorResponse.setErrorMessage("Invalid Mobile Number");
 			errorResponseList.add(errorResponse);
 		}
-		
+
 		if (customerDTO.getMail() == null || customerDTO.getMail().trim().isEmpty()
 				|| !ValidationUtil.isValidEmail(customerDTO.getMail())) {
 			ErrorResponse errorResponse = new ErrorResponse();
@@ -232,7 +233,7 @@ public class CustomerServiceImpl implements CustomerService {
 			errorResponse.setErrorMessage("Email is invalid");
 			errorResponseList.add(errorResponse);
 		}
-		
+
 		if (customerDTO.getPassword() == null || customerDTO.getPassword().trim().isEmpty()
 				|| !ValidationUtil.isValidPassword(customerDTO.getPassword())) {
 			ErrorResponse errorResponse = new ErrorResponse();
@@ -309,6 +310,7 @@ public class CustomerServiceImpl implements CustomerService {
 	 * @param customerFilterList
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
 	public FilteredResponse listCustomer(CustomerFilterList customerFilterList) {
@@ -322,18 +324,39 @@ public class CustomerServiceImpl implements CustomerService {
 
 			Map<String, Object> resultMap = customerDAO.listCustomer(customerFilterList);
 
-			if ((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT) > 0) {
-				filteredResponse.setStatus(WebServiceUtil.SUCCESS);
-				filteredResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
-				filteredResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
-				filteredResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
+//			if ((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT) > 0) {
+//				filteredResponse.setStatus(WebServiceUtil.SUCCESS);
+//				filteredResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
+//				filteredResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
+//				filteredResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
+//			} else {
+//				filteredResponse.setStatus(WebServiceUtil.FAILURE);
+//				filteredResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
+//				filteredResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
+////				filteredResponse.setData(resultMap.get("No Matching Records Found"));
+//				filteredResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
+//			}
+
+			List<CustomerDTO> transactionDetails = (List<CustomerDTO>) resultMap.get("data");
+
+			if (customerFilterList.getOrderBy().getColumn().equalsIgnoreCase("serialNumber")
+					&& customerFilterList.getOrderBy().getType().equalsIgnoreCase("desc")) {
+				Collections.reverse(transactionDetails);
+				for (Integer i = transactionDetails.size() - 1; i >= 0; i--) {
+					transactionDetails.get(i)
+							.setSerialNumber(customerFilterList.getStart() + transactionDetails.size() - i);
+				}
 			} else {
-				filteredResponse.setStatus(WebServiceUtil.FAILURE);
-				filteredResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
-				filteredResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
-//				filteredResponse.setData(resultMap.get("No Matching Records Found"));
-				filteredResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
+				for (Integer i = 0; i < transactionDetails.size(); i++) {
+					transactionDetails.get(i).setSerialNumber(customerFilterList.getStart() + i + 1);
+				}
 			}
+
+			filteredResponse.setStatus(WebServiceUtil.SUCCESS);
+			filteredResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
+			filteredResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
+			filteredResponse.setData(transactionDetails);
+
 		} else {
 			filteredResponse.setStatus(WebServiceUtil.FAILURE);
 			filteredResponse.setData(errorResponseList);

@@ -2,6 +2,8 @@ package com.supermarket.model.custom.customer;
 
 public class CustomerDTO {
 
+	private Integer serialNumber;
+
 	private Integer customerId;
 
 	private String customerName;
@@ -9,7 +11,7 @@ public class CustomerDTO {
 	private String mobileNo;
 
 	private String mail;
-	
+
 	private String password;
 
 	private String address;
@@ -19,6 +21,14 @@ public class CustomerDTO {
 	private String city;
 
 	private String pincode;
+
+	public Integer getSerialNumber() {
+		return serialNumber;
+	}
+
+	public void setSerialNumber(Integer serialNumber) {
+		this.serialNumber = serialNumber;
+	}
 
 	public Integer getCustomerId() {
 		return customerId;

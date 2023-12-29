@@ -3,6 +3,7 @@ package com.supermarket.serviceimpl;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import com.supermarket.model.custom.ErrorResponse;
 import com.supermarket.model.custom.FilteredResponse;
 import com.supermarket.model.custom.Response;
 import com.supermarket.model.custom.product.ProductFilterList;
+import com.supermarket.model.custom.product.ProductSales;
 import com.supermarket.model.custom.product.ProductSalesFilterList;
 import com.supermarket.model.custom.product.PriceHistoryDTO;
 import com.supermarket.model.custom.product.ProductDTO;
@@ -373,6 +375,7 @@ public class ProductServiceImpl implements ProductService {
 	 * @param productFilterList
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
 	public FilteredResponse listProduct(ProductFilterList productFilterList) {
@@ -386,18 +389,39 @@ public class ProductServiceImpl implements ProductService {
 
 			Map<String, Object> resultMap = productDAO.listProducts(productFilterList);
 
-			if ((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT) > 0) {
-				filterResponse.setStatus(WebServiceUtil.SUCCESS);
-				filterResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
-				filterResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
-				filterResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
+//			if ((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT) > 0) {
+//				filterResponse.setStatus(WebServiceUtil.SUCCESS);
+//				filterResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
+//				filterResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
+//				filterResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
+//			} else {
+//				filterResponse.setStatus(WebServiceUtil.FAILURE);
+//				filterResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
+//				filterResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
+////				filterResponse.setData("No Matching Records Found");
+//				filterResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
+//			}
+
+			List<ProductSales> transactionDetails = (List<ProductSales>) resultMap.get("data");
+
+			if (productFilterList.getOrderBy().getColumn().equalsIgnoreCase("serialNumber")
+					&& productFilterList.getOrderBy().getType().equalsIgnoreCase("desc")) {
+				Collections.reverse(transactionDetails);
+				for (Integer i = transactionDetails.size() - 1; i >= 0; i--) {
+					transactionDetails.get(i)
+							.setSerialNumber(productFilterList.getStart() + transactionDetails.size() - i);
+				}
 			} else {
-				filterResponse.setStatus(WebServiceUtil.FAILURE);
-				filterResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
-				filterResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
-//				filterResponse.setData("No Matching Records Found");
-				filterResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
+				for (Integer i = 0; i < transactionDetails.size(); i++) {
+					transactionDetails.get(i).setSerialNumber(productFilterList.getStart() + i + 1);
+				}
 			}
+
+			filterResponse.setStatus(WebServiceUtil.SUCCESS);
+			filterResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
+			filterResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
+			filterResponse.setData(transactionDetails);
+
 		} else {
 			filterResponse.setStatus(WebServiceUtil.FAILURE);
 			filterResponse.setData(errorResponseList);
@@ -498,6 +522,7 @@ public class ProductServiceImpl implements ProductService {
 	 * @param productSalesFilterList
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
 	public FilteredResponse listProductSales(ProductSalesFilterList productFilterList) {
@@ -509,18 +534,39 @@ public class ProductServiceImpl implements ProductService {
 
 			Map<String, Object> resultMap = productDAO.listProductsSales(productFilterList);
 
-			if ((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT) > 0) {
-				filterResponse.setStatus(WebServiceUtil.SUCCESS);
-				filterResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
-				filterResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
-				filterResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
+//			if ((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT) > 0) {
+//				filterResponse.setStatus(WebServiceUtil.SUCCESS);
+//				filterResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
+//				filterResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
+//				filterResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
+//			} else {
+//				filterResponse.setStatus(WebServiceUtil.FAILURE);
+//				filterResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
+//				filterResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
+////				filterResponse.setData("No Matching Records Found");
+//				filterResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
+//			}
+
+			List<ProductSales> transactionDetails = (List<ProductSales>) resultMap.get("data");
+
+			if (productFilterList.getOrderBy().getColumn().equalsIgnoreCase("serialNumber")
+					&& productFilterList.getOrderBy().getType().equalsIgnoreCase("desc")) {
+				Collections.reverse(transactionDetails);
+				for (Integer i = transactionDetails.size() - 1; i >= 0; i--) {
+					transactionDetails.get(i)
+							.setSerialNumber(productFilterList.getStart() + transactionDetails.size() - i);
+				}
 			} else {
-				filterResponse.setStatus(WebServiceUtil.FAILURE);
-				filterResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
-				filterResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
-//				filterResponse.setData("No Matching Records Found");
-				filterResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
+				for (Integer i = 0; i < transactionDetails.size(); i++) {
+					transactionDetails.get(i).setSerialNumber(productFilterList.getStart() + i + 1);
+				}
 			}
+
+			filterResponse.setStatus(WebServiceUtil.SUCCESS);
+			filterResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
+			filterResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
+			filterResponse.setData(transactionDetails);
+
 		} else {
 			filterResponse.setStatus(WebServiceUtil.FAILURE);
 			filterResponse.setData(errorResponseList);
