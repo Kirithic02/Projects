@@ -9,8 +9,8 @@ public final class WebServiceUtil {
 	public static final String FAILURE = "failure";
 
 	// *********************** FilteredResponse *****************************
-	public static final String FILTEREDRESPONSE_FILTEREDCOUNT = "filteredCount";
-	public static final String FILTEREDRESPONSE_TOTALCOUNT = "totalCount";
+	public static final String FILTEREDRESPONSE_RECORDSFILTERED = "recordsFiltered";
+	public static final String FILTEREDRESPONSE_RECORDSTOTAL = "recordsTotal";
 	public static final String FILTEREDRESPONSE_DATA = "data";
 
 	// *********************** FilterList *****************************

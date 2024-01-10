@@ -4,9 +4,9 @@ public class FilteredResponse {
 
 	private String status;
 
-	private Long totalCount;
+	private Long recordsTotal;
 
-	private Long filteredCount;
+	private Long recordsFiltered;
 
 	private Object data;
 
@@ -18,20 +18,20 @@ public class FilteredResponse {
 		this.status = status;
 	}
 
-	public Long getTotalCount() {
-		return totalCount;
+	public Long getRecordsTotal() {
+		return recordsTotal;
 	}
 
-	public void setTotalCount(Long totalCount) {
-		this.totalCount = totalCount;
+	public void setRecordsTotal(Long recordsTotal) {
+		this.recordsTotal = recordsTotal;
 	}
 
-	public Long getFilteredCount() {
-		return filteredCount;
+	public Long getRecordsFiltered() {
+		return recordsFiltered;
 	}
 
-	public void setFilteredCount(Long filteredCount) {
-		this.filteredCount = filteredCount;
+	public void setRecordsFiltered(Long recordsFiltered) {
+		this.recordsFiltered = recordsFiltered;
 	}
 
 	public Object getData() {

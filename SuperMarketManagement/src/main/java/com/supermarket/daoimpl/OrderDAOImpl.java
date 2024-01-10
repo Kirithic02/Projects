@@ -242,7 +242,7 @@ public class OrderDAOImpl implements OrderDAO {
 //		criteria.add(Restrictions.)
 
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		resultMap.put("totalCount", criteria.uniqueResult());
+		resultMap.put(WebServiceUtil.FILTEREDRESPONSE_RECORDSTOTAL, criteria.uniqueResult());
 
 		if (orderFilterList.getSearch() != null && !orderFilterList.getSearch().trim().isEmpty()) {
 
@@ -350,7 +350,7 @@ public class OrderDAOImpl implements OrderDAO {
 		}
 
 		criteria.setProjection(Projections.countDistinct("orderId"));
-		resultMap.put("filteredCount", criteria.uniqueResult());
+		resultMap.put(WebServiceUtil.FILTEREDRESPONSE_RECORDSFILTERED, criteria.uniqueResult());
 
 		criteria.setProjection(Projections.projectionList().add(Projections.groupProperty("order.orderId"), "orderId")
 				.add(Projections.property("order.orderedDate"), "orderedDate")

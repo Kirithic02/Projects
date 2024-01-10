@@ -82,7 +82,7 @@ public class ProductDAOImpl implements ProductDAO {
 				.setProjection(Projections.rowCount());
 
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		resultMap.put("totalCount", criteria.uniqueResult());
+		resultMap.put(WebServiceUtil.FILTEREDRESPONSE_RECORDSTOTAL, criteria.uniqueResult());
 
 		if (filterList.getSearch() != null && !filterList.getSearch().trim().isEmpty()) {
 
@@ -190,7 +190,7 @@ public class ProductDAOImpl implements ProductDAO {
 		}
 
 		criteria.setProjection(Projections.rowCount());
-		resultMap.put("filteredCount", criteria.uniqueResult());
+		resultMap.put(WebServiceUtil.FILTEREDRESPONSE_RECORDSFILTERED, criteria.uniqueResult());
 
 		criteria.setProjection(Projections.projectionList().add(Projections.property("productId"), "productId")
 				.add(Projections.property("productName"), "productName")
@@ -218,7 +218,7 @@ public class ProductDAOImpl implements ProductDAO {
 				.createAlias("productId", "product").setProjection(Projections.countDistinct("productId"));
 
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		resultMap.put("totalCount", criteria.uniqueResult());
+		resultMap.put(WebServiceUtil.FILTEREDRESPONSE_RECORDSTOTAL, criteria.uniqueResult());
 
 		if (productSalesFilterList.getSearch() != null && !productSalesFilterList.getSearch().trim().isEmpty()) {
 
@@ -261,7 +261,7 @@ public class ProductDAOImpl implements ProductDAO {
 		}
 
 		criteria.setProjection(Projections.countDistinct("productId"));
-		resultMap.put("filteredCount", (Long) criteria.uniqueResult());
+		resultMap.put(WebServiceUtil.FILTEREDRESPONSE_RECORDSFILTERED, (Long) criteria.uniqueResult());
 
 		criteria.setProjection(
 				Projections.projectionList().add(Projections.groupProperty("product.productId"), "productId")

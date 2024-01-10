@@ -114,7 +114,7 @@ public class CustomerDAOImpl implements CustomerDAO {
 				.setProjection(Projections.rowCount());
 
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		resultMap.put("totalCount", criteria.uniqueResult());
+		resultMap.put(WebServiceUtil.FILTEREDRESPONSE_RECORDSTOTAL, criteria.uniqueResult());
 
 		if (customerFilterList.getSearch() != null && !customerFilterList.getSearch().trim().isEmpty()) {
 
@@ -176,7 +176,7 @@ public class CustomerDAOImpl implements CustomerDAO {
 		}
 
 		criteria.setProjection(Projections.rowCount());
-		resultMap.put("filteredCount", criteria.uniqueResult());
+		resultMap.put(WebServiceUtil.FILTEREDRESPONSE_RECORDSFILTERED, criteria.uniqueResult());
 
 		criteria.setProjection(Projections.projectionList().add(Projections.property("customerId"), "customerId")
 				.add(Projections.property("customerName"), "customerName")

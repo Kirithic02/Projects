@@ -22,26 +22,26 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @ComponentScan("com.supermarket")
 public class HibernateConfiguration {
 
-	@Bean
-	public DataSource dataSource() {
-		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-		dataSource.setUrl("jdbc:mysql://localhost:3306/supermarket");
-		dataSource.setUsername("root");
-		dataSource.setPassword("5595");
-		return dataSource;
-	}
-
 //	@Bean
 //	public DataSource dataSource() {
-//		org.apache.commons.dbcp.BasicDataSource dataSource = new org.apache.commons.dbcp.BasicDataSource();
+//		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 //		dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-//		dataSource.setUrl(
-//				"jdbc:mysql://humhealth-development-instance.cdxyrkms3ue9.us-east-2.rds.amazonaws.com:3306/supermarket_management");
-//		dataSource.setUsername("humhealthmobile");
-//		dataSource.setPassword("Pr0$HumHealth$%RDSMDB2o21");
+//		dataSource.setUrl("jdbc:mysql://localhost:3306/supermarket");
+//		dataSource.setUsername("root");
+//		dataSource.setPassword("5595");
 //		return dataSource;
 //	}
+
+	@Bean
+	public DataSource dataSource() {
+		org.apache.commons.dbcp.BasicDataSource dataSource = new org.apache.commons.dbcp.BasicDataSource();
+		dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+		dataSource.setUrl(
+				"jdbc:mysql://humhealth-development-instance.cdxyrkms3ue9.us-east-2.rds.amazonaws.com:3306/supermarket_management");
+		dataSource.setUsername("humhealthmobile");
+		dataSource.setPassword("Pr0$HumHealth$%RDSMDB2o21");
+		return dataSource;
+	}
 
 	public Properties hibernateProprties() {
 		Properties properties = new Properties();

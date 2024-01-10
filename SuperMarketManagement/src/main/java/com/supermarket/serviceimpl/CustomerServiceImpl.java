@@ -326,13 +326,13 @@ public class CustomerServiceImpl implements CustomerService {
 
 //			if ((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT) > 0) {
 //				filteredResponse.setStatus(WebServiceUtil.SUCCESS);
-//				filteredResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
-//				filteredResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
+//				filteredResponse.setRecordsTotal((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
+//				filteredResponse.setRecordsFiltered((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
 //				filteredResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
 //			} else {
 //				filteredResponse.setStatus(WebServiceUtil.FAILURE);
-//				filteredResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
-//				filteredResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
+//				filteredResponse.setRecordsTotal((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
+//				filteredResponse.setRecordsFiltered((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
 ////				filteredResponse.setData(resultMap.get("No Matching Records Found"));
 //				filteredResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
 //			}
@@ -353,8 +353,8 @@ public class CustomerServiceImpl implements CustomerService {
 			}
 
 			filteredResponse.setStatus(WebServiceUtil.SUCCESS);
-			filteredResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
-			filteredResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
+			filteredResponse.setRecordsTotal((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_RECORDSTOTAL));
+			filteredResponse.setRecordsFiltered((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_RECORDSFILTERED));
 			filteredResponse.setData(transactionDetails);
 
 		} else {

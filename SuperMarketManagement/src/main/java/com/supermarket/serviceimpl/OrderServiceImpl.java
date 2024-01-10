@@ -655,8 +655,8 @@ public class OrderServiceImpl implements OrderService {
 			}
 
 			filteredResponse.setStatus(WebServiceUtil.SUCCESS);
-			filteredResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
-			filteredResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
+			filteredResponse.setRecordsTotal((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_RECORDSTOTAL));
+			filteredResponse.setRecordsFiltered((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_RECORDSFILTERED));
 			filteredResponse.setData(transactionDetails);
 
 		} else {
@@ -698,7 +698,7 @@ public class OrderServiceImpl implements OrderService {
 
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setFieldName(WebServiceUtil.ORDERDETAILS_STATUS);
-			errorResponse.setErrorMessage("OrderStatus Should not be null");
+			errorResponse.setErrorMessage("OrderStatus Should Contain only new (or) packed (or) shipped (or) delivered (or) cancelled");
 			errorResponseList.add(errorResponse);
 		}
 

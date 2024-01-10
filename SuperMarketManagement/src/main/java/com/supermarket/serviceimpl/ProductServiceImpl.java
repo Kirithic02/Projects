@@ -186,7 +186,7 @@ public class ProductServiceImpl implements ProductService {
 					productDAO.addProduct(newProduct);
 
 					response.setStatus(WebServiceUtil.SUCCESS);
-					response.setData("Product Details Are Updated, New Product");
+					response.setData("New Product Details Are Updated");
 
 				} else {
 					response.setStatus(WebServiceUtil.FAILURE);
@@ -402,7 +402,7 @@ public class ProductServiceImpl implements ProductService {
 //				filterResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
 //			}
 
-			List<ProductSales> transactionDetails = (List<ProductSales>) resultMap.get("data");
+			List<ProductDTO> transactionDetails = (List<ProductDTO>) resultMap.get("data");
 
 			if (productFilterList.getOrderBy().getColumn().equalsIgnoreCase("serialNumber")
 					&& productFilterList.getOrderBy().getType().equalsIgnoreCase("desc")) {
@@ -418,8 +418,8 @@ public class ProductServiceImpl implements ProductService {
 			}
 
 			filterResponse.setStatus(WebServiceUtil.SUCCESS);
-			filterResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
-			filterResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
+			filterResponse.setRecordsTotal((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_RECORDSTOTAL));
+			filterResponse.setRecordsFiltered((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_RECORDSFILTERED));
 			filterResponse.setData(transactionDetails);
 
 		} else {
@@ -563,8 +563,8 @@ public class ProductServiceImpl implements ProductService {
 			}
 
 			filterResponse.setStatus(WebServiceUtil.SUCCESS);
-			filterResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
-			filterResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
+			filterResponse.setRecordsTotal((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_RECORDSTOTAL));
+			filterResponse.setRecordsFiltered((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_RECORDSFILTERED));
 			filterResponse.setData(transactionDetails);
 
 		} else {
