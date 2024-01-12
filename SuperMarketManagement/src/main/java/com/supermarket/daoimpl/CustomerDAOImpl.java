@@ -122,13 +122,21 @@ public class CustomerDAOImpl implements CustomerDAO {
 					&& !customerFilterList.getSearchColumn().trim().isEmpty()) {
 
 				if (customerFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.CUSTOMER_ID)) {
-					criteria.add(Restrictions.eq("customerId", Integer.parseInt(customerFilterList.getSearch())));
+					try {
+						criteria.add(Restrictions.eq("customerId", Integer.parseInt(customerFilterList.getSearch())));
+					} catch(NumberFormatException e){
+						criteria.add(Restrictions.eq("customerId", -1));
+					}
 				} else if (customerFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.CUSTOMER_NAME)) {
 					criteria.add(
 							Restrictions.ilike("customerName", customerFilterList.getSearch(), MatchMode.ANYWHERE));
 				} else if (customerFilterList.getSearchColumn().trim()
 						.equalsIgnoreCase(WebServiceUtil.CUSTOMER_MOBILE_NUMBER)) {
-					criteria.add(Restrictions.ilike("mobileNo", customerFilterList.getSearch(), MatchMode.ANYWHERE));
+					try {
+						criteria.add(Restrictions.ilike("mobileNo", customerFilterList.getSearch(), MatchMode.ANYWHERE));
+					} catch(NumberFormatException e){
+						criteria.add(Restrictions.eq("mobileNo", -1));
+					}
 				} else {
 					criteria.add(Restrictions.ilike("mail", customerFilterList.getSearch(), MatchMode.ANYWHERE));
 				}
@@ -147,7 +155,6 @@ public class CustomerDAOImpl implements CustomerDAO {
 
 		if (customerFilterList.getOrderBy() != null) {
 
-//			 && customerFilterList.getOrderBy().getType() != null
 			if (ValidationUtil.isNotEmpty(customerFilterList.getOrderBy().getColumn())) {
 
 				if (customerFilterList.getOrderBy().getColumn().trim().equalsIgnoreCase(WebServiceUtil.CUSTOMER_NAME)) {

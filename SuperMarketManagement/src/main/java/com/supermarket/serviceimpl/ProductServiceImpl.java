@@ -389,22 +389,9 @@ public class ProductServiceImpl implements ProductService {
 
 			Map<String, Object> resultMap = productDAO.listProducts(productFilterList);
 
-//			if ((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT) > 0) {
-//				filterResponse.setStatus(WebServiceUtil.SUCCESS);
-//				filterResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
-//				filterResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
-//				filterResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
-//			} else {
-//				filterResponse.setStatus(WebServiceUtil.FAILURE);
-//				filterResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
-//				filterResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
-////				filterResponse.setData("No Matching Records Found");
-//				filterResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
-//			}
-
 			List<ProductDTO> transactionDetails = (List<ProductDTO>) resultMap.get("data");
 
-			if (productFilterList.getOrderBy().getColumn().equalsIgnoreCase("serialNumber")
+			if (productFilterList.getOrderBy().getColumn() != null && productFilterList.getOrderBy().getColumn().equalsIgnoreCase("serialNumber")
 					&& productFilterList.getOrderBy().getType().equalsIgnoreCase("desc")) {
 				Collections.reverse(transactionDetails);
 				for (Integer i = transactionDetails.size() - 1; i >= 0; i--) {
@@ -483,11 +470,7 @@ public class ProductServiceImpl implements ProductService {
 			errorResponse.setFieldName(WebServiceUtil.FILTERLIST_SEARCHCOLUMN);
 			errorResponse.setErrorMessage("searchColumn Should Contain only productid (or) productname");
 			errorResponseList.add(errorResponse);
-		} else if (productFilterList.getSearchColumn() != null
-				&& productFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_ID)
-				&& !ValidationUtil.isValidNumber(productFilterList.getSearch())) {
 
-			productFilterList.setSearch("-1");
 		}
 
 //		if (productFilterList.getOrderBy() != null
@@ -525,40 +508,27 @@ public class ProductServiceImpl implements ProductService {
 	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
-	public FilteredResponse listProductSales(ProductSalesFilterList productFilterList) {
+	public FilteredResponse listProductSales(ProductSalesFilterList productSalesFilterList) {
 
-		List<ErrorResponse> errorResponseList = productSalesFilterListValidation(productFilterList);
+		List<ErrorResponse> errorResponseList = productSalesFilterListValidation(productSalesFilterList);
 		FilteredResponse filterResponse = new FilteredResponse();
 
 		if (errorResponseList.isEmpty()) {
 
-			Map<String, Object> resultMap = productDAO.listProductsSales(productFilterList);
-
-//			if ((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT) > 0) {
-//				filterResponse.setStatus(WebServiceUtil.SUCCESS);
-//				filterResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
-//				filterResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
-//				filterResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
-//			} else {
-//				filterResponse.setStatus(WebServiceUtil.FAILURE);
-//				filterResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
-//				filterResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
-////				filterResponse.setData("No Matching Records Found");
-//				filterResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
-//			}
+			Map<String, Object> resultMap = productDAO.listProductsSales(productSalesFilterList);
 
 			List<ProductSales> transactionDetails = (List<ProductSales>) resultMap.get("data");
 
-			if (productFilterList.getOrderBy().getColumn().equalsIgnoreCase("serialNumber")
-					&& productFilterList.getOrderBy().getType().equalsIgnoreCase("desc")) {
+			if (productSalesFilterList.getOrderBy().getColumn() != null && productSalesFilterList.getOrderBy().getColumn().equalsIgnoreCase("serialNumber")
+					&& productSalesFilterList.getOrderBy().getType().equalsIgnoreCase("desc")) {
 				Collections.reverse(transactionDetails);
 				for (Integer i = transactionDetails.size() - 1; i >= 0; i--) {
 					transactionDetails.get(i)
-							.setSerialNumber(productFilterList.getStart() + transactionDetails.size() - i);
+							.setSerialNumber(productSalesFilterList.getStart() + transactionDetails.size() - i);
 				}
 			} else {
 				for (Integer i = 0; i < transactionDetails.size(); i++) {
-					transactionDetails.get(i).setSerialNumber(productFilterList.getStart() + i + 1);
+					transactionDetails.get(i).setSerialNumber(productSalesFilterList.getStart() + i + 1);
 				}
 			}
 
@@ -613,11 +583,7 @@ public class ProductServiceImpl implements ProductService {
 			errorResponse.setFieldName(WebServiceUtil.FILTERLIST_SEARCHCOLUMN);
 			errorResponse.setErrorMessage("searchColumn Should Contain only productid (or) productname");
 			errorResponseList.add(errorResponse);
-		} else if (productSalesFilterList.getSearchColumn() != null
-				&& productSalesFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_ID)
-				&& !ValidationUtil.isValidNumber(productSalesFilterList.getSearch())) {
 
-			productSalesFilterList.setSearch("-1");
 		}
 
 		return errorResponseList;

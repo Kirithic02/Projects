@@ -1,6 +1,5 @@
 package com.supermarket.dao;
 
-import java.util.List;
 import java.util.Map;
 
 import com.supermarket.model.custom.product.ProductFilterList;
@@ -15,10 +14,6 @@ public interface ProductDAO {
 	Product getProductById(int productId);
 
 	Map<String, Object> listProducts(ProductFilterList filterList);
-
-//	Map<String, Object> listActiveProducts(Date date, Integer page, Integer limit);
-//	
-//	Map<String, Object> listInActiveProducts(Date date);
 
 	ProductDTO getProductDTOById(int productId);
 

@@ -44,7 +44,15 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	@Transactional
 	public Response login(String mail, String password) {
-
+		
+		if(!( ValidationUtil.isNotEmpty(mail) && ValidationUtil.isNotEmpty(password) )) {
+			throw new NullPointerException("mail and password is Null");
+		} else if(!ValidationUtil.isNotEmpty(mail)) {
+			throw new NullPointerException("mail is Null");
+		} else if(!ValidationUtil.isNotEmpty(password)) {
+			throw new NullPointerException("password is Null");
+		}
+		
 		Customer customer = customerDAO.getCustomerDTOByMail(mail);
 
 		List<ErrorResponse> errorResponseList = new ArrayList<ErrorResponse>();
@@ -178,14 +186,7 @@ public class CustomerServiceImpl implements CustomerService {
 					errorResponse.setFieldName(WebServiceUtil.CUSTOMER_MAIL);
 					errorResponse.setErrorMessage("Mail Already Exist");
 					errorResponseList.add(errorResponse);
-//				} else {
-////					response.setStatus(WebServiceUtil.FAILURE);
-////					response.setData("MobileNo and Mail Already Exist");
-//					
-//					ErrorResponse errorResponse = new ErrorResponse();
-//					errorResponse.setFieldName(WebServiceUtil.CUSTOMER_);
-//					errorResponse.setErrorMessage("MobileNo Already Exist");
-//					errorResponseList.add(errorResponse);
+
 				}
 			}
 
@@ -324,22 +325,9 @@ public class CustomerServiceImpl implements CustomerService {
 
 			Map<String, Object> resultMap = customerDAO.listCustomer(customerFilterList);
 
-//			if ((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT) > 0) {
-//				filteredResponse.setStatus(WebServiceUtil.SUCCESS);
-//				filteredResponse.setRecordsTotal((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
-//				filteredResponse.setRecordsFiltered((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
-//				filteredResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
-//			} else {
-//				filteredResponse.setStatus(WebServiceUtil.FAILURE);
-//				filteredResponse.setRecordsTotal((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
-//				filteredResponse.setRecordsFiltered((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
-////				filteredResponse.setData(resultMap.get("No Matching Records Found"));
-//				filteredResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
-//			}
-
 			List<CustomerDTO> transactionDetails = (List<CustomerDTO>) resultMap.get("data");
 
-			if (customerFilterList.getOrderBy().getColumn().equalsIgnoreCase("serialNumber")
+			if (customerFilterList.getOrderBy().getColumn() != null && customerFilterList.getOrderBy().getColumn().equalsIgnoreCase("serialNumber")
 					&& customerFilterList.getOrderBy().getType().equalsIgnoreCase("desc")) {
 				Collections.reverse(transactionDetails);
 				for (Integer i = transactionDetails.size() - 1; i >= 0; i--) {
@@ -394,10 +382,7 @@ public class CustomerServiceImpl implements CustomerService {
 			errorResponse.setErrorMessage(
 					"searchColumn Should Contain Only customerid (or) customername (or) mobileno (or) mail");
 			errorResponseList.add(errorResponse);
-		} else if (customerFilterList.getSearchColumn() != null
-				&& customerFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_ID)
-				&& !ValidationUtil.isValidNumber(customerFilterList.getSearch())) {
-			customerFilterList.setSearch("-1");
+
 		}
 
 //		if (customerFilterList.getOrderBy() != null

@@ -89,13 +89,15 @@ public class ProductDAOImpl implements ProductDAO {
 			if (filterList.getSearchColumn() != null && !filterList.getSearchColumn().trim().isEmpty()) {
 
 				if (filterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_ID)) {
-					criteria.add(Restrictions.eq("productId", Integer.parseInt(filterList.getSearch())));
+					try {
+						criteria.add(Restrictions.eq("productId", Integer.parseInt(filterList.getSearch())));
+					} catch(NumberFormatException e){
+						criteria.add(Restrictions.eq("productId", -1));
+					}
 				} else if (filterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_NAME)) {
 					criteria.add(Restrictions.ilike("productName", filterList.getSearch().trim(), MatchMode.ANYWHERE));
 				}
 			} else {
-//				criteria.add(Restrictions.disjunction()
-//						.add(Restrictions.ilike("productName", "%" + filterList.getSearch() + "%")));
 				if (ValidationUtil.isValidNumber(filterList.getSearch())) {
 					criteria.add(Restrictions.eq("productId", Integer.parseInt(filterList.getSearch())));
 				} else {
@@ -226,16 +228,18 @@ public class ProductDAOImpl implements ProductDAO {
 					&& !productSalesFilterList.getSearchColumn().trim().isEmpty()) {
 
 				if (productSalesFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_ID)) {
-					criteria.add(
-							Restrictions.eq("product.productId", Integer.parseInt(productSalesFilterList.getSearch())));
+					try {
+						criteria.add(
+								Restrictions.eq("product.productId", Integer.parseInt(productSalesFilterList.getSearch())));
+					} catch(NumberFormatException e){
+						criteria.add(Restrictions.eq("product.productId", -1));
+					}
 				} else if (productSalesFilterList.getSearchColumn().trim()
 						.equalsIgnoreCase(WebServiceUtil.PRODUCT_NAME)) {
 					criteria.add(Restrictions.ilike("product.productName", productSalesFilterList.getSearch().trim(),
 							MatchMode.ANYWHERE));
 				}
 			} else {
-//				criteria.add(Restrictions.disjunction()
-//						.add(Restrictions.ilike("productName", "%" + filterList.getSearch() + "%")));
 				if (ValidationUtil.isValidNumber(productSalesFilterList.getSearch())) {
 					criteria.add(
 							Restrictions.eq("product.productId", Integer.parseInt(productSalesFilterList.getSearch())));

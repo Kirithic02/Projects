@@ -145,9 +145,6 @@ public class OrderDAOImpl implements OrderDAO {
 							MatchMode.ANYWHERE));
 				}
 			} else {
-//				criteria.add(Restrictions.disjunction()
-//						.add(Restrictions.ilike("customer.customerName", orderFilterList.getSearch(), MatchMode.ANYWHERE))
-//						.add(Restrictions.eq("customer.customerId", Integer.parseInt(orderFilterList.getSearch()))));
 				if (ValidationUtil.isValidNumber(orderFilterList.getSearch())) {
 					criteria.add(Restrictions.eq("customer.customerId", Integer.parseInt(orderFilterList.getSearch())));
 				} else {
@@ -249,25 +246,34 @@ public class OrderDAOImpl implements OrderDAO {
 			if (orderFilterList.getSearchColumn() != null && !orderFilterList.getSearchColumn().trim().isEmpty()) {
 
 				if (orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_ID)) {
-					criteria.add(Restrictions.eq("customer.customerId",
-							Integer.parseInt(orderFilterList.getSearch().trim())));
+					try {
+						criteria.add(Restrictions.eq("customer.customerId",
+								Integer.parseInt(orderFilterList.getSearch().trim())));
+					} catch(NumberFormatException e){
+						criteria.add(Restrictions.eq("customer.customerId", -1));
+					}
 				} else if (orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.CUSTOMER_NAME)) {
 					criteria.add(Restrictions.ilike("customer.customerName", orderFilterList.getSearch().trim(),
 							MatchMode.ANYWHERE));
 				} else if (orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.PRODUCT_ID)) {
-					criteria.add(
-							Restrictions.eq("product.productId", Integer.parseInt(orderFilterList.getSearch().trim())));
+					try {
+						criteria.add(
+								Restrictions.eq("product.productId", Integer.parseInt(orderFilterList.getSearch().trim())));
+					} catch(NumberFormatException e){
+						criteria.add(Restrictions.eq("product.productId", -1));
+					}
 				} else if (orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.ORDERDETAILS_ID)) {
-					criteria.add(
-							Restrictions.eq("order.orderId", Integer.parseInt(orderFilterList.getSearch().trim())));
+					try {
+						criteria.add(
+								Restrictions.eq("order.orderId", Integer.parseInt(orderFilterList.getSearch().trim())));
+					} catch(NumberFormatException e){
+						criteria.add(Restrictions.eq("order.orderId", -1));
+					}
 				} else if (orderFilterList.getSearchColumn().equalsIgnoreCase(WebServiceUtil.PRODUCT_NAME)) {
 					criteria.add(Restrictions.ilike("product.productName", orderFilterList.getSearch().trim(),
 							MatchMode.ANYWHERE));
 				}
 			} else {
-//				criteria.add(Restrictions.disjunction()
-//						.add(Restrictions.ilike("customer.customerName", orderFilterList.getSearch(), MatchMode.ANYWHERE))
-//						.add(Restrictions.eq("customer.customerId", Integer.parseInt(orderFilterList.getSearch()))));
 				if (ValidationUtil.isValidNumber(orderFilterList.getSearch())) {
 					criteria.add(Restrictions.disjunction()
 							.add(Restrictions.eq("customer.customerId",
@@ -289,19 +295,6 @@ public class OrderDAOImpl implements OrderDAO {
 
 			criteria.add(Restrictions.eq("order.orderStatus", orderFilterList.getFilter().getOrderStatus()));
 		}
-
-//		if(orderFilterList.getFilter().getFromDate() != null && orderFilterList.getFilter().getToDate() != null) {
-//			if(orderFilterList.getFilter().getFromDate().equals(orderFilterList.getFilter().getToDate()))
-//			{
-//				System.out.println(orderFilterList.getFilter().getFromDate());
-////				criteria.add(Restrictions.eq("order.orderedDate", orderFilterList.getFilter().getFromDate()));
-//				criteria.add(Restrictions.sqlRestriction("DATE(OLID_created_date) = ?",
-//						orderFilterList.getFilter().getFromDate(), StandardBasicTypes.DATE));
-//			} else {
-//				criteria.add(Restrictions.ge("order.orderedDate", orderFilterList.getFilter().getFromDate()))
-//						.add(Restrictions.le("order.orderedDate", orderFilterList.getFilter().getToDate()));
-//			}
-//		} else 
 
 		if (orderFilterList.getFilter().getFromDate() != null) {
 			criteria.add(Restrictions.ge("order.orderExpectedDate", orderFilterList.getFilter().getFromDate()));

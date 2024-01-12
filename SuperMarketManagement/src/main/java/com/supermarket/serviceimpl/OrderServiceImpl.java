@@ -33,7 +33,6 @@ import com.supermarket.model.entity.OrderDetails;
 import com.supermarket.model.entity.OrderLineItemDetails;
 import com.supermarket.model.entity.Product;
 import com.supermarket.service.OrderService;
-import com.supermarket.util.ValidationUtil;
 import com.supermarket.util.WebServiceUtil;
 
 @Service
@@ -87,11 +86,11 @@ public class OrderServiceImpl implements OrderService {
 		List<ErrorResponse> errorResponseList = productListValidation(customerOrderDTO);
 
 		if (customerOrderDTO.getCustomerId() == null) {
-			ErrorResponse errorResponse = new ErrorResponse();
-			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_ID);
-			errorResponse.setErrorMessage("Customer ID should not be null");
-			errorResponseList.add(errorResponse);
-//			throw new InternalError("Customer ID should not be null");
+//			ErrorResponse errorResponse = new ErrorResponse();
+//			errorResponse.setFieldName(WebServiceUtil.CUSTOMER_ID);
+//			errorResponse.setErrorMessage("Customer ID should not be null");
+//			errorResponseList.add(errorResponse);
+			throw new NullPointerException("Customer ID is null");
 
 		} else {
 
@@ -333,16 +332,18 @@ public class OrderServiceImpl implements OrderService {
 				}
 
 			} else if (customerOrderDTO.getOrderId() == null) {
-				ErrorResponse errorResponse = new ErrorResponse();
-				errorResponse.setFieldName(WebServiceUtil.ORDERDETAILS_ID);
-				errorResponse.setErrorMessage("Order ID Should not be null");
-				errorResponseList.add(errorResponse);
+//				ErrorResponse errorResponse = new ErrorResponse();
+//				errorResponse.setFieldName(WebServiceUtil.ORDERDETAILS_ID);
+//				errorResponse.setErrorMessage("Order ID Should not be null");
+//				errorResponseList.add(errorResponse);
+				throw new NullPointerException("Order ID is Null");
 
 			} else {
-				ErrorResponse errorResponse = new ErrorResponse();
-				errorResponse.setFieldName(WebServiceUtil.PRODUCT_ID);
-				errorResponse.setErrorMessage("Product ID Should not be null");
-				errorResponseList.add(errorResponse);
+//				ErrorResponse errorResponse = new ErrorResponse();
+//				errorResponse.setFieldName(WebServiceUtil.PRODUCT_ID);
+//				errorResponse.setErrorMessage("Product ID Should not be null");
+//				errorResponseList.add(errorResponse);
+				throw new NullPointerException("Product ID is Null");
 			}
 		}
 
@@ -508,8 +509,9 @@ public class OrderServiceImpl implements OrderService {
 			}
 
 		} else {
-			response.setData(WebServiceUtil.FAILURE);
-			response.setData("productId Should not be null");
+//			response.setData(WebServiceUtil.FAILURE);
+//			response.setData("Order ID is Null");
+			throw new NullPointerException("Order ID is Null");
 		}
 
 		return response;
@@ -594,8 +596,9 @@ public class OrderServiceImpl implements OrderService {
 
 		} else {
 
-			response.setStatus(WebServiceUtil.FAILURE);
-			response.setData("orderId Should not be null");
+//			response.setStatus(WebServiceUtil.FAILURE);
+//			response.setData("orderId Should not be null");
+			throw new NullPointerException("Order ID is Null");
 		}
 
 		return response;
@@ -623,25 +626,9 @@ public class OrderServiceImpl implements OrderService {
 
 			Map<String, Object> resultMap = orderDAO.listOrder(orderFilterList);
 
-//			if ((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT) > 0) {
-//
-//				filteredResponse.setStatus(WebServiceUtil.SUCCESS);
-//				filteredResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
-//				filteredResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
-//				filteredResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
-//
-//			} else {
-//
-//				filteredResponse.setStatus(WebServiceUtil.FAILURE);
-//				filteredResponse.setTotalCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_TOTALCOUNT));
-//				filteredResponse.setFilteredCount((Long) resultMap.get(WebServiceUtil.FILTEREDRESPONSE_FILTEREDCOUNT));
-////				filteredResponse.setData(resultMap.get("No Matching Records Found"));
-//				filteredResponse.setData(resultMap.get(WebServiceUtil.FILTEREDRESPONSE_DATA));
-//			}
-
 			List<OrderDetailsDTO> transactionDetails = (List<OrderDetailsDTO>) resultMap.get("data");
 
-			if (orderFilterList.getOrderBy().getColumn().equalsIgnoreCase("serialNumber")
+			if (orderFilterList.getOrderBy().getColumn() != null && orderFilterList.getOrderBy().getColumn().equalsIgnoreCase("serialNumber")
 					&& orderFilterList.getOrderBy().getType().equalsIgnoreCase("desc")) {
 				Collections.reverse(transactionDetails);
 				for (Integer i = transactionDetails.size() - 1; i >= 0; i--) {
@@ -715,12 +702,6 @@ public class OrderServiceImpl implements OrderService {
 					"searchColumn Should Contain only customerid (or) customername (or) productid (or) productname (or) orderdid");
 			errorResponseList.add(errorResponse);
 
-		} else if ((orderFilterList.getSearchColumn() != null
-				&& orderFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.CUSTOMER_ID)
-				|| orderFilterList.getSearchColumn().trim().equalsIgnoreCase(WebServiceUtil.PRODUCT_ID))
-				&& !ValidationUtil.isValidNumber(orderFilterList.getSearch())) {
-
-			orderFilterList.setSearch("-1");
 		}
 
 //		if (orderFilterList.getOrderBy() != null && ValidationUtil.isNotEmpty(orderFilterList.getOrderBy().getType())
