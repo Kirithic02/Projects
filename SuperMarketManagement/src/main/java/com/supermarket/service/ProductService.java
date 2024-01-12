@@ -22,7 +22,4 @@ public interface ProductService {
 
 	FilteredResponse listProductSales(ProductSalesFilterList productFilterList);
 
-//	FilteredResponse listActiveProducts(Date date, Integer page, Integer limit);
-//	
-//	FilteredResponse listInActiveProducts(Date date, Integer page, Integer limit);
 }
